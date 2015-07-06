@@ -38,6 +38,6 @@ unused_qualifications, variant_size_differences)]
 
 ///////////////////////////////////////////////////
 
-//! #Maidsafe-Client Library
-//! [Project github page](https://github.com/maidsafe/maidsafe_client)
+//! #Maidsafe-Dns Library
+//! [Project github page](https://github.com/maidsafe/maidsafe_dns)
 
