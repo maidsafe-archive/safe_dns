@@ -8,15 +8,6 @@
 | [API Documentation - master branch](http://maidsafe.net/maidsafe_dns/master) | [SAFE Network System Documentation](http://systemdocs.maidsafe.net) | [MaidSafe website](http://maidsafe.net) | [Safe Community site](https://forum.safenetwork.io) |
 |:------:|:-------:|:-------:|:-------:|
 
-###Build Instructions:
-Maidsafe-Client interfaces conditionally with either the actual routing crate or the Mock used for efficient local testing.
-
-To use it with the Mock (default) do:
-```
-cargo build
-cargo test
-etc
-```
 ##TODO (rust_3 sprint)
 ###Version 0.1.0
 - [ ] [MAID-1240](https://maidsafe.atlassian.net/browse/MAID-1240) Create DNS mapping
