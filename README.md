@@ -1,11 +1,11 @@
-# maidsafe_nfs
+# maidsafe_dns
 
 **Primary Maintainer:**     Spandan Sharma (spandan.sharma@maidsafe.net)
 
 **Secondary Maintainer:**   Krishna Kumar (krishna.kumar@maidsafe.net)
 
 
-| [API Documentation - master branch](http://maidsafe.net/maidsafe_nfs/master) | [SAFE Network System Documentation](http://systemdocs.maidsafe.net) | [MaidSafe website](http://maidsafe.net) | [Safe Community site](https://forum.safenetwork.io) |
+| [API Documentation - master branch](http://maidsafe.net/maidsafe_dns/master) | [SAFE Network System Documentation](http://systemdocs.maidsafe.net) | [MaidSafe website](http://maidsafe.net) | [Safe Community site](https://forum.safenetwork.io) |
 |:------:|:-------:|:-------:|:-------:|
 
 ###Build Instructions:
