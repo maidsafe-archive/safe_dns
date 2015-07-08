@@ -1,7 +1,6 @@
 # maidsafe_dns
 
 [![](https://img.shields.io/badge/Project%20SAFE-Approved-green.svg)](http://maidsafe.net/applications) [![](https://img.shields.io/badge/License-GPL3-green.svg)](https://github.com/maidsafe/maidsafe_dns/blob/master/COPYING)
->>>>>>> e4791ae377e758a70db304648b19f75f8f3443fd
 
 **Primary Maintainer:**     Spandan Sharma (spandan.sharma@maidsafe.net)
 
