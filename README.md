@@ -2,9 +2,9 @@
 
 [![](https://img.shields.io/badge/Project%20SAFE-Approved-green.svg)](http://maidsafe.net/applications) [![](https://img.shields.io/badge/License-GPL3-green.svg)](https://github.com/maidsafe/maidsafe_dns/blob/master/COPYING)
 
-**Primary Maintainer:**     Spandan Sharma (spandan.sharma@maidsafe.net)
+**Primary Maintainer:**     Krishna Kumar (krishna.kumar@maidsafe.net)
 
-**Secondary Maintainer:**   Krishna Kumar (krishna.kumar@maidsafe.net)
+**Secondary Maintainer:**   Spandan Sharma (spandan.sharma@maidsafe.net)
 
 |Crate|Linux|Windows|OSX|Coverage|Issues|
 |:------:|:-------:|:-------:|:-------:|:-------:|:-------:|
