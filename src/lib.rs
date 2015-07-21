@@ -38,6 +38,54 @@ unused_qualifications, variant_size_differences)]
 
 ///////////////////////////////////////////////////
 
+#![allow(missing_docs, unused)] // TODO
+
 //! #Maidsafe-Dns Library
 //! [Project github page](https://github.com/maidsafe/maidsafe_dns)
 
+extern crate routing;
+extern crate sodiumoxide;
+extern crate maidsafe_client;
+//extern crate rustc_serialize;
+
+//#[derive(Clone, Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+pub struct DnsConfiguation {
+    long_name         : String,
+    ownership_keypair : (::sodiumoxide::crypto::sign::PublicKey,
+                        ::sodiumoxide::crypto::sign::SecretKey),
+    encryption_keypair: (::sodiumoxide::crypto::box_::PublicKey,
+                         ::sodiumoxide::crypto::box_::SecretKey),
+
+}
+
+/// The DNS structure
+//#[derive(Clone, Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+pub struct Dns {
+    long_name     : String,
+    encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
+    services      : ::std::collections::HashMap<String, ::routing::NameType>,
+}
+
+pub fn register_dns(_long_name         : String,
+                    _pub_encryption_key: ::sodiumoxide::crypto::box_::PublicKey) -> Result<(), ::maidsafe_client::errors::ClientError> {
+    unimplemented!();
+}
+
+pub fn add_service(_long_name: &String, _new_service: &String) -> Result<(), ::maidsafe_client::errors::ClientError> {
+    unimplemented!();
+}
+
+pub fn get_all_registered_names() -> Result<Vec<String>, ::maidsafe_client::errors::ClientError> {
+    unimplemented!();
+}
+
+pub fn get_all_services(_long_name: &String) -> Result<Vec<String>, ::maidsafe_client::errors::ClientError> {
+    unimplemented!();
+}
+
+pub fn get_service_home_directory_name(_long_name   : &String,
+                                       _service_name: &String) -> Result<::routing::NameType, ::maidsafe_client::errors::ClientError> {
+    unimplemented!();
+}
+
+//fn create_or_get_configuaration_file() -> Result<
