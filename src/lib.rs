@@ -43,19 +43,74 @@ unused_qualifications, variant_size_differences)]
 //! #Maidsafe-Dns Library
 //! [Project github page](https://github.com/maidsafe/maidsafe_dns)
 
+extern crate cbor;
 extern crate routing;
 extern crate sodiumoxide;
 extern crate maidsafe_client;
-//extern crate rustc_serialize;
+extern crate rustc_serialize;
 
-//#[derive(Clone, Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+pub enum DnsError {
+    /// Errors from Maidsafe-Client
+    ClientError(::maidsafe_client::errors::ClientError),
+    /// Dns record already exists
+    DnsNameAlreadyRegistered,
+    /// Dns record not found
+    DnsRecordNotFound,
+    /// Service already exists
+    ServiceAlreadyExists,
+    /// Service not found,
+    ServiceNotFound,
+}
+
+impl From<::maidsafe_client::errors::ClientError> for DnsError {
+    fn from(error: ::maidsafe_client::errors::ClientError) -> DnsError {
+        DnsError::ClientError(error)
+    }
+}
+
+#[derive(Clone)] // TODO , Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
 pub struct DnsConfiguation {
     long_name         : String,
-    ownership_keypair : (::sodiumoxide::crypto::sign::PublicKey,
-                        ::sodiumoxide::crypto::sign::SecretKey),
     encryption_keypair: (::sodiumoxide::crypto::box_::PublicKey,
                          ::sodiumoxide::crypto::box_::SecretKey),
 
+}
+
+impl ::rustc_serialize::Encodable for DnsConfiguation {
+    fn encode<E: ::rustc_serialize::Encoder>(&self, e: &mut E) -> Result<(), E::Error> {
+        let encryption_keypair_vec = ((self.encryption_keypair.0).0.iter().map(|a| *a).collect::<Vec<u8>>(),
+                                      (self.encryption_keypair.1).0.iter().map(|a| *a).collect::<Vec<u8>>());
+
+        ::cbor::CborTagEncode::new(100_001, &(&self.long_name,
+                                              encryption_keypair_vec)).encode(e)
+    }
+}
+
+impl ::rustc_serialize::Decodable for DnsConfiguation {
+    fn decode<D: ::rustc_serialize::Decoder>(d: &mut D) -> Result<Self, D::Error> {
+        let _ = try!(d.read_u64());
+
+        let (long_name,
+             encryption_keypair_vec):
+            (String,
+             (Vec<u8>, Vec<u8>)) = try!(::rustc_serialize::Decodable::decode(d));
+
+        let mut encryption_keypair_arr = ([0u8; ::sodiumoxide::crypto::box_::PUBLICKEYBYTES],
+                                          [0u8; ::sodiumoxide::crypto::box_::SECRETKEYBYTES]);
+
+        for it in encryption_keypair_vec.0.iter().enumerate() {
+            encryption_keypair_arr.0[it.0] = *it.1;
+        }
+        for it in encryption_keypair_vec.1.iter().enumerate() {
+            encryption_keypair_arr.1[it.0] = *it.1;
+        }
+
+        Ok(DnsConfiguation {
+            long_name         : long_name,
+            encryption_keypair: (::sodiumoxide::crypto::box_::PublicKey(encryption_keypair_arr.0),
+                                 ::sodiumoxide::crypto::box_::SecretKey(encryption_keypair_arr.1)),
+        })
+    }
 }
 
 /// The DNS structure
@@ -63,29 +118,199 @@ pub struct DnsConfiguation {
 pub struct Dns {
     long_name     : String,
     encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
-    services      : ::std::collections::HashMap<String, ::routing::NameType>,
+    services      : ::std::collections::HashMap<String, (u64, ::routing::NameType)>,
 }
 
-pub fn register_dns(_long_name         : String,
-                    _pub_encryption_key: ::sodiumoxide::crypto::box_::PublicKey) -> Result<(), ::maidsafe_client::errors::ClientError> {
-    unimplemented!();
+impl ::rustc_serialize::Encodable for Dns {
+    fn encode<E: ::rustc_serialize::Encoder>(&self, e: &mut E) -> Result<(), E::Error> {
+        let encryption_key_vec = self.encryption_key.0.iter().map(|a| *a).collect::<Vec<u8>>();
+
+        ::cbor::CborTagEncode::new(100_001, &(&self.long_name,
+                                              encryption_key_vec,
+                                              &self.services)).encode(e)
+    }
 }
 
-pub fn add_service(_long_name: &String, _new_service: &String) -> Result<(), ::maidsafe_client::errors::ClientError> {
-    unimplemented!();
+impl ::rustc_serialize::Decodable for Dns {
+    fn decode<D: ::rustc_serialize::Decoder>(d: &mut D) -> Result<Self, D::Error> {
+        let _ = try!(d.read_u64());
+
+        let (long_name,
+             encryption_key_vec,
+             services):
+            (String,
+             Vec<u8>,
+             ::std::collections::HashMap<String, (u64, ::routing::NameType)>) = try!(::rustc_serialize::Decodable::decode(d));
+
+        let mut encryption_key_arr = [0u8; ::sodiumoxide::crypto::box_::PUBLICKEYBYTES];
+
+        for it in encryption_key_vec.iter().enumerate() {
+            encryption_key_arr[it.0] = *it.1;
+        }
+
+        Ok(::Dns {
+            long_name     : long_name,
+            encryption_key: ::sodiumoxide::crypto::box_::PublicKey(encryption_key_arr),
+            services      : services,
+        })
+    }
 }
 
-pub fn get_all_registered_names() -> Result<Vec<String>, ::maidsafe_client::errors::ClientError> {
-    unimplemented!();
+struct DnsOperations {
+    client: ::std::sync::Arc<::std::sync::Mutex<::maidsafe_client::client::Client>>,
 }
 
-pub fn get_all_services(_long_name: &String) -> Result<Vec<String>, ::maidsafe_client::errors::ClientError> {
-    unimplemented!();
-}
+impl DnsOperations {
+    pub fn new(client: ::std::sync::Arc<::std::sync::Mutex<::maidsafe_client::client::Client>>) -> DnsOperations {
+        DnsOperations {
+            client: client,
+        }
+    }
 
-pub fn get_service_home_directory_name(_long_name   : &String,
-                                       _service_name: &String) -> Result<::routing::NameType, ::maidsafe_client::errors::ClientError> {
-    unimplemented!();
-}
+    pub fn register_dns(&mut self,
+                        long_name                      : String,
+                        public_messaging_encryption_key: &::sodiumoxide::crypto::box_::PublicKey,
+                        secret_messaging_encryption_key: &::sodiumoxide::crypto::box_::SecretKey,
+                        services                       : &Vec<(String, (u64, ::routing::NameType))>,
+                        owners                         : Vec<::sodiumoxide::crypto::sign::PublicKey>,
+                        private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
+                        data_encryption_keys           : Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                                 &::sodiumoxide::crypto::box_::SecretKey,
+                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(), ::DnsError> {
+        let mut saved_configs = try!(self.get_dns_configuaration_data());
+        if saved_configs.iter().any(|config| config.long_name == long_name) {
+            Err(::DnsError::DnsNameAlreadyRegistered)
+        } else {
+            let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
 
-//fn create_or_get_configuaration_file() -> Result<
+            let dns_record = Dns {
+                long_name: long_name.clone(),
+                encryption_key: public_messaging_encryption_key.clone(),
+                services: services.iter().map(|a| a.clone()).collect(),
+            };
+
+            saved_configs.push(DnsConfiguation {
+                long_name: long_name,
+                encryption_keypair: (public_messaging_encryption_key.clone(),
+                                     secret_messaging_encryption_key.clone())
+
+            });
+            try!(self.write_dns_configuaration_data(saved_configs));
+
+            let struct_data = try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
+                                                                                                      5, // TODO
+                                                                                                      identifier,
+                                                                                                      0,
+                                                                                                      try!(::maidsafe_client::utility::serialise(&dns_record)),
+                                                                                                      owners,
+                                                                                                      vec![],
+                                                                                                      private_signing_key,
+                                                                                                      data_encryption_keys));
+            Ok(try!(self.client.lock().unwrap().put(struct_data.name(), ::maidsafe_client::client::Data::StructuredData(struct_data))))
+        }
+    }
+
+    pub fn get_all_registered_names(&mut self) -> Result<Vec<String>, ::DnsError> {
+        Ok(try!(self.get_dns_configuaration_data()).iter().map(|a| a.long_name.clone()).collect())
+    }
+
+    pub fn get_messaging_encryption_keys(&mut self, long_name: &String) -> Result<(::sodiumoxide::crypto::box_::PublicKey,
+                                                                                   ::sodiumoxide::crypto::box_::SecretKey), ::DnsError> {
+        let config_vec = try!(self.get_dns_configuaration_data());
+        let dns_record = try!(config_vec.iter().find(|config| config.long_name == *long_name).ok_or(::DnsError::DnsRecordNotFound));
+        Ok(dns_record.encryption_keypair.clone())
+    }
+
+    pub fn get_all_services(&mut self,
+                            long_name           : &String,
+                            data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                          &::sodiumoxide::crypto::box_::SecretKey,
+                                                          &::sodiumoxide::crypto::box_::Nonce)>) -> Result<Vec<String>, ::DnsError> {
+        let (_, dns_record) = try!(self.get_dns_record_and_housing_sturctured_data(long_name, data_decryption_keys));
+        Ok(dns_record.services.keys().map(|a| a.clone()).collect())
+    }
+
+    pub fn get_service_home_directory_key(&mut self,
+                                          long_name           : &String,
+                                          service_name        : &String,
+                                          data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                                        &::sodiumoxide::crypto::box_::SecretKey,
+                                                                        &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(u64, ::routing::NameType), ::DnsError> {
+        let (_, dns_record) = try!(self.get_dns_record_and_housing_sturctured_data(long_name, data_decryption_keys));
+        Ok(try!(dns_record.services.get(service_name).ok_or(::DnsError::ServiceNotFound)).clone())
+    }
+
+    pub fn add_service(&mut self,
+                       long_name                      : &String,
+                       new_service                    : (String, (u64, ::routing::NameType)),
+                       private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
+                       data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                                &::sodiumoxide::crypto::box_::SecretKey,
+                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(), ::DnsError> {
+        let mut saved_configs = try!(self.get_dns_configuaration_data());
+        if saved_configs.iter().any(|config| config.long_name == *long_name) {
+            let (prev_struct_data, mut dns_record) = try!(self.get_dns_record_and_housing_sturctured_data(long_name,
+                                                                                                          data_encryption_decryption_keys));
+
+            if dns_record.services.contains_key(&new_service.0) {
+                Err(::DnsError::ServiceAlreadyExists)
+            } else {
+                let _ = dns_record.services.insert(new_service.0, new_service.1);
+                let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
+
+                let struct_data = try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
+                                                                                                          5, // TODO
+                                                                                                          identifier,
+                                                                                                          prev_struct_data.get_version() + 1,
+                                                                                                          try!(::maidsafe_client::utility::serialise(&dns_record)),
+                                                                                                          prev_struct_data.get_owners().clone(),
+                                                                                                          prev_struct_data.get_previous_owners().clone(),
+                                                                                                          private_signing_key,
+                                                                                                          data_encryption_decryption_keys));
+                Ok(try!(self.client.lock().unwrap().put(struct_data.name(), ::maidsafe_client::client::Data::StructuredData(struct_data))))
+            }
+        } else {
+            Err(::DnsError::DnsRecordNotFound)
+        }
+    }
+
+    pub fn remove_service(_long_name: &String, _new_service: &String) -> Result<(), ::DnsError> {
+        unimplemented!();
+    }
+
+    fn get_dns_record_and_housing_sturctured_data(&mut self,
+                                                  long_name           : &String,
+                                                  data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                                                &::sodiumoxide::crypto::box_::SecretKey,
+                                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(::maidsafe_client::client::StructuredData,
+                                                                                                                                  Dns), ::DnsError> {
+        let struct_data = try!(self.get_housing_structured_data(long_name, data_decryption_keys));
+        let dns_record = try!(::maidsafe_client::utility::deserialise(&try!(::maidsafe_client::structured_data_operations::unversioned::get_data(self.client.clone(),
+                                                                                                                                                 &struct_data,
+                                                                                                                                                 data_decryption_keys))));
+        Ok((struct_data, dns_record))
+    }
+
+    fn get_housing_structured_data(&mut self,
+                                   long_name           : &String,
+                                   data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                                 &::sodiumoxide::crypto::box_::SecretKey,
+                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::maidsafe_client::client::StructuredData, ::DnsError> {
+        let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
+        let location = ::maidsafe_client::client::StructuredData::compute_name(5, &identifier); // TODO 5
+        let mut response_getter = try!(self.client.lock().unwrap().get(location, ::maidsafe_client::client::DataRequest::StructuredData(5)));
+        if let ::maidsafe_client::client::Data::StructuredData(struct_data) = try!(response_getter.get()) { // TODO 5
+            Ok(struct_data)
+        } else {
+            Err(::DnsError::ClientError(::maidsafe_client::errors::ClientError::ReceivedUnexpectedData))
+        }
+    }
+
+    fn get_dns_configuaration_data(&mut self) -> Result<Vec<DnsConfiguation>, ::DnsError> {
+        Ok(vec![])
+    }
+
+    fn write_dns_configuaration_data(&mut self, config: Vec<DnsConfiguation>) -> Result<(), ::DnsError> {
+        Ok(())
+    }
+}
