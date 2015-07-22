@@ -60,6 +60,8 @@ pub enum DnsError {
     ServiceAlreadyExists,
     /// Service not found,
     ServiceNotFound,
+    /// Unexpected, probably due to logical error
+    Unexpected,
 }
 
 impl From<::maidsafe_client::errors::ClientError> for DnsError {
@@ -176,7 +178,7 @@ impl DnsOperations {
                         private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                         data_encryption_keys           : Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                  &::sodiumoxide::crypto::box_::SecretKey,
-                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(), ::DnsError> {
+                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::maidsafe_client::client::StructuredData, ::DnsError> {
         let mut saved_configs = try!(self.get_dns_configuaration_data());
         if saved_configs.iter().any(|config| config.long_name == long_name) {
             Err(::DnsError::DnsNameAlreadyRegistered)
@@ -197,16 +199,15 @@ impl DnsOperations {
             });
             try!(self.write_dns_configuaration_data(saved_configs));
 
-            let struct_data = try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
-                                                                                                      5, // TODO
-                                                                                                      identifier,
-                                                                                                      0,
-                                                                                                      try!(::maidsafe_client::utility::serialise(&dns_record)),
-                                                                                                      owners,
-                                                                                                      vec![],
-                                                                                                      private_signing_key,
-                                                                                                      data_encryption_keys));
-            Ok(try!(self.client.lock().unwrap().put(struct_data.name(), ::maidsafe_client::client::Data::StructuredData(struct_data))))
+            Ok(try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
+                                                                                       5, // TODO
+                                                                                       identifier,
+                                                                                       0,
+                                                                                       try!(::maidsafe_client::utility::serialise(&dns_record)),
+                                                                                       owners,
+                                                                                       vec![],
+                                                                                       private_signing_key,
+                                                                                       data_encryption_keys)))
         }
     }
 
@@ -246,36 +247,60 @@ impl DnsOperations {
                        private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                        data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                 &::sodiumoxide::crypto::box_::SecretKey,
-                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(), ::DnsError> {
+                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::maidsafe_client::client::StructuredData, ::DnsError> {
+        Ok(try!(self.add_remove_service_impl(long_name, (&new_service.0, Some(new_service.1)), private_signing_key, data_encryption_decryption_keys)))
+    }
+
+    pub fn remove_service(&mut self,
+                          long_name                      : &String,
+                          service_to_remove              : &String,
+                          private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
+                          data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                                   &::sodiumoxide::crypto::box_::SecretKey,
+                                                                   &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::maidsafe_client::client::StructuredData, ::DnsError> {
+        Ok(try!(self.add_remove_service_impl(long_name, (service_to_remove, None), private_signing_key, data_encryption_decryption_keys)))
+    }
+
+    fn add_remove_service_impl(&mut self,
+                               long_name                      : &String,
+                               service                        : (&String, Option<(u64, ::routing::NameType)>),
+                               private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
+                               data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
+                                                                        &::sodiumoxide::crypto::box_::SecretKey,
+                                                                        &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::maidsafe_client::client::StructuredData, ::DnsError> {
+        let is_add_service = service.1.is_some();
+
         let mut saved_configs = try!(self.get_dns_configuaration_data());
         if saved_configs.iter().any(|config| config.long_name == *long_name) {
             let (prev_struct_data, mut dns_record) = try!(self.get_dns_record_and_housing_sturctured_data(long_name,
                                                                                                           data_encryption_decryption_keys));
 
-            if dns_record.services.contains_key(&new_service.0) {
+            if !is_add_service && !dns_record.services.contains_key(service.0) {
+                Err(::DnsError::ServiceNotFound)
+            } else if is_add_service && dns_record.services.contains_key(service.0) {
                 Err(::DnsError::ServiceAlreadyExists)
             } else {
-                let _ = dns_record.services.insert(new_service.0, new_service.1);
+                if is_add_service {
+                    let _ = dns_record.services.insert(service.0.clone(), try!(service.1.ok_or(::DnsError::Unexpected)));
+                } else {
+                    let _ = dns_record.services.remove(service.0);
+                }
+
                 let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
 
-                let struct_data = try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
-                                                                                                          5, // TODO
-                                                                                                          identifier,
-                                                                                                          prev_struct_data.get_version() + 1,
-                                                                                                          try!(::maidsafe_client::utility::serialise(&dns_record)),
-                                                                                                          prev_struct_data.get_owners().clone(),
-                                                                                                          prev_struct_data.get_previous_owners().clone(),
-                                                                                                          private_signing_key,
-                                                                                                          data_encryption_decryption_keys));
-                Ok(try!(self.client.lock().unwrap().put(struct_data.name(), ::maidsafe_client::client::Data::StructuredData(struct_data))))
+                Ok(try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
+                                                                                           5, // TODO
+                                                                                           identifier,
+                                                                                           prev_struct_data.get_version() + 1,
+                                                                                           try!(::maidsafe_client::utility::serialise(&dns_record)),
+                                                                                           prev_struct_data.get_owners().clone(),
+                                                                                           prev_struct_data.get_previous_owners().clone(),
+                                                                                           private_signing_key,
+                                                                                           data_encryption_decryption_keys)))
             }
         } else {
             Err(::DnsError::DnsRecordNotFound)
         }
-    }
-
-    pub fn remove_service(_long_name: &String, _new_service: &String) -> Result<(), ::DnsError> {
-        unimplemented!();
     }
 
     fn get_dns_record_and_housing_sturctured_data(&mut self,
