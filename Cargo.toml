@@ -1,10 +1,26 @@
 [package]
-name = "maidsafe_dns"
-version = "0.0.1"
-authors = ["MaidSafe Developers <dev@maidsafe.net>"]
-description = "This is Pre alpha, and not useful, no code worth looking at."
+name          = "maidsafe_dns"
+version       = "0.0.1"
+authors       = ["MaidSafe Developers <dev@maidsafe.net>"]
+description   = "Maidsafe DNS API library"
 documentation = "http://maidsafe.net/maidsafe_dns/latest"
-repository = "https://github.com/maidsafe/maidsafe_dns"
-readme = "README.md"
-license = "GPL-3.0"
-homepage = "http://maidsafe.net"
+repository    = "https://github.com/maidsafe/maidsafe_dns"
+readme        = "README.md"
+license       = "GPL-3.0"
+homepage      = "http://maidsafe.net"
+
+[dependencies]
+# ---- Maidsafe ----
+routing         = "*"
+#maidsafe_client = "*"
+
+# ---- Others ----
+cbor            = "*"
+sodiumoxide     = "*"
+rustc-serialize = "*"
+
+[dependencies.maidsafe_client]
+git = "https://github.com/maidsafe/maidsafe_client.git"
+
+[features]
+USE_ACTUAL_ROUTING = ["maidsafe_client/USE_ACTUAL_ROUTING"]
