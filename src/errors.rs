@@ -36,3 +36,16 @@ impl From<::maidsafe_client::errors::ClientError> for DnsError {
         DnsError::ClientError(error)
     }
 }
+
+impl ::std::fmt::Debug for DnsError {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+        match *self {
+            DnsError::ClientError(ref error)   => writeln!(f, "DnsError::ClientError -> {:?}", error),
+            DnsError::DnsNameAlreadyRegistered => writeln!(f, "DnsError::DnsNameAlreadyRegistered"),
+            DnsError::DnsRecordNotFound        => writeln!(f, "DnsError::DnsRecordNotFound"),
+            DnsError::ServiceAlreadyExists     => writeln!(f, "DnsError::ServiceAlreadyExists"),
+            DnsError::ServiceNotFound          => writeln!(f, "DnsError::ServiceNotFound"),
+            DnsError::Unexpected               => writeln!(f, "DnsError::Unexpected"),
+        }
+    }
+}
