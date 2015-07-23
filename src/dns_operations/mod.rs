@@ -27,14 +27,16 @@ pub struct DnsOperations {
 impl DnsOperations {
     /// Create a new instance of DnsOperations. It is intended that only one of this be created as
     /// it operates on global data such as files.
-    pub fn new(client: ::std::sync::Arc<::std::sync::Mutex<::maidsafe_client::client::Client>>) -> DnsOperations {
-        DnsOperations {
+    pub fn new(client: ::std::sync::Arc<::std::sync::Mutex<::maidsafe_client::client::Client>>) -> Result<DnsOperations, ::errors::DnsError> {
+        try!(dns_configuration::initialise_dns_configuaration(client.clone()));
+
+        Ok(DnsOperations {
             client: client,
-        }
+        })
     }
 
     /// Register one's own Dns - eg., pepsico.com, spandansharma.com, krishnakumar.in etc
-    pub fn register_dns(&mut self,
+    pub fn register_dns(&self,
                         long_name                      : String,
                         public_messaging_encryption_key: &::sodiumoxide::crypto::box_::PublicKey,
                         secret_messaging_encryption_key: &::sodiumoxide::crypto::box_::SecretKey,
@@ -62,7 +64,7 @@ impl DnsOperations {
                                      secret_messaging_encryption_key.clone())
 
             });
-            try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), saved_configs));
+            try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
 
             Ok(try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
                                                                                        DNS_TAG,
@@ -82,7 +84,7 @@ impl DnsOperations {
     }
 
     /// Get the messaging encryption keys that the user has associated with one's particular Dns-name.
-    pub fn get_messaging_encryption_keys(&mut self, long_name: &String) -> Result<(::sodiumoxide::crypto::box_::PublicKey,
+    pub fn get_messaging_encryption_keys(&self, long_name: &String) -> Result<(::sodiumoxide::crypto::box_::PublicKey,
                                                                                    ::sodiumoxide::crypto::box_::SecretKey), ::errors::DnsError> {
         let config_vec = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
         let dns_record = try!(config_vec.iter().find(|config| config.long_name == *long_name).ok_or(::errors::DnsError::DnsRecordNotFound));
@@ -91,7 +93,7 @@ impl DnsOperations {
 
     /// Get all the services (www, blog, micro-blog etc) that user has associated with this
     /// Dns-name
-    pub fn get_all_services(&mut self,
+    pub fn get_all_services(&self,
                             long_name           : &String,
                             data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                           &::sodiumoxide::crypto::box_::SecretKey,
@@ -101,7 +103,7 @@ impl DnsOperations {
     }
 
     /// Get the home directory (eg., homepage containing HOME.html, INDEX.html) for the given service.
-    pub fn get_service_home_directory_key(&mut self,
+    pub fn get_service_home_directory_key(&self,
                                           long_name           : &String,
                                           service_name        : &String,
                                           data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
@@ -112,20 +114,20 @@ impl DnsOperations {
     }
 
     /// Add a new service for the given Dns-name.
-    pub fn add_service(&mut self,
+    pub fn add_service(&self,
                        long_name                      : &String,
                        new_service                    : (String, (u64, ::routing::NameType)),
                        private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                        data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                 &::sodiumoxide::crypto::box_::SecretKey,
                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::maidsafe_client::client::StructuredData, ::errors::DnsError> {
-        Ok(try!(self.add_remove_service_impl(long_name, (&new_service.0, Some(new_service.1)), private_signing_key, data_encryption_decryption_keys)))
+        Ok(try!(self.add_remove_service_impl(long_name, (new_service.0, Some(new_service.1)), private_signing_key, data_encryption_decryption_keys)))
     }
 
     /// Remove a service from the given Dns-name.
     pub fn remove_service(&mut self,
                           long_name                      : &String,
-                          service_to_remove              : &String,
+                          service_to_remove              : String,
                           private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                           data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                    &::sodiumoxide::crypto::box_::SecretKey,
@@ -133,9 +135,9 @@ impl DnsOperations {
         Ok(try!(self.add_remove_service_impl(long_name, (service_to_remove, None), private_signing_key, data_encryption_decryption_keys)))
     }
 
-    fn add_remove_service_impl(&mut self,
+    fn add_remove_service_impl(&self,
                                long_name                      : &String,
-                               service                        : (&String, Option<(u64, ::routing::NameType)>),
+                               service                        : (String, Option<(u64, ::routing::NameType)>),
                                private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                                data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                         &::sodiumoxide::crypto::box_::SecretKey,
@@ -147,15 +149,15 @@ impl DnsOperations {
             let (prev_struct_data, mut dns_record) = try!(self.get_dns_record_and_housing_sturctured_data(long_name,
                                                                                                           data_encryption_decryption_keys));
 
-            if !is_add_service && !dns_record.services.contains_key(service.0) {
+            if !is_add_service && !dns_record.services.contains_key(&service.0) {
                 Err(::errors::DnsError::ServiceNotFound)
-            } else if is_add_service && dns_record.services.contains_key(service.0) {
+            } else if is_add_service && dns_record.services.contains_key(&service.0) {
                 Err(::errors::DnsError::ServiceAlreadyExists)
             } else {
                 if is_add_service {
-                    let _ = dns_record.services.insert(service.0.clone(), try!(service.1.ok_or(::errors::DnsError::Unexpected)));
+                    let _ = dns_record.services.insert(service.0, try!(service.1.ok_or(::errors::DnsError::Unexpected("Programming Error - Investigate !!".to_string()))));
                 } else {
-                    let _ = dns_record.services.remove(service.0);
+                    let _ = dns_record.services.remove(&service.0);
                 }
 
                 let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
@@ -175,7 +177,7 @@ impl DnsOperations {
         }
     }
 
-    fn get_dns_record_and_housing_sturctured_data(&mut self,
+    fn get_dns_record_and_housing_sturctured_data(&self,
                                                   long_name           : &String,
                                                   data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                                 &::sodiumoxide::crypto::box_::SecretKey,
@@ -188,7 +190,7 @@ impl DnsOperations {
         Ok((struct_data, dns_record))
     }
 
-    fn get_housing_structured_data(&mut self, long_name: &String) -> Result<::maidsafe_client::client::StructuredData, ::errors::DnsError> {
+    fn get_housing_structured_data(&self, long_name: &String) -> Result<::maidsafe_client::client::StructuredData, ::errors::DnsError> {
         let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
         let location = ::maidsafe_client::client::StructuredData::compute_name(DNS_TAG, &identifier);
         let mut response_getter = try!(self.client.lock().unwrap().get(location, ::maidsafe_client::client::DataRequest::StructuredData(DNS_TAG)));
@@ -240,4 +242,9 @@ impl ::rustc_serialize::Decodable for Dns {
             services      : services,
         })
     }
+}
+
+#[cfg(test)]
+mod test {
+    //use super::*;
 }
