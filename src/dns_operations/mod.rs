@@ -78,6 +78,27 @@ impl DnsOperations {
         }
     }
 
+    /// Delete the Dns-Record
+    pub fn delete_dns(&self,
+                      long_name          : &String,
+                      private_signing_key: &::sodiumoxide::crypto::sign::SecretKey) -> Result<::maidsafe_client::client::StructuredData, ::errors::DnsError> {
+        let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
+        let pos = try!(saved_configs.iter().position(|config| config.long_name == *long_name).ok_or(::errors::DnsError::DnsRecordNotFound));
+        let _ = saved_configs.remove(pos);
+        try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
+
+        let prev_struct_data = try!(self.get_housing_structured_data(long_name));
+        Ok(try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
+                                                                                   DNS_TAG,
+                                                                                   prev_struct_data.get_identifier().clone(),
+                                                                                   prev_struct_data.get_version() + 1,
+                                                                                   vec![],
+                                                                                   prev_struct_data.get_owners().clone(),
+                                                                                   prev_struct_data.get_previous_owners().clone(),
+                                                                                   private_signing_key,
+                                                                                   None)))
+    }
+
     /// Get all the Dns-names registered by the user so far in the network.
     pub fn get_all_registered_names(&mut self) -> Result<Vec<String>, ::errors::DnsError> {
         Ok(try!(dns_configuration::get_dns_configuaration_data(self.client.clone())).iter().map(|a| a.long_name.clone()).collect())
@@ -160,11 +181,9 @@ impl DnsOperations {
                     let _ = dns_record.services.remove(&service.0);
                 }
 
-                let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
-
                 Ok(try!(::maidsafe_client::structured_data_operations::unversioned::create(self.client.clone(),
                                                                                            DNS_TAG,
-                                                                                           identifier,
+                                                                                           prev_struct_data.get_identifier().clone(),
                                                                                            prev_struct_data.get_version() + 1,
                                                                                            try!(::maidsafe_client::utility::serialise(&dns_record)),
                                                                                            prev_struct_data.get_owners().clone(),
@@ -246,5 +265,51 @@ impl ::rustc_serialize::Decodable for Dns {
 
 #[cfg(test)]
 mod test {
-    //use super::*;
+    use super::*;
+
+    #[test]
+    fn register_and_delete_dns() {
+        let client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::maidsafe_client::utility::test_utils::get_client())));
+        let dns_operations = eval_result!(DnsOperations::new(client.clone()));
+
+        let dns_name = eval_result!(::maidsafe_client::utility::generate_random_string(10));
+        let messaging_keypair = ::sodiumoxide::crypto::box_::gen_keypair();
+        let services = vec![("www".to_string(), (15000, ::routing::NameType::new([123; 64])))];
+        let owners = vec![client.lock().unwrap().get_public_signing_key().clone()];
+
+        let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
+
+        // Register
+        let mut struct_data = eval_result!(dns_operations.register_dns(dns_name.clone(),
+                                                                       &messaging_keypair.0,
+                                                                       &messaging_keypair.1,
+                                                                       &services,
+                                                                       owners.clone(),
+                                                                       &secret_signing_key,
+                                                                       None));
+
+        eval_result!(client.lock().unwrap().put(struct_data.name().clone(), ::maidsafe_client::client::Data::StructuredData(struct_data)));
+
+        // Re-registering is not allower
+        assert!(dns_operations.register_dns(dns_name.clone(),
+                                            &messaging_keypair.0,
+                                            &messaging_keypair.1,
+                                            &services,
+                                            owners.clone(),
+                                            &secret_signing_key,
+                                            None).is_err());
+
+        // Delete
+        struct_data = eval_result!(dns_operations.delete_dns(&dns_name, &secret_signing_key));
+        eval_result!(client.lock().unwrap().delete(struct_data.name().clone(), ::maidsafe_client::client::Data::StructuredData(struct_data)));
+
+        // Registering again should be allowed
+        let _ = eval_result!(dns_operations.register_dns(dns_name,
+                                                         &messaging_keypair.0,
+                                                         &messaging_keypair.1,
+                                                         &services,
+                                                         owners,
+                                                         &secret_signing_key,
+                                                         None));
+    }
 }
