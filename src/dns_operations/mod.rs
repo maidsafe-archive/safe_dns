@@ -303,12 +303,8 @@ mod test {
                                           &secret_signing_key,
                                           None) {
             Ok(_) => panic!("Should have been an error"),
-            Err(error) => {
-                match error {
-                    ::errors::DnsError::DnsNameAlreadyRegistered => (),
-                    _ => panic!("{:?}", error),
-                }
-            }
+            Err(::errors::DnsError::DnsNameAlreadyRegistered) => (),
+            Err(error) => panic!("{:?}", error),
         }
 
         // Delete
@@ -363,12 +359,8 @@ mod test {
 
         match dns_operations.get_service_home_directory_key(&"bogus".to_string(), &services[0].0, None) {
             Ok(_) => panic!("Should have been an error"),
-            Err(error) => {
-                match error {
-                    ::errors::DnsError::DnsRecordNotFound => (),
-                    _ => panic!("{:?}", error),
-                }
-            }
+            Err(::errors::DnsError::DnsRecordNotFound) => (),
+            Err(error) => panic!("{:?}", error),
         }
 
         // Get information about a service - the home-directory and its type
@@ -388,12 +380,8 @@ mod test {
         // Try to enquire about a deleted service
         match dns_operations.get_service_home_directory_key(&dns_name, &removed_service.0, None) {
             Ok(_) => panic!("Should have been an error"),
-            Err(error) => {
-                match error {
-                    ::errors::DnsError::ServiceNotFound => (),
-                    _ => panic!("{:?}", error),
-                }
-            }
+            Err(::errors::DnsError::ServiceNotFound) => (),
+            Err(error) => panic!("{:?}", error),
         }
 
         // Add a service

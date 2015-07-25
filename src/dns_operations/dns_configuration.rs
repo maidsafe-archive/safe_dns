@@ -123,10 +123,12 @@ mod test {
         let mut config_vec = eval_result!(get_dns_configuaration_data(client.clone()));
         assert_eq!(config_vec.len(), 0);
 
+        let long_name = eval_result!(::maidsafe_client::utility::generate_random_string(10));
+
         // Put in the 1st record
         let mut keypair = ::sodiumoxide::crypto::box_::gen_keypair();
         let config_0 = DnsConfiguation {
-            long_name         : "spandan_sharma.com".to_string(),
+            long_name         : long_name.clone(),
             encryption_keypair: (keypair.0, keypair.1),
         };
 
@@ -142,7 +144,7 @@ mod test {
         // Modify the content
         keypair = ::sodiumoxide::crypto::box_::gen_keypair();
         let config_1 = DnsConfiguation {
-            long_name         : "spandan_sharma.com".to_string(),
+            long_name         : long_name,
             encryption_keypair: (keypair.0, keypair.1),
         };
 
