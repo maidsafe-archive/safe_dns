@@ -17,6 +17,7 @@ routing         = "*"
 
 # ---- Others ----
 cbor            = "*"
+regex           = "*"
 sodiumoxide     = "*"
 rustc-serialize = "*"
 
