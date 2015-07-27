@@ -71,7 +71,7 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_cl
                      dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
     println!("\n\n    Create Dns Record
                 \n    ===================");
-    println!("\nEnter Dns Name (eg., pepsico.com [Note: more than one \".\"'s are not allowed in this simple example):");
+    println!("\nEnter Dns Name (eg., pepsico.com [Note: more than one \".\"s are not allowed in this simple example]):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
     long_name = long_name.trim().to_string(); // TODO improve
@@ -244,7 +244,7 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<m
 
     println!("\n-----------------------------------------------------");
     println!("                 Home Page Contents
-             \n-----------------------------------------------------\n");
+              \n-----------------------------------------------------\n");
     println!("{:?}", try!(String::from_utf8(content).map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Cannot convert contents to displayable string !!".to_string()))));
 
     Ok(())
