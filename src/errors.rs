@@ -57,13 +57,13 @@ impl From<String> for DnsError {
 impl ::std::fmt::Debug for DnsError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            DnsError::ClientError(ref error)           => writeln!(f, "DnsError::ClientError -> {:?}", error),
-            DnsError::DnsNameAlreadyRegistered         => writeln!(f, "DnsError::DnsNameAlreadyRegistered"),
-            DnsError::DnsRecordNotFound                => writeln!(f, "DnsError::DnsRecordNotFound"),
-            DnsError::ServiceAlreadyExists             => writeln!(f, "DnsError::ServiceAlreadyExists"),
-            DnsError::ServiceNotFound                  => writeln!(f, "DnsError::ServiceNotFound"),
-            DnsError::DnsConfigFileNotFoundOrCorrupted => writeln!(f, "DnsError::DnsConfigFileNotFoundOrCorrupted"),
-            DnsError::Unexpected(ref error)            => writeln!(f, "DnsError::Unexpected::{:?}", error),
+            DnsError::ClientError(ref error)           => write!(f, "DnsError::ClientError -> {:?}", error),
+            DnsError::DnsNameAlreadyRegistered         => write!(f, "DnsError::DnsNameAlreadyRegistered"),
+            DnsError::DnsRecordNotFound                => write!(f, "DnsError::DnsRecordNotFound"),
+            DnsError::ServiceAlreadyExists             => write!(f, "DnsError::ServiceAlreadyExists"),
+            DnsError::ServiceNotFound                  => write!(f, "DnsError::ServiceNotFound"),
+            DnsError::DnsConfigFileNotFoundOrCorrupted => write!(f, "DnsError::DnsConfigFileNotFoundOrCorrupted"),
+            DnsError::Unexpected(ref error)            => write!(f, "DnsError::Unexpected::{{{:?}}}", error),
         }
     }
 }

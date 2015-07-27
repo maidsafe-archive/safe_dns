@@ -45,8 +45,8 @@ extern crate cbor;
 extern crate routing;
 extern crate sodiumoxide;
 extern crate maidsafe_nfs;
-extern crate maidsafe_client;
 extern crate rustc_serialize;
+#[macro_use] extern crate maidsafe_client;
 
 /// Maidsafe-Dns errors
 pub mod errors;
