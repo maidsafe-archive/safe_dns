@@ -23,7 +23,7 @@ extern crate maidsafe_nfs;
 #[macro_use] extern crate maidsafe_client;
 
 const DEFAULT_SERVICE: &'static str = "www";
-const HOME_PAGE_FILE: &'static str = "HOME.html";
+const HOME_PAGE_FILE_NAME: &'static str = "HOME.html";
 
 fn handle_login() -> std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>> {
     let mut keyword = String::new();
@@ -69,8 +69,8 @@ fn handle_login() -> std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Cl
 
 fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
                      dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
-    println!("\n\n    Create Dns Record
-                \n    ===================");
+    println!("\n\n    Create Dns Record");
+    println!(    "    =================");
     println!("\nEnter Dns Name (eg., pepsico.com [Note: more than one \".\"s are not allowed in this simple example]):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
@@ -95,8 +95,8 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_cl
 
 fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
                      dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
-    println!("\n\n    Delete Dns Record
-                \n    ===================");
+    println!("\n\n    Delete Dns Record");
+    println!(    "    =================");
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
@@ -111,20 +111,20 @@ fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_cl
 }
 
 fn display_dns_records(dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
-    println!("\n\n    Display Dns Records
-                \n    ===================");
-    println!("\nRegistered Dns Names (fetching..):");
+    println!("\n\n    Display Dns Records");
+    println!(    "    ===================");
+    println!("\nRegistered Dns Names (fetching...):");
     let record_names = try!(dns_operations.get_all_registered_names());
     for it in record_names.iter().enumerate() {
-        println!("<{:?}> {:?}", it.0 + 1, it.1);
+        println!("<{:?}> {}", it.0 + 1, it.1);
     }
     Ok(())
 }
 
 fn add_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
                dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
-    println!("\n\n    Add Service
-                \n    ===================");
+    println!("\n\n    Add Service");
+    println!(    "    ===========");
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
@@ -144,7 +144,7 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::
     let dir_listing = try!(dir_helper.get(&dir_id));
 
     let mut file_helper = maidsafe_nfs::helper::FileHelper::new(client.clone());
-    let mut writer = try!(file_helper.create(HOME_PAGE_FILE.to_string(), vec![], &dir_listing));
+    let mut writer = try!(file_helper.create(HOME_PAGE_FILE_NAME.to_string(), vec![], &dir_listing));
 
     println!("\nEnter text that you want to display on the Home-Page:");
     let mut text = String::new();
@@ -164,8 +164,8 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::
 
 fn remove_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
                   dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
-    println!("\n\n    Remove Service
-                \n    ===================");
+    println!("\n\n    Remove Service");
+    println!(    "    ==============");
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
@@ -184,25 +184,25 @@ fn remove_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_clien
 }
  
 fn display_services(dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
-    println!("\n\n    Display Services
-                \n    ===================");
+    println!("\n\n    Display Services");
+    println!(    "    ================");
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
     long_name = long_name.trim().to_string(); // TODO improve
 
-    println!("\nServices For Dns {:?} (fetching..):", long_name);
+    println!("\nServices For Dns {:?} (fetching...):", long_name);
     let service_names = try!(dns_operations.get_all_services(&long_name, None));
     for it in service_names.iter().enumerate() {
-        println!("<{:?}> {:?}", it.0 + 1, it.1);
+        println!("<{:?}> {}", it.0 + 1, it.1);
     }
     Ok(())
 }
 
 fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
                                dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
-    println!("\n\n    Parse URL
-                \n    ===================");
+    println!("\n\n    Parse URL");
+    println!(    "    =========");
     println!("\nEnter SAFE-Url (eg., safe:lays.pepsico.com ie., \"safe:[<service-name>.]<dns-name>\"):");
     let mut url = String::new();
     let _ = std::io::stdin().read_line(&mut url);
@@ -237,15 +237,15 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<m
     let mut direcory_helper = maidsafe_nfs::helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(direcory_helper.get(&dir_id));
 
-    let file = try!(dir_listing.get_files().iter().find(|a| *a.get_name() == HOME_PAGE_FILE.to_string()).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not find homepage !!".to_string())));
+    let file = try!(dir_listing.get_files().iter().find(|a| *a.get_name() == HOME_PAGE_FILE_NAME.to_string()).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not find homepage !!".to_string())));
     let mut reader = maidsafe_nfs::io::Reader::new(file.clone(), client.clone());
     let size = reader.size();
     let content = try!(reader.read(0, size));
 
     println!("\n-----------------------------------------------------");
-    println!("                 Home Page Contents
-              \n-----------------------------------------------------\n");
-    println!("{:?}", try!(String::from_utf8(content).map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Cannot convert contents to displayable string !!".to_string()))));
+    println!(  "                 Home Page Contents");
+    println!(  "-----------------------------------------------------\n");
+    println!("{}", try!(String::from_utf8(content).map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Cannot convert contents to displayable string !!".to_string()))));
 
     Ok(())
 }
