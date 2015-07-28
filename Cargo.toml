@@ -17,9 +17,11 @@ routing         = "*"
 
 # ---- Others ----
 cbor            = "*"
-regex           = "*"
 sodiumoxide     = "*"
 rustc-serialize = "*"
+
+[dev-dependencies]
+regex = "*"
 
 [dependencies.maidsafe_client]
 git = "https://github.com/maidsafe/maidsafe_client.git"
