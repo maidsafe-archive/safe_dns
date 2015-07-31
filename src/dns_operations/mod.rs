@@ -217,7 +217,7 @@ impl DnsOperations {
         if let ::maidsafe_client::client::Data::StructuredData(struct_data) = try!(response_getter.get()) {
             Ok(struct_data)
         } else {
-            Err(::errors::DnsError::ClientError(::maidsafe_client::errors::ClientError::ReceivedUnexpectedData))
+            Err(::errors::DnsError::from(::maidsafe_client::errors::ClientError::ReceivedUnexpectedData))
         }
     }
 }

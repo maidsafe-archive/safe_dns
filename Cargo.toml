@@ -11,7 +11,7 @@ homepage      = "http://maidsafe.net"
 
 [dependencies]
 # ---- Maidsafe ----
-routing         = "*"
+routing         = "0.2.*"
 #maidsafe_nfs    = "*"
 #maidsafe_client = "*"
 
