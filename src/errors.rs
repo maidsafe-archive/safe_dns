@@ -19,6 +19,8 @@
 pub enum DnsError {
     /// Errors from Maidsafe-Client
     ClientError(::maidsafe_client::errors::ClientError),
+    /// Errors from Maidsafe-Nfs
+    NfsError(::maidsafe_nfs::errors::NfsError),
     /// Dns record already exists
     DnsNameAlreadyRegistered,
     /// Dns record not found
@@ -39,11 +41,11 @@ impl From<::maidsafe_client::errors::ClientError> for DnsError {
     }
 }
 
-// TODO change to NfsError
-impl From<::maidsafe_nfs::errors::NFSError> for DnsError {
-    fn from(error: ::maidsafe_nfs::errors::NFSError) -> DnsError {
+impl From<::maidsafe_nfs::errors::NfsError> for DnsError {
+    fn from(error: ::maidsafe_nfs::errors::NfsError) -> DnsError {
         match error {
-            ::maidsafe_nfs::errors::NFSError::ClientError(error) => DnsError::ClientError(error),
+            ::maidsafe_nfs::errors::NfsError::ClientError(error) => DnsError::ClientError(error),
+            _ => DnsError::NfsError(error),
         }
     }
 }
@@ -58,6 +60,7 @@ impl ::std::fmt::Debug for DnsError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
             DnsError::ClientError(ref error)           => write!(f, "DnsError::ClientError -> {:?}", error),
+            DnsError::NfsError(ref error)              => write!(f, "DnsError::NfsError -> {:?}", error),
             DnsError::DnsNameAlreadyRegistered         => write!(f, "DnsError::DnsNameAlreadyRegistered"),
             DnsError::DnsRecordNotFound                => write!(f, "DnsError::DnsRecordNotFound"),
             DnsError::ServiceAlreadyExists             => write!(f, "DnsError::ServiceAlreadyExists"),

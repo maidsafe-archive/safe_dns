@@ -78,18 +78,25 @@ impl ::rustc_serialize::Decodable for DnsConfiguation {
 }
 
 pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex<::maidsafe_client::client::Client>>) -> Result<(), ::errors::DnsError> {
-    let dir_listing = try!(::maidsafe_nfs::utility::get_configuration_directory_id(client.clone(), DNS_CONFIG_DIR_NAME.to_string()));
-    let mut file_helper = ::maidsafe_nfs::helper::FileHelper::new(client.clone());
-    match file_helper.create(DNS_CONFIG_FILE_NAME.to_string(), vec![], &dir_listing) {
-        Ok(writer) => Ok(try!(writer.close())),
-        Err(_)     => Ok(()), // TODO improve in nfs-crate
+    let dir_helper = ::maidsafe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
+    let file_helper = ::maidsafe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    match file_helper.create(DNS_CONFIG_FILE_NAME.to_string(), vec![], dir_listing) {
+        Ok(writer) => {
+            let _ = try!(writer.close());
+            Ok(())
+        },
+        Err(::maidsafe_nfs::errors::NfsError::AlreadyExists) => Ok(()),
+        Err(error) => Err(::errors::DnsError::from(error)),
     }
 }
 
 pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::maidsafe_client::client::Client>>) -> Result<Vec<DnsConfiguation>, ::errors::DnsError> {
-    let dir_listing = try!(::maidsafe_nfs::utility::get_configuration_directory_id(client.clone(), DNS_CONFIG_DIR_NAME.to_string()));
-    let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted)).clone();
-    let mut reader = ::maidsafe_nfs::io::reader::Reader::new(file, client);
+    let dir_helper = ::maidsafe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
+    let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted));
+    let file_helper = ::maidsafe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    let mut reader = file_helper.read(file);
     let size = reader.size();
     if size != 0 {
         Ok(try!(::maidsafe_client::utility::deserialise(&try!(reader.read(0, size)))))
@@ -100,12 +107,14 @@ pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<:
 
 pub fn write_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::maidsafe_client::client::Client>>,
                                      config: &Vec<DnsConfiguation>) -> Result<(), ::errors::DnsError> {
-    let dir_listing = try!(::maidsafe_nfs::utility::get_configuration_directory_id(client.clone(), DNS_CONFIG_DIR_NAME.to_string()));
-    let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted));
-    let mut file_helper = ::maidsafe_nfs::helper::FileHelper::new(client.clone());
-    let mut writer = try!(file_helper.update(file, &dir_listing, ::maidsafe_nfs::io::writer::Mode::Overwrite));
+    let dir_helper = ::maidsafe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
+    let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted)).clone();
+    let file_helper = ::maidsafe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    let mut writer = try!(file_helper.update(file, ::maidsafe_nfs::helper::writer::Mode::Overwrite, dir_listing));
     writer.write(&try!(::maidsafe_client::utility::serialise(&config)), 0);
-    Ok(try!(writer.close()))
+    let _ = try!(writer.close());
+    Ok(())
 }
 
 #[cfg(test)]

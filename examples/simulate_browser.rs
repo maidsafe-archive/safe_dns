@@ -74,7 +74,7 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_cl
     println!("\nEnter Dns Name (eg., pepsico.com [Note: more than one \".\"s are not allowed in this simple example]):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
-    long_name = long_name.trim().to_string(); // TODO improve
+    long_name = long_name.trim().to_string();
 
     println!("\nGenerating messaging ecryption keys for you...");
     let (public_messaging_encryption_key, secret_messaging_encryption_key) = sodiumoxide::crypto::box_::gen_keypair();
@@ -100,7 +100,7 @@ fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_cl
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
-    long_name = long_name.trim().to_string(); // TODO improve
+    long_name = long_name.trim().to_string();
 
     let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
 
@@ -128,37 +128,45 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
-    long_name = long_name.trim().to_string(); // TODO improve
+    long_name = long_name.trim().to_string();
 
     println!("\nEnter Service Name (eg., www):");
     let mut service_name = String::new();
     let _ = std::io::stdin().read_line(&mut service_name);
-    service_name = service_name.trim().to_string(); // TODO improve
+    service_name = service_name.trim().to_string();
 
     println!("Creating Home Directory for the Service...");
 
     let service_home_dir_name = service_name.clone() + "_home_dir";
 
-    let mut dir_helper = maidsafe_nfs::helper::DirectoryHelper::new(client.clone());
-    let dir_id = try!(dir_helper.create(service_home_dir_name, vec![]));
-    let dir_listing = try!(dir_helper.get(&dir_id));
+    let dir_helper = maidsafe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_listing = try!(dir_helper.create(service_home_dir_name,
+                                             maidsafe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG,
+                                             vec![],
+                                             false,
+                                             maidsafe_nfs::AccessLevel::Public,
+                                             None));
 
-    let mut file_helper = maidsafe_nfs::helper::FileHelper::new(client.clone());
-    let mut writer = try!(file_helper.create(HOME_PAGE_FILE_NAME.to_string(), vec![], &dir_listing));
+    let file_helper = maidsafe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    let mut writer = try!(file_helper.create(HOME_PAGE_FILE_NAME.to_string(), vec![], dir_listing));
 
     println!("\nEnter text that you want to display on the Home-Page:");
     let mut text = String::new();
     let _ = std::io::stdin().read_line(&mut text);
-    text = text.trim().to_string(); // TODO improve
+    text = text.trim().to_string();
 
     println!("Creating Home Page for the Service...");
 
     writer.write(text.as_bytes(), 0);
-    try!(writer.close());
+    let updated_parent_dir_listing = try!(writer.close());
+    let dir_key = updated_parent_dir_listing.get_key();
 
     let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
 
-    let struct_data = try!(dns_operations.add_service(&long_name, (service_name, (dir_id, 15000)), &secret_signing_key, None)); // TODO improve u64 in conjunction with Nfs
+    let struct_data = try!(dns_operations.add_service(&long_name,
+                                                      (service_name, (dir_key.0.clone(), dir_key.1)),
+                                                      &secret_signing_key,
+                                                      None));
     Ok(try!(client.lock().unwrap().post(struct_data.name().clone(), maidsafe_client::client::Data::StructuredData(struct_data))))
 }
 
@@ -169,12 +177,12 @@ fn remove_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_clien
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
-    long_name = long_name.trim().to_string(); // TODO improve
+    long_name = long_name.trim().to_string();
 
     println!("\nEnter Service Name (eg., www):");
     let mut service_name = String::new();
     let _ = std::io::stdin().read_line(&mut service_name);
-    service_name = service_name.trim().to_string(); // TODO improve
+    service_name = service_name.trim().to_string();
 
     println!("Removing Service...");
 
@@ -189,7 +197,7 @@ fn display_services(dns_operations: &maidsafe_dns::dns_operations::DnsOperations
     println!("\nEnter Dns Name (eg., pepsico.com):");
     let mut long_name = String::new();
     let _ = std::io::stdin().read_line(&mut long_name);
-    long_name = long_name.trim().to_string(); // TODO improve
+    long_name = long_name.trim().to_string();
 
     println!("\nServices For Dns {:?} (fetching...):", long_name);
     let service_names = try!(dns_operations.get_all_services(&long_name, None));
@@ -206,7 +214,7 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<m
     println!("\nEnter SAFE-Url (eg., safe:lays.pepsico.com ie., \"safe:[<service-name>.]<dns-name>\"):");
     let mut url = String::new();
     let _ = std::io::stdin().read_line(&mut url);
-    url = url.trim().to_string(); // TODO improve
+    url = url.trim().to_string();
 
     let re_with_service = try!(regex::Regex::new(r"safe:([^.]+?)\.([^.]+?\.[^.]+)$").map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Failed to form Regular-Expression !!".to_string())));
     let re_without_service = try!(regex::Regex::new(r"safe:([^.]+?\.[^.]+)$").map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Failed to form Regular-Expression !!".to_string())));
@@ -233,12 +241,14 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<m
 
     println!("Fetching data...");
 
-    let (dir_id, _tag_type) = try!(dns_operations.get_service_home_directory_key(&long_name, &service_name, None)); // TODO Use this tag_type
-    let mut direcory_helper = maidsafe_nfs::helper::DirectoryHelper::new(client.clone());
-    let dir_listing = try!(direcory_helper.get(&dir_id));
+    let (dir_id, tag_type) = try!(dns_operations.get_service_home_directory_key(&long_name, &service_name, None));
+    let direcory_helper = maidsafe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_listing = try!(direcory_helper.get((&dir_id, tag_type), false, &maidsafe_nfs::AccessLevel::Public));
 
-    let file = try!(dir_listing.get_files().iter().find(|a| *a.get_name() == HOME_PAGE_FILE_NAME.to_string()).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not find homepage !!".to_string())));
-    let mut reader = maidsafe_nfs::io::Reader::new(file.clone(), client.clone());
+    let file = try!(dir_listing.get_files().iter().find(|a| *a.get_name() == HOME_PAGE_FILE_NAME.to_string())
+                                                       .ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not find homepage !!".to_string())));
+    let file_helper = maidsafe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    let mut reader = file_helper.read(file);
     let size = reader.size();
     let content = try!(reader.read(0, size));
 
