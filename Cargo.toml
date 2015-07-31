@@ -1,10 +1,10 @@
 [package]
-name          = "maidsafe_dns"
+name          = "safe_dns"
 version       = "0.0.1"
 authors       = ["MaidSafe Developers <dev@maidsafe.net>"]
-description   = "Maidsafe DNS API library"
-documentation = "http://maidsafe.net/maidsafe_dns/latest"
-repository    = "https://github.com/maidsafe/maidsafe_dns"
+description   = "SAFE DNS API library"
+documentation = "http://maidsafe.net/safe_dns/latest"
+repository    = "https://github.com/maidsafe/safe_dns"
 readme        = "README.md"
 license       = "GPL-3.0"
 homepage      = "http://maidsafe.net"
@@ -12,8 +12,8 @@ homepage      = "http://maidsafe.net"
 [dependencies]
 # ---- Maidsafe ----
 routing         = "0.2.*"
-#maidsafe_nfs    = "*"
-#maidsafe_client = "*"
+#safe_nfs    = "*"
+#safe_client = "*"
 
 # ---- Others ----
 cbor            = "*"
@@ -23,11 +23,11 @@ rustc-serialize = "*"
 [dev-dependencies]
 regex = "*"
 
-[dependencies.maidsafe_client]
-git = "https://github.com/maidsafe/maidsafe_client.git"
+[dependencies.safe_client]
+git = "https://github.com/maidsafe/safe_client.git"
 
-[dependencies.maidsafe_nfs]
-git = "https://github.com/maidsafe/maidsafe_nfs.git"
+[dependencies.safe_nfs]
+git = "https://github.com/maidsafe/safe_nfs.git"
 
 [features]
-USE_ACTUAL_ROUTING = ["maidsafe_client/USE_ACTUAL_ROUTING"]
+USE_ACTUAL_ROUTING = ["safe_client/USE_ACTUAL_ROUTING"]

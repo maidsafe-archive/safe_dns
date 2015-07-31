@@ -15,40 +15,40 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-#![crate_name = "maidsafe_dns"]
+#![crate_name = "safe_dns"]
 #![crate_type = "lib"]
 #![doc(html_logo_url = "http://maidsafe.net/img/Resources/branding/maidsafe_logo.fab2.png",
        html_favicon_url = "http://maidsafe.net/img/favicon.ico",
-              html_root_url = "http://dirvine.github.io/dirvine/maidsafe_dns/")]
+              html_root_url = "http://dirvine.github.io/dirvine/safe_dns/")]
 
 ///////////////////////////////////////////////////
 //               LINT
 ///////////////////////////////////////////////////
 
-#![forbid(bad_style, warnings)] 
+#![forbid(bad_style, warnings)]
 
 #![deny(deprecated, improper_ctypes, missing_docs, non_shorthand_field_patterns,
 overflowing_literals, plugin_as_library, private_no_mangle_fns, private_no_mangle_statics,
 raw_pointer_derive, stable_features, unconditional_recursion, unknown_lints, unsafe_code,
 unsigned_negation, unused, unused_allocation, unused_attributes, unused_comparisons,
-unused_features, unused_parens, while_true)] 
+unused_features, unused_parens, while_true)]
 
 #![warn(trivial_casts, trivial_numeric_casts, unused_extern_crates, unused_import_braces,
 unused_qualifications, variant_size_differences)]
 
 ///////////////////////////////////////////////////
 
-//! #Maidsafe-Dns Library
-//! [Project github page](https://github.com/maidsafe/maidsafe_dns)
+//! #Safe-Dns Library
+//! [Project github page](https://github.com/maidsafe/safe_dns)
 
 extern crate cbor;
 extern crate routing;
 extern crate sodiumoxide;
-extern crate maidsafe_nfs;
+extern crate safe_nfs;
 extern crate rustc_serialize;
-#[macro_use] extern crate maidsafe_client;
+#[macro_use] extern crate safe_client;
 
-/// Maidsafe-Dns errors
+/// Safe-Dns errors
 pub mod errors;
 /// Contains interfaces for all dns related operations
 pub mod dns_operations;
