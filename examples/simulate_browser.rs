@@ -18,14 +18,14 @@
 extern crate regex;
 extern crate routing;
 extern crate sodiumoxide;
-extern crate maidsafe_dns;
-extern crate maidsafe_nfs;
-#[macro_use] extern crate maidsafe_client;
+extern crate safe_dns;
+extern crate safe_nfs;
+#[macro_use] extern crate safe_client;
 
 const DEFAULT_SERVICE: &'static str = "www";
 const HOME_PAGE_FILE_NAME: &'static str = "HOME.html";
 
-fn handle_login() -> std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>> {
+fn handle_login() -> std::sync::Arc<std::sync::Mutex<safe_client::client::Client>> {
     let mut keyword = String::new();
     let mut password = String::new();
     let mut pin_str = String::new();
@@ -55,7 +55,7 @@ fn handle_login() -> std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Cl
     // Account Creation
     {
         println!("\nTrying to create an account ...");
-        let _ = eval_result!(maidsafe_client::client::Client::create_account(&keyword, pin, &password));
+        let _ = eval_result!(safe_client::client::Client::create_account(&keyword, pin, &password));
         println!("Account Creation Successful !!");
     }
 
@@ -64,11 +64,11 @@ fn handle_login() -> std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Cl
 
     // Log into the created account
     println!("\nTrying to log into the created account using supplied credentials ...");
-    std::sync::Arc::new(std::sync::Mutex::new(eval_result!(maidsafe_client::client::Client::log_in(&keyword, pin, &password))))
+    std::sync::Arc::new(std::sync::Mutex::new(eval_result!(safe_client::client::Client::log_in(&keyword, pin, &password))))
 }
 
-fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
-                     dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
+fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
+                     dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Create Dns Record");
     println!(    "    =================");
     println!("\nEnter Dns Name (eg., pepsico.com [Note: more than one \".\"s are not allowed in this simple example]):");
@@ -90,11 +90,11 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_cl
                                                            owners,
                                                            &secret_signing_key,
                                                            None));
-    Ok(try!(client.lock().unwrap().put(dns_struct_data.name().clone(), maidsafe_client::client::Data::StructuredData(dns_struct_data))))
+    Ok(try!(client.lock().unwrap().put(dns_struct_data.name().clone(), safe_client::client::Data::StructuredData(dns_struct_data))))
 }
 
-fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
-                     dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
+fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
+                     dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Delete Dns Record");
     println!(    "    =================");
     println!("\nEnter Dns Name (eg., pepsico.com):");
@@ -107,10 +107,10 @@ fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<maidsafe_cl
     println!("Deleting Dns...");
 
     let dns_struct_data = try!(dns_operations.delete_dns(&long_name, &secret_signing_key));
-    Ok(try!(client.lock().unwrap().delete(dns_struct_data.name().clone(), maidsafe_client::client::Data::StructuredData(dns_struct_data))))
+    Ok(try!(client.lock().unwrap().delete(dns_struct_data.name().clone(), safe_client::client::Data::StructuredData(dns_struct_data))))
 }
 
-fn display_dns_records(dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
+fn display_dns_records(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Display Dns Records");
     println!(    "    ===================");
     println!("\nRegistered Dns Names (fetching...):");
@@ -121,8 +121,8 @@ fn display_dns_records(dns_operations: &maidsafe_dns::dns_operations::DnsOperati
     Ok(())
 }
 
-fn add_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
-               dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
+fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
+               dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Add Service");
     println!(    "    ===========");
     println!("\nEnter Dns Name (eg., pepsico.com):");
@@ -139,15 +139,15 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::
 
     let service_home_dir_name = service_name.clone() + "_home_dir";
 
-    let dir_helper = maidsafe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(dir_helper.create(service_home_dir_name,
-                                             maidsafe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG,
+                                             safe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG,
                                              vec![],
                                              false,
-                                             maidsafe_nfs::AccessLevel::Public,
+                                             safe_nfs::AccessLevel::Public,
                                              None));
 
-    let file_helper = maidsafe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    let file_helper = safe_nfs::helper::file_helper::FileHelper::new(client.clone());
     let mut writer = try!(file_helper.create(HOME_PAGE_FILE_NAME.to_string(), vec![], dir_listing));
 
     println!("\nEnter text that you want to display on the Home-Page:");
@@ -167,11 +167,11 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::
                                                       (service_name, (dir_key.0.clone(), dir_key.1)),
                                                       &secret_signing_key,
                                                       None));
-    Ok(try!(client.lock().unwrap().post(struct_data.name().clone(), maidsafe_client::client::Data::StructuredData(struct_data))))
+    Ok(try!(client.lock().unwrap().post(struct_data.name().clone(), safe_client::client::Data::StructuredData(struct_data))))
 }
 
-fn remove_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
-                  dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
+fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
+                  dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Remove Service");
     println!(    "    ==============");
     println!("\nEnter Dns Name (eg., pepsico.com):");
@@ -188,10 +188,10 @@ fn remove_service(client        : std::sync::Arc<std::sync::Mutex<maidsafe_clien
 
     let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
     let struct_data = try!(dns_operations.remove_service(&long_name, service_name, &secret_signing_key, None));
-    Ok(try!(client.lock().unwrap().post(struct_data.name().clone(), maidsafe_client::client::Data::StructuredData(struct_data))))
+    Ok(try!(client.lock().unwrap().post(struct_data.name().clone(), safe_client::client::Data::StructuredData(struct_data))))
 }
  
-fn display_services(dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
+fn display_services(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Display Services");
     println!(    "    ================");
     println!("\nEnter Dns Name (eg., pepsico.com):");
@@ -207,8 +207,8 @@ fn display_services(dns_operations: &maidsafe_dns::dns_operations::DnsOperations
     Ok(())
 }
 
-fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<maidsafe_client::client::Client>>,
-                               dns_operations: &maidsafe_dns::dns_operations::DnsOperations) -> Result<(), maidsafe_dns::errors::DnsError> {
+fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
+                               dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Parse URL");
     println!(    "    =========");
     println!("\nEnter SAFE-Url (eg., safe:lays.pepsico.com ie., \"safe:[<service-name>.]<dns-name>\"):");
@@ -216,38 +216,38 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<m
     let _ = std::io::stdin().read_line(&mut url);
     url = url.trim().to_string();
 
-    let re_with_service = try!(regex::Regex::new(r"safe:([^.]+?)\.([^.]+?\.[^.]+)$").map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Failed to form Regular-Expression !!".to_string())));
-    let re_without_service = try!(regex::Regex::new(r"safe:([^.]+?\.[^.]+)$").map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Failed to form Regular-Expression !!".to_string())));
+    let re_with_service = try!(regex::Regex::new(r"safe:([^.]+?)\.([^.]+?\.[^.]+)$").map_err(|_| safe_dns::errors::DnsError::Unexpected("Failed to form Regular-Expression !!".to_string())));
+    let re_without_service = try!(regex::Regex::new(r"safe:([^.]+?\.[^.]+)$").map_err(|_| safe_dns::errors::DnsError::Unexpected("Failed to form Regular-Expression !!".to_string())));
 
     let long_name;
     let service_name;
 
     if re_with_service.is_match(&url) {
-        let captures = try!(re_with_service.captures(&url).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not capture items in Url !!".to_string())));
-        let caps_0 = try!(captures.at(1).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not access a capture !!".to_string())));
-        let caps_1 = try!(captures.at(2).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not access a capture !!".to_string())));
+        let captures = try!(re_with_service.captures(&url).ok_or(safe_dns::errors::DnsError::Unexpected("Could not capture items in Url !!".to_string())));
+        let caps_0 = try!(captures.at(1).ok_or(safe_dns::errors::DnsError::Unexpected("Could not access a capture !!".to_string())));
+        let caps_1 = try!(captures.at(2).ok_or(safe_dns::errors::DnsError::Unexpected("Could not access a capture !!".to_string())));
 
         long_name = caps_1.to_string();
         service_name = caps_0.to_string();
     } else if re_without_service.is_match(&url) {
-        let captures = try!(re_without_service.captures(&url).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not capture items in Url !!".to_string())));
-        let caps_0 = try!(captures.at(1).ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not access a capture !!".to_string())));
+        let captures = try!(re_without_service.captures(&url).ok_or(safe_dns::errors::DnsError::Unexpected("Could not capture items in Url !!".to_string())));
+        let caps_0 = try!(captures.at(1).ok_or(safe_dns::errors::DnsError::Unexpected("Could not access a capture !!".to_string())));
 
         long_name = caps_0.to_string();
         service_name = DEFAULT_SERVICE.to_string();
     } else {
-        return Err(maidsafe_dns::errors::DnsError::Unexpected("Malformed Url !!".to_string()))
+        return Err(safe_dns::errors::DnsError::Unexpected("Malformed Url !!".to_string()))
     }
 
     println!("Fetching data...");
 
     let (dir_id, tag_type) = try!(dns_operations.get_service_home_directory_key(&long_name, &service_name, None));
-    let direcory_helper = maidsafe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
-    let dir_listing = try!(direcory_helper.get((&dir_id, tag_type), false, &maidsafe_nfs::AccessLevel::Public));
+    let direcory_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_listing = try!(direcory_helper.get((&dir_id, tag_type), false, &safe_nfs::AccessLevel::Public));
 
     let file = try!(dir_listing.get_files().iter().find(|a| *a.get_name() == HOME_PAGE_FILE_NAME.to_string())
-                                                       .ok_or(maidsafe_dns::errors::DnsError::Unexpected("Could not find homepage !!".to_string())));
-    let file_helper = maidsafe_nfs::helper::file_helper::FileHelper::new(client.clone());
+                                                       .ok_or(safe_dns::errors::DnsError::Unexpected("Could not find homepage !!".to_string())));
+    let file_helper = safe_nfs::helper::file_helper::FileHelper::new(client.clone());
     let mut reader = file_helper.read(file);
     let size = reader.size();
     let content = try!(reader.read(0, size));
@@ -255,7 +255,7 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<m
     println!("\n-----------------------------------------------------");
     println!(  "                 Home Page Contents");
     println!(  "-----------------------------------------------------\n");
-    println!("{}", try!(String::from_utf8(content).map_err(|_| maidsafe_dns::errors::DnsError::Unexpected("Cannot convert contents to displayable string !!".to_string()))));
+    println!("{}", try!(String::from_utf8(content).map_err(|_| safe_dns::errors::DnsError::Unexpected("Cannot convert contents to displayable string !!".to_string()))));
 
     Ok(())
 }
@@ -265,7 +265,7 @@ fn main() {
     println!("Account Login Successful !!");
 
     println!("Initialising Dns..");
-    let dns_operations = eval_result!(maidsafe_dns::dns_operations::DnsOperations::new(client.clone()));
+    let dns_operations = eval_result!(safe_dns::dns_operations::DnsOperations::new(client.clone()));
 
     let mut user_option = String::new();
 

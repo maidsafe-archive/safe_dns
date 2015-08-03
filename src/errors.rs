@@ -15,12 +15,12 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
-/// Maidsafe-Dns specific errors
+/// Safe-Dns specific errors
 pub enum DnsError {
-    /// Errors from Maidsafe-Client
-    ClientError(::maidsafe_client::errors::ClientError),
-    /// Errors from Maidsafe-Nfs
-    NfsError(::maidsafe_nfs::errors::NfsError),
+    /// Errors from Safe-Client
+    ClientError(::safe_client::errors::ClientError),
+    /// Errors from Safe-Nfs
+    NfsError(::safe_nfs::errors::NfsError),
     /// Dns record already exists
     DnsNameAlreadyRegistered,
     /// Dns record not found
@@ -35,16 +35,16 @@ pub enum DnsError {
     Unexpected(String),
 }
 
-impl From<::maidsafe_client::errors::ClientError> for DnsError {
-    fn from(error: ::maidsafe_client::errors::ClientError) -> DnsError {
+impl From<::safe_client::errors::ClientError> for DnsError {
+    fn from(error: ::safe_client::errors::ClientError) -> DnsError {
         DnsError::ClientError(error)
     }
 }
 
-impl From<::maidsafe_nfs::errors::NfsError> for DnsError {
-    fn from(error: ::maidsafe_nfs::errors::NfsError) -> DnsError {
+impl From<::safe_nfs::errors::NfsError> for DnsError {
+    fn from(error: ::safe_nfs::errors::NfsError) -> DnsError {
         match error {
-            ::maidsafe_nfs::errors::NfsError::ClientError(error) => DnsError::ClientError(error),
+            ::safe_nfs::errors::NfsError::ClientError(error) => DnsError::ClientError(error),
             _ => DnsError::NfsError(error),
         }
     }
