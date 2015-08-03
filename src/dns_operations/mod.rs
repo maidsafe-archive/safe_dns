@@ -67,14 +67,14 @@ impl DnsOperations {
             try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
 
             Ok(try!(::safe_client::structured_data_operations::unversioned::create(self.client.clone(),
-                                                                                       DNS_TAG,
-                                                                                       identifier,
-                                                                                       0,
-                                                                                       try!(::safe_client::utility::serialise(&dns_record)),
-                                                                                       owners,
-                                                                                       vec![],
-                                                                                       private_signing_key,
-                                                                                       data_encryption_keys)))
+                                                                                   DNS_TAG,
+                                                                                   identifier,
+                                                                                   0,
+                                                                                   try!(::safe_client::utility::serialise(&dns_record)),
+                                                                                   owners,
+                                                                                   vec![],
+                                                                                   private_signing_key,
+                                                                                   data_encryption_keys)))
         }
     }
 
@@ -90,14 +90,14 @@ impl DnsOperations {
         try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
 
         Ok(try!(::safe_client::structured_data_operations::unversioned::create(self.client.clone(),
-                                                                                   DNS_TAG,
-                                                                                   prev_struct_data.get_identifier().clone(),
-                                                                                   prev_struct_data.get_version() + 1,
-                                                                                   vec![],
-                                                                                   prev_struct_data.get_owners().clone(),
-                                                                                   prev_struct_data.get_previous_owners().clone(),
-                                                                                   private_signing_key,
-                                                                                   None)))
+                                                                               DNS_TAG,
+                                                                               prev_struct_data.get_identifier().clone(),
+                                                                               prev_struct_data.get_version() + 1,
+                                                                               vec![],
+                                                                               prev_struct_data.get_owners().clone(),
+                                                                               prev_struct_data.get_previous_owners().clone(),
+                                                                               private_signing_key,
+                                                                               None)))
     }
 
     /// Get all the Dns-names registered by the user so far in the network.
@@ -184,14 +184,14 @@ impl DnsOperations {
             }
 
             Ok(try!(::safe_client::structured_data_operations::unversioned::create(self.client.clone(),
-                                                                                       DNS_TAG,
-                                                                                       prev_struct_data.get_identifier().clone(),
-                                                                                       prev_struct_data.get_version() + 1,
-                                                                                       try!(::safe_client::utility::serialise(&dns_record)),
-                                                                                       prev_struct_data.get_owners().clone(),
-                                                                                       prev_struct_data.get_previous_owners().clone(),
-                                                                                       private_signing_key,
-                                                                                       data_encryption_decryption_keys)))
+                                                                                   DNS_TAG,
+                                                                                   prev_struct_data.get_identifier().clone(),
+                                                                                   prev_struct_data.get_version() + 1,
+                                                                                   try!(::safe_client::utility::serialise(&dns_record)),
+                                                                                   prev_struct_data.get_owners().clone(),
+                                                                                   prev_struct_data.get_previous_owners().clone(),
+                                                                                   private_signing_key,
+                                                                                   data_encryption_decryption_keys)))
         }
     }
 
