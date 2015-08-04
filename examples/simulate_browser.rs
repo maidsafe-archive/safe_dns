@@ -17,9 +17,9 @@
 
 extern crate regex;
 extern crate routing;
-extern crate sodiumoxide;
 extern crate safe_dns;
 extern crate safe_nfs;
+extern crate sodiumoxide;
 #[macro_use] extern crate safe_client;
 
 const DEFAULT_SERVICE: &'static str = "www";
@@ -264,7 +264,7 @@ fn main() {
     let client = handle_login();
     println!("Account Login Successful !!");
 
-    println!("Initialising Dns..");
+    println!("Initialising Dns...");
     let dns_operations = eval_result!(safe_dns::dns_operations::DnsOperations::new(client.clone()));
 
     let mut user_option = String::new();
