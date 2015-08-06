@@ -43,8 +43,8 @@ unused_qualifications, variant_size_differences)]
 
 extern crate cbor;
 extern crate routing;
-extern crate sodiumoxide;
 extern crate safe_nfs;
+extern crate sodiumoxide;
 extern crate rustc_serialize;
 #[macro_use] extern crate safe_client;
 
