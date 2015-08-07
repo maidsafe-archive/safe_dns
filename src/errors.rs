@@ -15,6 +15,10 @@
 // Please review the Licences for the specific language governing permissions and limitations
 // relating to use of the SAFE Network Software.
 
+/// Intended for converting DNS Errors into numeric codes for propagating some error information
+/// across FFI boundaries and specially to C.
+pub const DNS_ERROR_START_RANGE: i32 = ::safe_nfs::errors::NFS_ERROR_START_RANGE - 500;
+
 /// Safe-Dns specific errors
 pub enum DnsError {
     /// Errors from Safe-Client
@@ -50,9 +54,24 @@ impl From<::safe_nfs::errors::NfsError> for DnsError {
     }
 }
 
-impl From<String> for DnsError {
-    fn from(error: String) -> DnsError {
-        DnsError::Unexpected(error)
+impl<'a> From<&'a str> for DnsError {
+    fn from(error: &'a str) -> DnsError {
+        DnsError::Unexpected(error.to_string())
+    }
+}
+
+impl Into<i32> for DnsError {
+    fn into(self) -> i32 {
+        match self {
+            DnsError::ClientError(error)               => error.into(),
+            DnsError::NfsError(error)                  => error.into(),
+            DnsError::DnsNameAlreadyRegistered         => DNS_ERROR_START_RANGE,
+            DnsError::DnsRecordNotFound                => DNS_ERROR_START_RANGE - 1,
+            DnsError::ServiceAlreadyExists             => DNS_ERROR_START_RANGE - 2,
+            DnsError::ServiceNotFound                  => DNS_ERROR_START_RANGE - 3,
+            DnsError::DnsConfigFileNotFoundOrCorrupted => DNS_ERROR_START_RANGE - 4,
+            DnsError::Unexpected(_)                    => DNS_ERROR_START_RANGE - 5,
+        }
     }
 }
 

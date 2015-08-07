@@ -85,7 +85,7 @@ impl DnsOperations {
         let prev_struct_data = try!(self.get_housing_structured_data(long_name));
 
         let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
-        let pos = try!(saved_configs.iter().position(|config| config.long_name == *long_name).ok_or(::errors::DnsError::Unexpected("Programming Error - Investigate !!".to_string())));
+        let pos = try!(saved_configs.iter().position(|config| config.long_name == *long_name).ok_or(::errors::DnsError::from("Programming Error - Investigate !!")));
         let _ = saved_configs.remove(pos);
         try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
 
@@ -178,7 +178,7 @@ impl DnsOperations {
             Err(::errors::DnsError::ServiceAlreadyExists)
         } else {
             if is_add_service {
-                let _ = dns_record.services.insert(service.0, try!(service.1.ok_or(::errors::DnsError::Unexpected("Programming Error - Investigate !!".to_string()))));
+                let _ = dns_record.services.insert(service.0, try!(service.1.ok_or(::errors::DnsError::from("Programming Error - Investigate !!"))));
             } else {
                 let _ = dns_record.services.remove(&service.0);
             }
