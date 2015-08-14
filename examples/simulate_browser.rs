@@ -23,7 +23,7 @@ extern crate sodiumoxide;
 #[macro_use] extern crate safe_client;
 
 const DEFAULT_SERVICE: &'static str = "www";
-const HOME_PAGE_FILE_NAME: &'static str = "HOME.html";
+const HOME_PAGE_FILE_NAME: &'static str = "index.html";
 
 fn handle_login() -> std::sync::Arc<std::sync::Mutex<safe_client::client::Client>> {
     let mut keyword = String::new();
