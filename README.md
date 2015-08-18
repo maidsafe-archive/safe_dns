@@ -6,8 +6,8 @@
 
 **Secondary Maintainer:**   Spandan Sharma (spandan.sharma@maidsafe.net)
 
-|Crate|Linux/OS X|Appveyor|Coverage|Issues|
-|:---:|:--------:|:------:|:------:|:----:|
+|Crate|Linux/OS X|Windows|Coverage|Issues|
+|:---:|:--------:|:-----:|:------:|:----:|
 |[![](http://meritbadge.herokuapp.com/safe_dns)](https://crates.io/crates/safe_dns)|[![Build Status](https://travis-ci.org/maidsafe/safe_dns.svg?branch=master)](https://travis-ci.org/maidsafe/safe_dns)|[![Build status](https://ci.appveyor.com/api/projects/status/eig27xveg95e6ct6/branch/master?svg=true)](https://ci.appveyor.com/project/MaidSafe-QA/safe-dns/branch/master)|[![Coverage Status](https://coveralls.io/repos/maidsafe/safe_dns/badge.svg)](https://coveralls.io/r/maidsafe/safe_dns)|[![Stories in Ready](https://badge.waffle.io/maidsafe/safe_dns.png?label=ready&title=Ready)](https://waffle.io/maidsafe/safe_dns)|
 
 | [API Documentation - master branch](http://maidsafe.net/safe_dns/master/) | [SAFE Network System Documention](http://systemdocs.maidsafe.net) | [MaidSafe website](http://maidsafe.net) | [Safe Community site](https://forum.safenetwork.io) |
