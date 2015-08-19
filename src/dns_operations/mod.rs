@@ -45,7 +45,7 @@ impl DnsOperations {
                         private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                         data_encryption_keys           : Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                  &::sodiumoxide::crypto::box_::SecretKey,
-                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::safe_client::client::StructuredData, ::errors::DnsError> {
+                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
         let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
         if saved_configs.iter().any(|config| config.long_name == long_name) {
             Err(::errors::DnsError::DnsNameAlreadyRegistered)
@@ -81,7 +81,7 @@ impl DnsOperations {
     /// Delete the Dns-Record
     pub fn delete_dns(&self,
                       long_name          : &String,
-                      private_signing_key: &::sodiumoxide::crypto::sign::SecretKey) -> Result<::safe_client::client::StructuredData, ::errors::DnsError> {
+                      private_signing_key: &::sodiumoxide::crypto::sign::SecretKey) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
         let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
         let pos = try!(saved_configs.iter().position(|config| config.long_name == *long_name).ok_or(::errors::DnsError::DnsRecordNotFound));
 
@@ -95,8 +95,8 @@ impl DnsOperations {
                                                                                prev_struct_data.get_identifier().clone(),
                                                                                prev_struct_data.get_version() + 1,
                                                                                vec![],
-                                                                               prev_struct_data.get_owners().clone(),
-                                                                               prev_struct_data.get_previous_owners().clone(),
+                                                                               prev_struct_data.get_owner_keys().clone(),
+                                                                               prev_struct_data.get_previous_owner_keys().clone(),
                                                                                private_signing_key,
                                                                                None)))
     }
@@ -144,7 +144,7 @@ impl DnsOperations {
                        private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                        data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                 &::sodiumoxide::crypto::box_::SecretKey,
-                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::safe_client::client::StructuredData, ::errors::DnsError> {
+                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
         Ok(try!(self.add_remove_service_impl(long_name, (new_service.0, Some(new_service.1)), private_signing_key, data_encryption_decryption_keys)))
     }
 
@@ -155,7 +155,7 @@ impl DnsOperations {
                           private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                           data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                    &::sodiumoxide::crypto::box_::SecretKey,
-                                                                   &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::safe_client::client::StructuredData, ::errors::DnsError> {
+                                                                   &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
         Ok(try!(self.add_remove_service_impl(long_name, (service_to_remove, None), private_signing_key, data_encryption_decryption_keys)))
     }
 
@@ -170,7 +170,7 @@ impl DnsOperations {
                                private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                                data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                         &::sodiumoxide::crypto::box_::SecretKey,
-                                                                        &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::safe_client::client::StructuredData, ::errors::DnsError> {
+                                                                        &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
         let _ = try!(self.find_dns_record(long_name));
 
         let is_add_service = service.1.is_some();
@@ -193,8 +193,8 @@ impl DnsOperations {
                                                                                    prev_struct_data.get_identifier().clone(),
                                                                                    prev_struct_data.get_version() + 1,
                                                                                    try!(::safe_client::utility::serialise(&dns_record)),
-                                                                                   prev_struct_data.get_owners().clone(),
-                                                                                   prev_struct_data.get_previous_owners().clone(),
+                                                                                   prev_struct_data.get_owner_keys().clone(),
+                                                                                   prev_struct_data.get_previous_owner_keys().clone(),
                                                                                    private_signing_key,
                                                                                    data_encryption_decryption_keys)))
         }
@@ -204,7 +204,7 @@ impl DnsOperations {
                                                   long_name           : &String,
                                                   data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                                 &::sodiumoxide::crypto::box_::SecretKey,
-                                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(::safe_client::client::StructuredData,
+                                                                                &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(::routing::structured_data::StructuredData,
                                                                                                                                   Dns), ::errors::DnsError> {
         let struct_data = try!(self.get_housing_structured_data(long_name));
         let dns_record = try!(::safe_client::utility::deserialise(&try!(::safe_client::structured_data_operations::unversioned::get_data(self.client.clone(),
@@ -213,11 +213,11 @@ impl DnsOperations {
         Ok((struct_data, dns_record))
     }
 
-    fn get_housing_structured_data(&self, long_name: &String) -> Result<::safe_client::client::StructuredData, ::errors::DnsError> {
+    fn get_housing_structured_data(&self, long_name: &String) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
         let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
-        let location = ::safe_client::client::StructuredData::compute_name(DNS_TAG, &identifier);
-        let mut response_getter = try!(self.client.lock().unwrap().get(location, ::safe_client::client::DataRequest::StructuredData(DNS_TAG)));
-        if let ::safe_client::client::Data::StructuredData(struct_data) = try!(response_getter.get()) {
+        let request = ::routing::data::DataRequest::StructuredData(identifier, DNS_TAG);
+        let response_getter = self.client.lock().unwrap().get(request, None);
+        if let ::routing::data::Data::StructuredData(struct_data) = try!(response_getter.get()) {
             Ok(struct_data)
         } else {
             Err(::errors::DnsError::from(::safe_client::errors::ClientError::ReceivedUnexpectedData))
@@ -225,46 +225,11 @@ impl DnsOperations {
     }
 }
 
-#[derive(Clone)] // TODO , Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+#[derive(Clone, Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
 struct Dns {
     long_name     : String,
     encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
     services      : ::std::collections::HashMap<String, (::routing::NameType, u64)>,
-}
-
-impl ::rustc_serialize::Encodable for Dns {
-    fn encode<E: ::rustc_serialize::Encoder>(&self, e: &mut E) -> Result<(), E::Error> {
-        let encryption_key_vec = self.encryption_key.0.iter().map(|a| *a).collect::<Vec<u8>>();
-
-        ::cbor::CborTagEncode::new(100_001, &(&self.long_name,
-                                              encryption_key_vec,
-                                              &self.services)).encode(e)
-    }
-}
-
-impl ::rustc_serialize::Decodable for Dns {
-    fn decode<D: ::rustc_serialize::Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        let _ = try!(d.read_u64());
-
-        let (long_name,
-             encryption_key_vec,
-             services):
-            (String,
-             Vec<u8>,
-             ::std::collections::HashMap<String, (::routing::NameType, u64)>) = try!(::rustc_serialize::Decodable::decode(d));
-
-        let mut encryption_key_arr = [0u8; ::sodiumoxide::crypto::box_::PUBLICKEYBYTES];
-
-        for it in encryption_key_vec.iter().enumerate() {
-            encryption_key_arr[it.0] = *it.1;
-        }
-
-        Ok(Dns {
-            long_name     : long_name,
-            encryption_key: ::sodiumoxide::crypto::box_::PublicKey(encryption_key_arr),
-            services      : services,
-        })
-    }
 }
 
 #[cfg(test)]
@@ -278,9 +243,9 @@ mod test {
 
         let dns_name = eval_result!(::safe_client::utility::generate_random_string(10));
         let messaging_keypair = ::sodiumoxide::crypto::box_::gen_keypair();
-        let owners = vec![client.lock().unwrap().get_public_signing_key().clone()];
+        let owners = vec![eval_result!(client.lock().unwrap().get_public_signing_key()).clone()];
 
-        let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
+        let secret_signing_key = eval_result!(client.lock().unwrap().get_secret_signing_key()).clone();
 
         // Register
         let mut struct_data = eval_result!(dns_operations.register_dns(dns_name.clone(),
@@ -291,7 +256,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        eval_result!(client.lock().unwrap().put(struct_data.name().clone(), ::safe_client::client::Data::StructuredData(struct_data)));
+        client.lock().unwrap().put(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get Services
         let services = eval_result!(dns_operations.get_all_services(&dns_name, None));
@@ -312,7 +277,7 @@ mod test {
 
         // Delete
         struct_data = eval_result!(dns_operations.delete_dns(&dns_name, &secret_signing_key));
-        eval_result!(client.lock().unwrap().delete(struct_data.name().clone(), ::safe_client::client::Data::StructuredData(struct_data)));
+        client.lock().unwrap().delete(::routing::data::Data::StructuredData(struct_data), None);
 
         // Registering again should be allowed
         let _ = eval_result!(dns_operations.register_dns(dns_name,
@@ -336,9 +301,9 @@ mod test {
                                 ("blog".to_string(),    (::routing::NameType::new([124; 64]), 15000)),
                                 ("bad-ass".to_string(), (::routing::NameType::new([124; 64]), 15000))];
 
-        let owners = vec![client.lock().unwrap().get_public_signing_key().clone()];
+        let owners = vec![eval_result!(client.lock().unwrap().get_public_signing_key()).clone()];
 
-        let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
+        let secret_signing_key = eval_result!(client.lock().unwrap().get_secret_signing_key()).clone();
 
         // Register
         let mut struct_data = eval_result!(dns_operations.register_dns(dns_name.clone(),
@@ -349,7 +314,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        eval_result!(client.lock().unwrap().put(struct_data.name().clone(), ::safe_client::client::Data::StructuredData(struct_data.clone())));
+        client.lock().unwrap().put(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all dns-names
         let dns_records_vec = eval_result!(dns_operations.get_all_registered_names());
@@ -374,7 +339,7 @@ mod test {
         // Remove a service
         let removed_service = services.remove(1);
         struct_data = eval_result!(dns_operations.remove_service(&dns_name, removed_service.0.clone(), &secret_signing_key, None));
-        eval_result!(client.lock().unwrap().post(struct_data.name().clone(), ::safe_client::client::Data::StructuredData(struct_data.clone())));
+        client.lock().unwrap().post(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all services
         let services_vec = eval_result!(dns_operations.get_all_services(&dns_name, None));
@@ -393,7 +358,7 @@ mod test {
         services.push(("added-service".to_string(), (::routing::NameType::new([126; 64]), 15000)));
         let services_size = services.len();
         struct_data = eval_result!(dns_operations.add_service(&dns_name, services[services_size - 1].clone(), &secret_signing_key, None));
-        eval_result!(client.lock().unwrap().post(struct_data.name().clone(), ::safe_client::client::Data::StructuredData(struct_data.clone())));
+        client.lock().unwrap().post(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all services
         let services_vec = eval_result!(dns_operations.get_all_services(&dns_name, None));

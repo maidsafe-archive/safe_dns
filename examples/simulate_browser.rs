@@ -81,8 +81,8 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client
 
     println!("Registering Dns...");
 
-    let owners = vec![client.lock().unwrap().get_public_signing_key().clone()];
-    let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
+    let owners = vec![try!(client.lock().unwrap().get_public_signing_key()).clone()];
+    let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
     let dns_struct_data = try!(dns_operations.register_dns(long_name,
                                                            &public_messaging_encryption_key,
                                                            &secret_messaging_encryption_key,
@@ -90,7 +90,7 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client
                                                            owners,
                                                            &secret_signing_key,
                                                            None));
-    Ok(try!(client.lock().unwrap().put(dns_struct_data.name().clone(), safe_client::client::Data::StructuredData(dns_struct_data))))
+    Ok(client.lock().unwrap().put(routing::data::Data::StructuredData(dns_struct_data), None))
 }
 
 fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
@@ -102,12 +102,12 @@ fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client
     let _ = std::io::stdin().read_line(&mut long_name);
     long_name = long_name.trim().to_string();
 
-    let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
+    let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
 
     println!("Deleting Dns...");
 
     let dns_struct_data = try!(dns_operations.delete_dns(&long_name, &secret_signing_key));
-    Ok(try!(client.lock().unwrap().delete(dns_struct_data.name().clone(), safe_client::client::Data::StructuredData(dns_struct_data))))
+    Ok(client.lock().unwrap().delete(routing::data::Data::StructuredData(dns_struct_data), None))
 }
 
 fn display_dns_records(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
@@ -161,13 +161,13 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::clie
     let updated_parent_dir_listing = try!(writer.close());
     let dir_key = updated_parent_dir_listing.get_key();
 
-    let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
+    let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
 
     let struct_data = try!(dns_operations.add_service(&long_name,
                                                       (service_name, (dir_key.0.clone(), dir_key.1)),
                                                       &secret_signing_key,
                                                       None));
-    Ok(try!(client.lock().unwrap().post(struct_data.name().clone(), safe_client::client::Data::StructuredData(struct_data))))
+    Ok(client.lock().unwrap().post(routing::data::Data::StructuredData(struct_data), None))
 }
 
 fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
@@ -186,9 +186,9 @@ fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::c
 
     println!("Removing Service...");
 
-    let secret_signing_key = client.lock().unwrap().get_secret_signing_key().clone();
+    let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
     let struct_data = try!(dns_operations.remove_service(&long_name, service_name, &secret_signing_key, None));
-    Ok(try!(client.lock().unwrap().post(struct_data.name().clone(), safe_client::client::Data::StructuredData(struct_data))))
+    Ok(client.lock().unwrap().post(routing::data::Data::StructuredData(struct_data), None))
 }
  
 fn display_services(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
