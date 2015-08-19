@@ -47,10 +47,7 @@ impl From<::safe_client::errors::ClientError> for DnsError {
 
 impl From<::safe_nfs::errors::NfsError> for DnsError {
     fn from(error: ::safe_nfs::errors::NfsError) -> DnsError {
-        match error {
-            ::safe_nfs::errors::NfsError::ClientError(error) => DnsError::ClientError(error),
-            _ => DnsError::NfsError(error),
-        }
+        DnsError::NfsError(error)
     }
 }
 
