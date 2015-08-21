@@ -16,7 +16,6 @@ homepage      = "http://maidsafe.net"
 #safe_client     = "*"
 
 # ---- Others ----
-cbor            = "*"
 sodiumoxide     = "*"
 rustc-serialize = "*"
 

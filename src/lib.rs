@@ -41,7 +41,6 @@ unused_qualifications, variant_size_differences)]
 //! #Safe-Dns Library
 //! [Project github page](https://github.com/maidsafe/safe_dns)
 
-extern crate cbor;
 extern crate routing;
 extern crate safe_nfs;
 extern crate sodiumoxide;

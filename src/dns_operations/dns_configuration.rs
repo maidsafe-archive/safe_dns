@@ -18,63 +18,12 @@
 const DNS_CONFIG_DIR_NAME: &'static str = "DnsReservedDirectory";
 const DNS_CONFIG_FILE_NAME: &'static str = "DnsConfigurationFile";
 
-#[derive(Clone)] // TODO , Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
+#[derive(Clone, Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
 pub struct DnsConfiguation {
     pub long_name         : String,
     pub encryption_keypair: (::sodiumoxide::crypto::box_::PublicKey,
                              ::sodiumoxide::crypto::box_::SecretKey),
 
-}
-
-impl PartialEq for DnsConfiguation {
-    fn eq(&self, other: &DnsConfiguation) -> bool {
-        self.long_name == other.long_name &&
-            self.encryption_keypair.0 .0.iter().chain(self.encryption_keypair.1 .0.iter()).zip(
-                other.encryption_keypair.0 .0.iter().chain(other.encryption_keypair.1 .0.iter())).all(|a| a.0 == a.1)
-    }
-}
-
-impl ::std::fmt::Debug for DnsConfiguation {
-    fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
-        write!(f, "{:?}", self.long_name)
-    }
-}
-
-impl ::rustc_serialize::Encodable for DnsConfiguation {
-    fn encode<E: ::rustc_serialize::Encoder>(&self, e: &mut E) -> Result<(), E::Error> {
-        let encryption_keypair_vec = ((self.encryption_keypair.0).0.iter().map(|a| *a).collect::<Vec<u8>>(),
-                                      (self.encryption_keypair.1).0.iter().map(|a| *a).collect::<Vec<u8>>());
-
-        ::cbor::CborTagEncode::new(100_001, &(&self.long_name,
-                                              encryption_keypair_vec)).encode(e)
-    }
-}
-
-impl ::rustc_serialize::Decodable for DnsConfiguation {
-    fn decode<D: ::rustc_serialize::Decoder>(d: &mut D) -> Result<Self, D::Error> {
-        let _ = try!(d.read_u64());
-
-        let (long_name,
-             encryption_keypair_vec):
-            (String,
-             (Vec<u8>, Vec<u8>)) = try!(::rustc_serialize::Decodable::decode(d));
-
-        let mut encryption_keypair_arr = ([0u8; ::sodiumoxide::crypto::box_::PUBLICKEYBYTES],
-                                          [0u8; ::sodiumoxide::crypto::box_::SECRETKEYBYTES]);
-
-        for it in encryption_keypair_vec.0.iter().enumerate() {
-            encryption_keypair_arr.0[it.0] = *it.1;
-        }
-        for it in encryption_keypair_vec.1.iter().enumerate() {
-            encryption_keypair_arr.1[it.0] = *it.1;
-        }
-
-        Ok(DnsConfiguation {
-            long_name         : long_name,
-            encryption_keypair: (::sodiumoxide::crypto::box_::PublicKey(encryption_keypair_arr.0),
-                                 ::sodiumoxide::crypto::box_::SecretKey(encryption_keypair_arr.1)),
-        })
-    }
 }
 
 pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<(), ::errors::DnsError> {
