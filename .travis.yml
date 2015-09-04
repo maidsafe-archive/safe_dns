@@ -1,24 +1,27 @@
+env:
+  global:
+    - secure: "hF510E+uveCHShUk9cfj+4XyY6zhV8HB6cYf1C6qJhVrjEH2mI7KIgYCBq82ISpGKkOsn6sTvCFK1JSOGMyF3o36dncmguQTiO+TCrmvdLvEptfdSINdjJupgGmdEsufcgoa7yGHmiuJTrxkvyPhQYoRqnHs3U7CrxvROKxrR79x6s6KUbDGt0eBXn6aT9SsjjOf93VwnajyLpozoXzMh7w0pcCUNU7QTS8moEEPeVB+jDlyjwmmBXcJsbVde0iUU+X13ydzBEj1HGCARyw+BGeuvIBtLGm1b2n2Qt6fZEf8zI3GBlXJq9hM3njcSwxo+HYcf9EkW4vBqeHLGoYWbJA+7OdiCgB36xnP2k2mKUy9xSmxI9z9hYs/uYPodmZxMTDUfEjzG+dH1soiue1OdDriuhxExidKATn75h/kFqjnQzESbljBfVbJBGqvCO8NgL9c1rQup8qpNEsD/fja49G3FHF3IzlL/gIT9IDs7dfbeXd9ClJo7mbLDzNr+uO7eQsxjNoNRctVqyT0sgZpGRWmOg8uSsxv4E1EtQ1jydTiP7evGFQSs14G+bt6kXRy4gQ7ikDBgHHPBCJ5saEpe39hUkkQZJyL1K3dmNJZs/HYDKkPjcA3ed4gGcQt1Ge8mm2lEoy0k1RNdSo9aH1GUga5wgPEpfUj5IBna/LiH+U="
+    - LibSodiumVersion=1.0.3
 os:
   - linux
   - osx
 language: rust
 rust:
   - nightly
-    #  - beta
-    #  - stable
+#  - beta
+#  - stable
 sudo: false
 branches:
   only:
-      - master
+    - master
+cache:
+  directories:
+    - $HOME/libsodium-$LibSodiumVersion
 install:
-- curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium.sh | bash
-- export PKG_CONFIG_PATH=$HOME/libsodium-1.0.3/lib/pkgconfig:$PKG_CONFIG_PATH
+  - curl -sSLO https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/install_libsodium.sh
+  - . install_libsodium.sh
 script:
-  - cargo build --verbose --features "use-mock-routing"
-  - cargo test --verbose --features "use-mock-routing"
-  - cargo bench
+  - cargo build --release --verbose --features "use-mock-routing"
+  - cargo test --release --features "use-mock-routing"
 after_success:
   - curl -sSL https://github.com/maidsafe/QA/raw/master/Bash%20Scripts/Travis/deploy_gh-pages.sh | bash
-env:
-  global:
-    secure: "hF510E+uveCHShUk9cfj+4XyY6zhV8HB6cYf1C6qJhVrjEH2mI7KIgYCBq82ISpGKkOsn6sTvCFK1JSOGMyF3o36dncmguQTiO+TCrmvdLvEptfdSINdjJupgGmdEsufcgoa7yGHmiuJTrxkvyPhQYoRqnHs3U7CrxvROKxrR79x6s6KUbDGt0eBXn6aT9SsjjOf93VwnajyLpozoXzMh7w0pcCUNU7QTS8moEEPeVB+jDlyjwmmBXcJsbVde0iUU+X13ydzBEj1HGCARyw+BGeuvIBtLGm1b2n2Qt6fZEf8zI3GBlXJq9hM3njcSwxo+HYcf9EkW4vBqeHLGoYWbJA+7OdiCgB36xnP2k2mKUy9xSmxI9z9hYs/uYPodmZxMTDUfEjzG+dH1soiue1OdDriuhxExidKATn75h/kFqjnQzESbljBfVbJBGqvCO8NgL9c1rQup8qpNEsD/fja49G3FHF3IzlL/gIT9IDs7dfbeXd9ClJo7mbLDzNr+uO7eQsxjNoNRctVqyT0sgZpGRWmOg8uSsxv4E1EtQ1jydTiP7evGFQSs14G+bt6kXRy4gQ7ikDBgHHPBCJ5saEpe39hUkkQZJyL1K3dmNJZs/HYDKkPjcA3ed4gGcQt1Ge8mm2lEoy0k1RNdSo9aH1GUga5wgPEpfUj5IBna/LiH+U="
