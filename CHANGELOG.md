@@ -1,9 +1,9 @@
 # safe_dns - Change Log
 
 ### [0.1.0]
-- Create DNS mapping
-- Update DNS Mapping
-- Delete DNS Mapping
-- DNS Lookup
-- Unit tests
-- Create Example to demonstrate the API usage
+- [X] [MAID-1240](https://maidsafe.atlassian.net/browse/MAID-1240) Create DNS mapping
+- [X] [MAID-1241](https://maidsafe.atlassian.net/browse/MAID-1241) Update DNS Mapping
+- [X] [MAID-1242](https://maidsafe.atlassian.net/browse/MAID-1242) Delete DNS Mapping
+- [X] [MAID-1243](https://maidsafe.atlassian.net/browse/MAID-1243) DNS Lookup
+- [X] [MAID-1244](https://maidsafe.atlassian.net/browse/MAID-1244) Unit tests
+- [X] [MAID-1245](https://maidsafe.atlassian.net/browse/MAID-1245) Create Example to demonstrate the API usage
