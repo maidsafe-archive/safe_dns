@@ -35,6 +35,17 @@ impl DnsOperations {
         })
     }
 
+    /// Create a new instance of DnsOperations. This is used for an unregistered client and will
+    /// have very limited set of functionalities - mostly reads. This is ideal for browsers etc.,
+    /// which only want to fetch from the Network, not mutate it.
+    /// It is intended that only one of this be created as it operates on global data such as
+    /// files.
+    pub fn new_unregistered(unregistered_client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> DnsOperations {
+        DnsOperations {
+            client: unregistered_client,
+        }
+    }
+
     /// Register one's own Dns - eg., pepsico.com, spandansharma.com, krishnakumar.in etc
     pub fn register_dns(&self,
                         long_name                      : String,
