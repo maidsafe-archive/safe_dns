@@ -216,7 +216,7 @@ impl DnsOperations {
     fn get_housing_structured_data(&self, long_name: &String) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
         let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
         let request = ::routing::data::DataRequest::StructuredData(identifier, DNS_TAG);
-        let response_getter = self.client.lock().unwrap().get(request, None);
+        let response_getter = eval_result!(self.client.lock()).get(request, None);
         if let ::routing::data::Data::StructuredData(struct_data) = try!(response_getter.get()) {
             Ok(struct_data)
         } else {
