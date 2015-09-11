@@ -103,7 +103,7 @@ impl DnsOperations {
 
     /// Get all the Dns-names registered by the user so far in the network.
     pub fn get_all_registered_names(&self) -> Result<Vec<String>, ::errors::DnsError> {
-        Ok(try!(dns_configuration::get_dns_configuaration_data(self.client.clone())).iter().map(|a| a.long_name.clone()).collect())
+        dns_configuration::get_dns_configuaration_data(self.client.clone()).map(|v| v.iter().map(|a| a.long_name.clone()).collect())
     }
 
     /// Get the messaging encryption keys that the user has associated with one's particular Dns-name.
@@ -134,7 +134,7 @@ impl DnsOperations {
                                                                         &::sodiumoxide::crypto::box_::SecretKey,
                                                                         &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(::routing::NameType, u64), ::errors::DnsError> {
         let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
-        Ok(try!(dns_record.services.get(service_name).ok_or(::errors::DnsError::ServiceNotFound)).clone())
+        dns_record.services.get(service_name).map(|v| v.clone()).ok_or(::errors::DnsError::ServiceNotFound)
     }
 
     /// Add a new service for the given Dns-name.
@@ -145,7 +145,7 @@ impl DnsOperations {
                        data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                 &::sodiumoxide::crypto::box_::SecretKey,
                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
-        Ok(try!(self.add_remove_service_impl(long_name, (new_service.0, Some(new_service.1)), private_signing_key, data_encryption_decryption_keys)))
+        self.add_remove_service_impl(long_name, (new_service.0, Some(new_service.1)), private_signing_key, data_encryption_decryption_keys)
     }
 
     /// Remove a service from the given Dns-name.
@@ -156,12 +156,12 @@ impl DnsOperations {
                           data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                    &::sodiumoxide::crypto::box_::SecretKey,
                                                                    &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
-        Ok(try!(self.add_remove_service_impl(long_name, (service_to_remove, None), private_signing_key, data_encryption_decryption_keys)))
+        self.add_remove_service_impl(long_name, (service_to_remove, None), private_signing_key, data_encryption_decryption_keys)
     }
 
     fn find_dns_record(&self, long_name: &String) -> Result<dns_configuration::DnsConfiguation, ::errors::DnsError> {
         let config_vec = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
-        Ok(try!(config_vec.iter().find(|config| config.long_name == *long_name).ok_or(::errors::DnsError::DnsRecordNotFound)).clone())
+        config_vec.iter().find(|config| config.long_name == *long_name).map(|v| v.clone()).ok_or(::errors::DnsError::DnsRecordNotFound)
     }
 
     fn add_remove_service_impl(&self,
