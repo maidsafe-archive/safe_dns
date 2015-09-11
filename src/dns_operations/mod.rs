@@ -243,9 +243,9 @@ mod test {
 
         let dns_name = eval_result!(::safe_client::utility::generate_random_string(10));
         let messaging_keypair = ::sodiumoxide::crypto::box_::gen_keypair();
-        let owners = vec![eval_result!(client.lock().unwrap().get_public_signing_key()).clone()];
+        let owners = vec![eval_result!(eval_result!(client.lock()).get_public_signing_key()).clone()];
 
-        let secret_signing_key = eval_result!(client.lock().unwrap().get_secret_signing_key()).clone();
+        let secret_signing_key = eval_result!(eval_result!(client.lock()).get_secret_signing_key()).clone();
 
         // Register
         let mut struct_data = eval_result!(dns_operations.register_dns(dns_name.clone(),
@@ -256,7 +256,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        client.lock().unwrap().put(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(client.lock()).put(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get Services
         let services = eval_result!(dns_operations.get_all_services(&dns_name, None));
@@ -277,7 +277,7 @@ mod test {
 
         // Delete
         struct_data = eval_result!(dns_operations.delete_dns(&dns_name, &secret_signing_key));
-        client.lock().unwrap().delete(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(client.lock()).delete(::routing::data::Data::StructuredData(struct_data), None);
 
         // Registering again should be allowed
         let _ = eval_result!(dns_operations.register_dns(dns_name,
@@ -301,9 +301,9 @@ mod test {
                                 ("blog".to_string(),    (::routing::NameType::new([124; 64]), 15000)),
                                 ("bad-ass".to_string(), (::routing::NameType::new([124; 64]), 15000))];
 
-        let owners = vec![eval_result!(client.lock().unwrap().get_public_signing_key()).clone()];
+        let owners = vec![eval_result!(eval_result!(client.lock()).get_public_signing_key()).clone()];
 
-        let secret_signing_key = eval_result!(client.lock().unwrap().get_secret_signing_key()).clone();
+        let secret_signing_key = eval_result!(eval_result!(client.lock()).get_secret_signing_key()).clone();
 
         // Register
         let mut struct_data = eval_result!(dns_operations.register_dns(dns_name.clone(),
@@ -314,7 +314,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        client.lock().unwrap().put(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(client.lock()).put(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all dns-names
         let dns_records_vec = eval_result!(dns_operations.get_all_registered_names());
@@ -339,7 +339,7 @@ mod test {
         // Remove a service
         let removed_service = services.remove(1);
         struct_data = eval_result!(dns_operations.remove_service(&dns_name, removed_service.0.clone(), &secret_signing_key, None));
-        client.lock().unwrap().post(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(client.lock()).post(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all services
         let services_vec = eval_result!(dns_operations.get_all_services(&dns_name, None));
@@ -358,7 +358,7 @@ mod test {
         services.push(("added-service".to_string(), (::routing::NameType::new([126; 64]), 15000)));
         let services_size = services.len();
         struct_data = eval_result!(dns_operations.add_service(&dns_name, services[services_size - 1].clone(), &secret_signing_key, None));
-        client.lock().unwrap().post(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(client.lock()).post(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all services
         let services_vec = eval_result!(dns_operations.get_all_services(&dns_name, None));
