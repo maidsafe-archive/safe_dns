@@ -28,7 +28,7 @@ impl DnsOperations {
     /// Create a new instance of DnsOperations. It is intended that only one of this be created as
     /// it operates on global data such as files.
     pub fn new(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<DnsOperations, ::errors::DnsError> {
-        debug!("Create an instance of DnsOperations...");
+        debug!("Creating an instance of DnsOperations...");
         try!(dns_configuration::initialise_dns_configuaration(client.clone()));
 
         Ok(DnsOperations {
@@ -42,7 +42,7 @@ impl DnsOperations {
     /// It is intended that only one of this be created as it operates on global data such as
     /// files.
     pub fn new_unregistered(unregistered_client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> DnsOperations {
-        debug!("Create unregistered DnsOperations..");
+        debug!("Creating unregistered DnsOperations..");
         DnsOperations {
             client: unregistered_client,
         }
