@@ -28,6 +28,7 @@ impl DnsOperations {
     /// Create a new instance of DnsOperations. It is intended that only one of this be created as
     /// it operates on global data such as files.
     pub fn new(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<DnsOperations, ::errors::DnsError> {
+        debug!("Create an instance of DnsOperations...");
         try!(dns_configuration::initialise_dns_configuaration(client.clone()));
 
         Ok(DnsOperations {
@@ -41,6 +42,7 @@ impl DnsOperations {
     /// It is intended that only one of this be created as it operates on global data such as
     /// files.
     pub fn new_unregistered(unregistered_client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> DnsOperations {
+        debug!("Create unregistered DnsOperations..");
         DnsOperations {
             client: unregistered_client,
         }
@@ -57,6 +59,7 @@ impl DnsOperations {
                         data_encryption_keys           : Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                  &::sodiumoxide::crypto::box_::SecretKey,
                                                                  &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
+        debug!("Registering dns...");
         let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
         if saved_configs.iter().any(|config| config.long_name == long_name) {
             Err(::errors::DnsError::DnsNameAlreadyRegistered)
@@ -93,6 +96,7 @@ impl DnsOperations {
     pub fn delete_dns(&self,
                       long_name          : &String,
                       private_signing_key: &::sodiumoxide::crypto::sign::SecretKey) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
+        debug!("Deleting dns record ...");
         let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
         let pos = try!(saved_configs.iter().position(|config| config.long_name == *long_name).ok_or(::errors::DnsError::DnsRecordNotFound));
 
@@ -225,6 +229,7 @@ impl DnsOperations {
     }
 
     fn get_housing_structured_data(&self, long_name: &String) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
+        debug!("Retrieving housing structured data ...");
         let identifier = ::routing::NameType::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
         let request = ::routing::data::DataRequest::StructuredData(identifier, DNS_TAG);
         let response_getter = self.client.lock().unwrap().get(request, None);
