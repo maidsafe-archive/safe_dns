@@ -40,7 +40,7 @@ impl DnsOperations {
                         long_name                      : String,
                         public_messaging_encryption_key: &::sodiumoxide::crypto::box_::PublicKey,
                         secret_messaging_encryption_key: &::sodiumoxide::crypto::box_::SecretKey,
-                        services                       : &Vec<(String, (::routing::NameType, u64))>,
+                        services                       : &Vec<(String, ::safe_nfs::metadata::directory_key::DirectoryKey)>,
                         owners                         : Vec<::sodiumoxide::crypto::sign::PublicKey>,
                         private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                         data_encryption_keys           : Option<(&::sodiumoxide::crypto::box_::PublicKey,
@@ -132,7 +132,7 @@ impl DnsOperations {
                                           service_name        : &String,
                                           data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                         &::sodiumoxide::crypto::box_::SecretKey,
-                                                                        &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(::routing::NameType, u64), ::errors::DnsError> {
+                                                                        &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::safe_nfs::metadata::directory_key::DirectoryKey, ::errors::DnsError> {
         let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
         dns_record.services.get(service_name).map(|v| v.clone()).ok_or(::errors::DnsError::ServiceNotFound)
     }
@@ -140,7 +140,7 @@ impl DnsOperations {
     /// Add a new service for the given Dns-name.
     pub fn add_service(&self,
                        long_name                      : &String,
-                       new_service                    : (String, (::routing::NameType, u64)),
+                       new_service                    : (String, ::safe_nfs::metadata::directory_key::DirectoryKey),
                        private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                        data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                 &::sodiumoxide::crypto::box_::SecretKey,
@@ -166,7 +166,7 @@ impl DnsOperations {
 
     fn add_remove_service_impl(&self,
                                long_name                      : &String,
-                               service                        : (String, Option<(::routing::NameType, u64)>),
+                               service                        : (String, Option<::safe_nfs::metadata::directory_key::DirectoryKey>),
                                private_signing_key            : &::sodiumoxide::crypto::sign::SecretKey,
                                data_encryption_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                         &::sodiumoxide::crypto::box_::SecretKey,
@@ -229,7 +229,7 @@ impl DnsOperations {
 struct Dns {
     long_name     : String,
     encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
-    services      : ::std::collections::HashMap<String, (::routing::NameType, u64)>,
+    services      : ::std::collections::HashMap<String, ::safe_nfs::metadata::directory_key::DirectoryKey>,
 }
 
 #[cfg(test)]
@@ -297,9 +297,9 @@ mod test {
         let dns_name = eval_result!(::safe_client::utility::generate_random_string(10));
         let messaging_keypair = ::sodiumoxide::crypto::box_::gen_keypair();
 
-        let mut services = vec![("www".to_string(),     (::routing::NameType::new([123; 64]), 15000)),
-                                ("blog".to_string(),    (::routing::NameType::new([124; 64]), 15000)),
-                                ("bad-ass".to_string(), (::routing::NameType::new([124; 64]), 15000))];
+        let mut services = vec![("www".to_string(),     ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]), 15000, false, ::safe_nfs::AccessLevel::Private)),
+                                ("blog".to_string(),    ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]), 15000, false, ::safe_nfs::AccessLevel::Private)),
+                                ("bad-ass".to_string(), ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]), 15000, false, ::safe_nfs::AccessLevel::Private))];
 
         let owners = vec![eval_result!(eval_result!(client.lock()).get_public_signing_key()).clone()];
 
@@ -355,7 +355,7 @@ mod test {
         // }
 
         // Add a service
-        services.push(("added-service".to_string(), (::routing::NameType::new([126; 64]), 15000)));
+        services.push(("added-service".to_string(), ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([126; 64]), 15000, false, ::safe_nfs::AccessLevel::Private)));
         let services_size = services.len();
         struct_data = eval_result!(dns_operations.add_service(&dns_name, services[services_size - 1].clone(), &secret_signing_key, None));
         eval_result!(client.lock()).post(::routing::data::Data::StructuredData(struct_data), None);

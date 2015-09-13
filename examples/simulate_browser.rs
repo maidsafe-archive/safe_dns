@@ -145,7 +145,7 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::clie
                                              None));
 
     let file_helper = safe_nfs::helper::file_helper::FileHelper::new(client.clone());
-    let mut writer = try!(file_helper.create(HOME_PAGE_FILE_NAME.to_string(), vec![], dir_listing));
+    let mut writer = try!(file_helper.create(HOME_PAGE_FILE_NAME.to_string(), vec![], dir_listing.0));
 
     println!("\nEnter text that you want to display on the Home-Page:");
     let mut text = String::new();
@@ -156,12 +156,12 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::clie
 
     writer.write(text.as_bytes(), 0);
     let updated_parent_dir_listing = try!(writer.close());
-    let dir_key = updated_parent_dir_listing.get_key();
+    let dir_key = updated_parent_dir_listing.0.get_key();
 
     let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
 
     let struct_data = try!(dns_operations.add_service(&long_name,
-                                                      (service_name, (dir_key.0.clone(), dir_key.1)),
+                                                      (service_name, dir_key.clone()),
                                                       &secret_signing_key,
                                                       None));
     Ok(client.lock().unwrap().post(routing::data::Data::StructuredData(struct_data), None))
@@ -187,7 +187,7 @@ fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::c
     let struct_data = try!(dns_operations.remove_service(&long_name, service_name, &secret_signing_key, None));
     Ok(client.lock().unwrap().post(routing::data::Data::StructuredData(struct_data), None))
 }
- 
+
 fn display_services(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
     println!("\n\n    Display Services");
     println!(    "    ================");
@@ -238,9 +238,9 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<s
 
     println!("Fetching data...");
 
-    let (dir_id, tag_type) = try!(dns_operations.get_service_home_directory_key(&long_name, &service_name, None));
-    let direcory_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
-    let dir_listing = try!(direcory_helper.get((&dir_id, tag_type), false, &safe_nfs::AccessLevel::Public));
+    let dir_key = try!(dns_operations.get_service_home_directory_key(&long_name, &service_name, None));
+    let directory_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
+    let dir_listing = try!(directory_helper.get(&dir_key));
 
     let file = try!(dir_listing.get_files().iter().find(|a| *a.get_name() == HOME_PAGE_FILE_NAME.to_string())
                                                        .ok_or(safe_dns::errors::DnsError::Unexpected("Could not find homepage !!".to_string())));
