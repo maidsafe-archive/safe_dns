@@ -45,6 +45,7 @@ pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<:
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted));
     let file_helper = ::safe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    debug!("Reading dns configuration data from file ...");
     let mut reader = file_helper.read(file);
     let size = reader.size();
     if size != 0 {
