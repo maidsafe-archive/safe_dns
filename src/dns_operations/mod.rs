@@ -297,9 +297,21 @@ mod test {
         let dns_name = eval_result!(::safe_client::utility::generate_random_string(10));
         let messaging_keypair = ::sodiumoxide::crypto::box_::gen_keypair();
 
-        let mut services = vec![("www".to_string(),     ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]), 15000, false, ::safe_nfs::AccessLevel::Private)),
-                                ("blog".to_string(),    ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]), 15000, false, ::safe_nfs::AccessLevel::Private)),
-                                ("bad-ass".to_string(), ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]), 15000, false, ::safe_nfs::AccessLevel::Private))];
+        let mut services = vec![("www".to_string(),
+                                 ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]),
+                                                                                        15000,
+                                                                                        false,
+                                                                                        ::safe_nfs::AccessLevel::Public)),
+                                ("blog".to_string(),
+                                 ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]),
+                                                                                        15000,
+                                                                                        false,
+                                                                                        ::safe_nfs::AccessLevel::Public)),
+                                ("bad-ass".to_string(),
+                                 ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([123; 64]),
+                                                                                        15000,
+                                                                                        false,
+                                                                                        ::safe_nfs::AccessLevel::Public))];
 
         let owners = vec![eval_result!(eval_result!(client.lock()).get_public_signing_key()).clone()];
 

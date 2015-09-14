@@ -137,12 +137,12 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::clie
     let service_home_dir_name = service_name.clone() + "_home_dir";
 
     let dir_helper = safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
-    let (dir_listing,_) = try!(dir_helper.create(service_home_dir_name,
-                                             safe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG,
-                                             vec![],
-                                             false,
-                                             safe_nfs::AccessLevel::Public,
-                                             None));
+    let (dir_listing, _) = try!(dir_helper.create(service_home_dir_name,
+                                                  safe_nfs::UNVERSIONED_DIRECTORY_LISTING_TAG,
+                                                  vec![],
+                                                  false,
+                                                  safe_nfs::AccessLevel::Public,
+                                                  None));
 
     let file_helper = safe_nfs::helper::file_helper::FileHelper::new(client.clone());
     let mut writer = try!(file_helper.create(HOME_PAGE_FILE_NAME.to_string(), vec![], dir_listing));
@@ -155,7 +155,7 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_client::clie
     println!("Creating Home Page for the Service...");
 
     writer.write(text.as_bytes(), 0);
-    let (updated_parent_dir_listing,_) = try!(writer.close());
+    let (updated_parent_dir_listing, _) = try!(writer.close());
     let dir_key = updated_parent_dir_listing.get_key();
 
     let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
