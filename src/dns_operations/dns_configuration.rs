@@ -27,7 +27,6 @@ pub struct DnsConfiguation {
 }
 
 pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<(), ::errors::DnsError> {
-    debug!("Initialising dns configuration ...");
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file_helper = ::safe_nfs::helper::file_helper::FileHelper::new(client.clone());
@@ -42,7 +41,6 @@ pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex
 }
 
 pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<Vec<DnsConfiguation>, ::errors::DnsError> {
-    debug!("Retrieving dns configuration ...");
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted));
@@ -58,12 +56,12 @@ pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<:
 
 pub fn write_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
                                      config: &Vec<DnsConfiguation>) -> Result<(), ::errors::DnsError> {
-    debug!("Writing dns configuration data ...");
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted)).clone();
     let file_helper = ::safe_nfs::helper::file_helper::FileHelper::new(client.clone());
     let mut writer = try!(file_helper.update(file, ::safe_nfs::helper::writer::Mode::Overwrite, dir_listing));
+    debug!("Writing dns configuration data ...");
     writer.write(&try!(::safe_client::utility::serialise(&config)), 0);
     let _ = try!(writer.close());
     Ok(())

@@ -57,7 +57,7 @@ impl DnsOperations {
                         data_encryption_keys           : Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                  &::sodiumoxide::crypto::box_::SecretKey,
                                                                  &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
-        debug!("Registering dns ...");
+        debug!("Registering {:?} dns ...",long_name);
         let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
         if saved_configs.iter().any(|config| config.long_name == long_name) {
             Err(::errors::DnsError::DnsNameAlreadyRegistered)
@@ -70,6 +70,7 @@ impl DnsOperations {
                 services      : services.iter().map(|a| a.clone()).collect(),
             };
 
+            debug!("Adding encryption key pair to saved dns configuration ...");
             saved_configs.push(dns_configuration::DnsConfiguation {
                 long_name         : long_name,
                 encryption_keypair: (public_messaging_encryption_key.clone(),
@@ -94,12 +95,12 @@ impl DnsOperations {
     pub fn delete_dns(&self,
                       long_name          : &String,
                       private_signing_key: &::sodiumoxide::crypto::sign::SecretKey) -> Result<::routing::structured_data::StructuredData, ::errors::DnsError> {
-        debug!("Deleting dns record ...");
         let mut saved_configs = try!(dns_configuration::get_dns_configuaration_data(self.client.clone()));
         let pos = try!(saved_configs.iter().position(|config| config.long_name == *long_name).ok_or(::errors::DnsError::DnsRecordNotFound));
 
         let prev_struct_data = try!(self.get_housing_structured_data(long_name));
 
+        debug!("Removing dns saved configs at {:?} position ...",pos);
         let _ = saved_configs.remove(pos);
         try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
 
@@ -196,8 +197,10 @@ impl DnsOperations {
             Err(::errors::DnsError::ServiceAlreadyExists)
         } else {
             if is_add_service {
+                debug!("Inserting service ...");
                 let _ = dns_record.services.insert(service.0, try!(service.1.ok_or(::errors::DnsError::from("Programming Error - Investigate !!"))));
             } else {
+                debug!("Removing service ...");
                 let _ = dns_record.services.remove(&service.0);
             }
 
