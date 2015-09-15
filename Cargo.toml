@@ -16,6 +16,7 @@ routing         = "0.3.*"
 #safe_client     = "0.1.*"
 
 # ---- Others ----
+log             = "*"
 sodiumoxide     = "*"
 rustc-serialize = "*"
 
