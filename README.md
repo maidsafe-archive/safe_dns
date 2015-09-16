@@ -14,13 +14,7 @@
 |:------:|:-------:|:-------:|:-------:|
 
 ###Pre-requisite:
-libsodium is a native dependency for [sodiumxoide](https://github.com/dnaq/sodiumoxide). Thus, install sodium by following the instructions [here](http://doc.libsodium.org/installation/index.html).
-
-For windows:
-
-- Download [prebuilt libsodium library](https://download.libsodium.org/libsodium/releases/libsodium-1.0.2-mingw.tar.gz)
-- Extract `libsodium.a` for x86/x64 from the corresponding folder in the archive to your local filesystem
-- Add this local path to `%PATH%`. (`PATH=%PATH%;<path to extracted libsodium.a dir>`)
+`libsodium` is a native dependency for [sodiumxoide](https://github.com/dnaq/sodiumoxide). Install sodium by following the instructions [here](https://github.com/maidsafe/QA/blob/master/Documentation/Install_libsodium.md).
 
 ###Build Instructions:
 `safe_dns` depends on `safe_client` which can interface conditionally against either the routing crate or a mock used for local testing.
