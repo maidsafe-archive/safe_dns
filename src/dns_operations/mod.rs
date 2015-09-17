@@ -66,8 +66,8 @@ impl DnsOperations {
 
             let dns_record = Dns {
                 long_name     : long_name.clone(),
-                encryption_key: public_messaging_encryption_key.clone(),
                 services      : services.iter().map(|a| a.clone()).collect(),
+                encryption_key: public_messaging_encryption_key.clone(),
             };
 
             debug!("Adding encryption key pair to saved dns configuration ...");
@@ -259,8 +259,8 @@ impl DnsOperations {
 #[derive(Clone, Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
 struct Dns {
     long_name     : String,
-    encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
     services      : ::std::collections::HashMap<String, ::safe_nfs::metadata::directory_key::DirectoryKey>,
+    encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
 }
 
 #[cfg(test)]
