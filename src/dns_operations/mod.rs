@@ -131,7 +131,13 @@ impl DnsOperations {
                             data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                           &::sodiumoxide::crypto::box_::SecretKey,
                                                           &::sodiumoxide::crypto::box_::Nonce)>) -> Result<Vec<String>, ::errors::DnsError> {
-        let _ = try!(self.find_dns_record(long_name));
+        // Allow unregistered clients to access this function
+        match self.find_dns_record(long_name) {
+            Ok(_) => (),
+            Err(::errors::DnsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient)) => (),
+            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient))) => (),
+            Err(error) => return Err(error),
+        };
 
         let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
         Ok(dns_record.services.keys().map(|a| a.clone()).collect())
@@ -144,6 +150,14 @@ impl DnsOperations {
                                           data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                         &::sodiumoxide::crypto::box_::SecretKey,
                                                                         &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(::routing::NameType, u64), ::errors::DnsError> {
+        // Allow unregistered clients to access this function
+        match self.find_dns_record(long_name) {
+            Ok(_) => (),
+            Err(::errors::DnsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient)) => (),
+            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient))) => (),
+            Err(error) => return Err(error),
+        };
+
         let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
         Ok(try!(dns_record.services.get(service_name).ok_or(::errors::DnsError::ServiceNotFound)).clone())
     }
