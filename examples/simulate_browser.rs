@@ -259,10 +259,15 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<s
 
 fn main() {
     let client = handle_login();
+    let unregistered_client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_client
+                                                                                         ::client
+                                                                                         ::Client
+                                                                                         ::create_unregistered_client())));
     println!("Account Login Successful !!");
 
     println!("Initialising Dns...");
     let dns_operations = eval_result!(safe_dns::dns_operations::DnsOperations::new(client.clone()));
+    let dns_operations_unregistered = safe_dns::dns_operations::DnsOperations::new_unregistered(unregistered_client.clone());
 
     let mut user_option = String::new();
 
@@ -299,10 +304,11 @@ fn main() {
                 5 => if let Err(err) = remove_service(client.clone(), &dns_operations) {
                     error = Some(err);
                 },
-                6 => if let Err(err) = display_services(&dns_operations) {
+                6 => if let Err(err) = display_services(&dns_operations_unregistered) {
                     error = Some(err);
                 },
-                7 => if let Err(err) = parse_url_and_get_home_page(client.clone(), &dns_operations) {
+                7 => if let Err(err) = parse_url_and_get_home_page(unregistered_client.clone(),
+                                                                   &dns_operations_unregistered) {
                     error = Some(err);
                 },
                 8 => break,

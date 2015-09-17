@@ -17,7 +17,7 @@
 
 mod dns_configuration;
 
-const DNS_TAG: u64 = 5; // TODO Get from routing
+const DNS_TAG: u64 = 5;
 
 /// This is a representational structure for all safe-dns operations
 pub struct DnsOperations {
@@ -66,8 +66,8 @@ impl DnsOperations {
 
             let dns_record = Dns {
                 long_name     : long_name.clone(),
-                encryption_key: public_messaging_encryption_key.clone(),
                 services      : services.iter().map(|a| a.clone()).collect(),
+                encryption_key: public_messaging_encryption_key.clone(),
             };
 
             debug!("Adding encryption key pair to saved dns configuration ...");
@@ -134,7 +134,13 @@ impl DnsOperations {
                             data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                           &::sodiumoxide::crypto::box_::SecretKey,
                                                           &::sodiumoxide::crypto::box_::Nonce)>) -> Result<Vec<String>, ::errors::DnsError> {
-        let _ = try!(self.find_dns_record(long_name));
+        // Allow unregistered clients to access this function
+        match self.find_dns_record(long_name) {
+            Ok(_) => (),
+            Err(::errors::DnsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient)) => (),
+            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient))) => (),
+            Err(error) => return Err(error),
+        };
 
         let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
         Ok(dns_record.services.keys().map(|a| a.clone()).collect())
@@ -147,6 +153,14 @@ impl DnsOperations {
                                           data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                         &::sodiumoxide::crypto::box_::SecretKey,
                                                                         &::sodiumoxide::crypto::box_::Nonce)>) -> Result<::safe_nfs::metadata::directory_key::DirectoryKey, ::errors::DnsError> {
+        // Allow unregistered clients to access this function
+        match self.find_dns_record(long_name) {
+            Ok(_) => (),
+            Err(::errors::DnsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient)) => (),
+            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient))) => (),
+            Err(error) => return Err(error),
+        };
+
         let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
         dns_record.services.get(service_name).map(|v| v.clone()).ok_or(::errors::DnsError::ServiceNotFound)
     }
@@ -245,8 +259,8 @@ impl DnsOperations {
 #[derive(Clone, Debug, Eq, PartialEq, RustcEncodable, RustcDecodable)]
 struct Dns {
     long_name     : String,
-    encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
     services      : ::std::collections::HashMap<String, ::safe_nfs::metadata::directory_key::DirectoryKey>,
+    encryption_key: ::sodiumoxide::crypto::box_::PublicKey,
 }
 
 #[cfg(test)]
@@ -349,8 +363,12 @@ mod test {
         let dns_records_vec = eval_result!(dns_operations.get_all_registered_names());
         assert_eq!(dns_records_vec.len(), 1);
 
+        // Gets should be possible with unregistered clients
+        let unregistered_client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_client::client::Client::create_unregistered_client())));
+        let dns_operations_unregistered = DnsOperations::new_unregistered(unregistered_client);
+
         // Get all services for a dns-name
-        let services_vec = eval_result!(dns_operations.get_all_services(&dns_name, None));
+        let services_vec = eval_result!(dns_operations_unregistered.get_all_services(&dns_name, None));
         assert_eq!(services.len(), services_vec.len());
         assert!(services.iter().all(|&(ref a, _)| services_vec.iter().find(|b| *a == **b).is_some()));
 
@@ -362,7 +380,7 @@ mod test {
         // }
 
         // Get information about a service - the home-directory and its type
-        let home_dir_key = eval_result!(dns_operations.get_service_home_directory_key(&dns_name, &services[1].0, None));
+        let home_dir_key = eval_result!(dns_operations_unregistered.get_service_home_directory_key(&dns_name, &services[1].0, None));
         assert_eq!(home_dir_key, services[1].1);
 
         // Remove a service
@@ -371,7 +389,7 @@ mod test {
         eval_result!(client.lock()).post(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all services
-        let services_vec = eval_result!(dns_operations.get_all_services(&dns_name, None));
+        let services_vec = eval_result!(dns_operations_unregistered.get_all_services(&dns_name, None));
         assert_eq!(services.len(), services_vec.len());
         assert!(services.iter().all(|&(ref a, _)| services_vec.iter().find(|b| *a == **b).is_some()));
 
@@ -384,13 +402,17 @@ mod test {
         // }
 
         // Add a service
-        services.push(("added-service".to_string(), ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([126; 64]), 15000, false, ::safe_nfs::AccessLevel::Private)));
+        services.push(("added-service".to_string(),
+                       ::safe_nfs::metadata::directory_key::DirectoryKey::new(::routing::NameType::new([126; 64]),
+                                                                              15000,
+                                                                              false,
+                                                                              ::safe_nfs::AccessLevel::Public)));
         let services_size = services.len();
         struct_data = eval_result!(dns_operations.add_service(&dns_name, services[services_size - 1].clone(), &secret_signing_key, None));
         eval_result!(client.lock()).post(::routing::data::Data::StructuredData(struct_data), None);
 
         // Get all services
-        let services_vec = eval_result!(dns_operations.get_all_services(&dns_name, None));
+        let services_vec = eval_result!(dns_operations_unregistered.get_all_services(&dns_name, None));
         assert_eq!(services.len(), services_vec.len());
         assert!(services.iter().all(|&(ref a, _)| services_vec.iter().find(|b| *a == **b).is_some()));
     }
