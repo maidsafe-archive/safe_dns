@@ -17,7 +17,7 @@
 
 #![crate_name = "safe_dns"]
 #![crate_type = "lib"]
-#![doc(html_logo_url = "http://maidsafe.net/img/Resources/branding/maidsafe_logo.fab2.png",
+#![doc(html_logo_url = "https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png",
        html_favicon_url = "http://maidsafe.net/img/favicon.ico",
               html_root_url = "http://dirvine.github.io/dirvine/safe_dns/")]
 
@@ -45,6 +45,7 @@ extern crate routing;
 extern crate safe_nfs;
 extern crate sodiumoxide;
 extern crate rustc_serialize;
+#[macro_use] extern crate log;
 #[macro_use] extern crate safe_client;
 
 /// Safe-Dns errors

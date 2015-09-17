@@ -35,7 +35,7 @@ pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex
             let _ = try!(writer.close());
             Ok(())
         },
-        Err(::safe_nfs::errors::NfsError::AlreadyExists) => Ok(()),
+        Err(::safe_nfs::errors::NfsError::FileAlreadyExistsWithSameName) => Ok(()),
         Err(error) => Err(::errors::DnsError::from(error)),
     }
 }
@@ -45,6 +45,7 @@ pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<:
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted));
     let file_helper = ::safe_nfs::helper::file_helper::FileHelper::new(client.clone());
+    debug!("Reading dns configuration data from file ...");
     let mut reader = file_helper.read(file);
     let size = reader.size();
     if size != 0 {
@@ -60,7 +61,8 @@ pub fn write_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted)).clone();
     let file_helper = ::safe_nfs::helper::file_helper::FileHelper::new(client.clone());
-    let mut writer = try!(file_helper.update(file, ::safe_nfs::helper::writer::Mode::Overwrite, dir_listing));
+    let mut writer = try!(file_helper.update_content(file, ::safe_nfs::helper::writer::Mode::Overwrite, dir_listing));
+    debug!("Writing dns configuration data ...");
     writer.write(&try!(::safe_client::utility::serialise(&config)), 0);
     let _ = try!(writer.close());
     Ok(())
