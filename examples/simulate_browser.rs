@@ -87,7 +87,7 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client
                                                            owners,
                                                            &secret_signing_key,
                                                            None));
-    Ok(client.lock().unwrap().put(routing::data::Data::StructuredData(dns_struct_data), None))
+    Ok(try!(eval_result!(client.lock()).put(routing::data::Data::StructuredData(dns_struct_data), None)))
 }
 
 fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client::client::Client>>,
@@ -104,7 +104,7 @@ fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_client
     println!("Deleting Dns...");
 
     let dns_struct_data = try!(dns_operations.delete_dns(&long_name, &secret_signing_key));
-    Ok(client.lock().unwrap().delete(routing::data::Data::StructuredData(dns_struct_data), None))
+    Ok(try!(eval_result!(client.lock()).delete(routing::data::Data::StructuredData(dns_struct_data), None)))
 }
 
 fn display_dns_records(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {

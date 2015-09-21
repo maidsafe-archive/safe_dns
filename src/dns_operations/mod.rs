@@ -287,7 +287,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        eval_result!(client.lock()).put(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(eval_result!(client.lock()).put(::routing::data::Data::StructuredData(struct_data), None));
 
         // Get Services
         let services = eval_result!(dns_operations.get_all_services(&dns_name, None));
@@ -308,7 +308,7 @@ mod test {
 
         // Delete
         struct_data = eval_result!(dns_operations.delete_dns(&dns_name, &secret_signing_key));
-        eval_result!(client.lock()).delete(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(eval_result!(client.lock()).delete(::routing::data::Data::StructuredData(struct_data), None));
 
         // Registering again should be allowed
         let _ = eval_result!(dns_operations.register_dns(dns_name,
@@ -357,7 +357,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        eval_result!(client.lock()).put(::routing::data::Data::StructuredData(struct_data), None);
+        eval_result!(eval_result!(client.lock()).put(::routing::data::Data::StructuredData(struct_data), None));
 
         // Get all dns-names
         let dns_records_vec = eval_result!(dns_operations.get_all_registered_names());
