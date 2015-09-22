@@ -1,6 +1,6 @@
 [package]
 name          = "safe_dns"
-version       = "0.1.0"
+version       = "0.2.0"
 authors       = ["MaidSafe Developers <dev@maidsafe.net>"]
 description   = "SAFE DNS API library"
 documentation = "http://maidsafe.net/safe_dns/latest"
@@ -12,8 +12,8 @@ homepage      = "http://maidsafe.net"
 [dependencies]
 # ---- Maidsafe ----
 routing         = "0.3.*"
-#safe_nfs        = "0.1.*"
-#safe_client     = "0.1.*"
+safe_nfs        = "0.2.*"
+safe_client     = "0.2.*"
 
 # ---- Others ----
 log             = "*"
@@ -22,12 +22,6 @@ rustc-serialize = "*"
 
 [dev-dependencies]
 regex = "*"
-
-[dependencies.safe_nfs]
-git = "https://github.com/maidsafe/safe_nfs"
-
-[dependencies.safe_client]
-git = "https://github.com/maidsafe/safe_client"
 
 [features]
 use-mock-routing = ["safe_client/use-mock-routing",
