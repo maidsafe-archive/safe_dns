@@ -1,6 +1,6 @@
 # safe_dns - Change Log
 
-### [0.2.0]
+## [0.2.0]
 - [MAID-1314](https://maidsafe.atlassian.net/browse/MAID-1314) Remove all unwraps
 - [MAID-1315](https://maidsafe.atlassian.net/browse/MAID-1315) Remove unwanted errors and Unexpected should take an &str instead of String
 - [MAID-1316](https://maidsafe.atlassian.net/browse/MAID-1316) Put debug statements
@@ -9,7 +9,7 @@
 - [MAID-1319](https://maidsafe.atlassian.net/browse/MAID-1319) Address the TODO’s and make temporary fixes as permanent
 - [MAID-1320](https://maidsafe.atlassian.net/browse/MAID-1320) Test cases for TODO's and temporary fixes as permanent
 
-### [0.1.0]
+## [0.1.0]
 - [MAID-1240](https://maidsafe.atlassian.net/browse/MAID-1240) Create DNS mapping
 - [MAID-1241](https://maidsafe.atlassian.net/browse/MAID-1241) Update DNS Mapping
 - [MAID-1242](https://maidsafe.atlassian.net/browse/MAID-1242) Delete DNS Mapping
