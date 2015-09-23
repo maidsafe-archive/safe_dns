@@ -1,5 +1,8 @@
 # safe_dns - Change Log
 
+## [0.2.1]
+- Routing crate updated to version 0.4.*
+
 ## [0.2.0]
 - [MAID-1314](https://maidsafe.atlassian.net/browse/MAID-1314) Remove all unwraps
 - [MAID-1315](https://maidsafe.atlassian.net/browse/MAID-1315) Remove unwanted errors and Unexpected should take an &str instead of String
