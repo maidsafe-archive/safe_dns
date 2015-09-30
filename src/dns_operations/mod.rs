@@ -372,7 +372,7 @@ mod test {
         assert_eq!(services.len(), services_vec.len());
         assert!(services.iter().all(|&(ref a, _)| services_vec.iter().find(|b| *a == **b).is_some()));
 
-        // TODO update all test cases for negative GET's once it is figured out how
+        // TODO(Spandan) update all test cases for negative GET's once it is figured out how
         // match dns_operations.get_service_home_directory_key(&"bogus".to_string(), &services[0].0, None) {
         //     Ok(_) => panic!("Should have been an error"),
         //     Err(::errors::DnsError::DnsRecordNotFound) => (),
@@ -393,7 +393,7 @@ mod test {
         assert_eq!(services.len(), services_vec.len());
         assert!(services.iter().all(|&(ref a, _)| services_vec.iter().find(|b| *a == **b).is_some()));
 
-        // TODO update all test cases for negative GET's once it is figured out how
+        // TODO(Spandan) update all test cases for negative GET's once it is figured out how
         // Try to enquire about a deleted service
         // match dns_operations.get_service_home_directory_key(&dns_name, &removed_service.0, None) {
         //     Ok(_) => panic!("Should have been an error"),
