@@ -12,8 +12,8 @@ homepage      = "http://maidsafe.net"
 [dependencies]
 # ---- Maidsafe ----
 routing         = "0.4.*"
-#safe_nfs        = "0.2.*"
-#safe_core       = "0.2.*"
+safe_nfs        = "0.3.*"
+safe_core       = "0.3.*"
 
 # ---- Others ----
 log             = "*"
@@ -22,12 +22,6 @@ rustc-serialize = "*"
 
 [dev-dependencies]
 regex = "*"
-
-[dependencies.safe_core]
-path = "/home/spandan/virtualization/coding/rust-maidsafe/maidsafe-core/safe_core"
-
-[dependencies.safe_nfs]
-path = "/home/spandan/virtualization/coding/rust-maidsafe/maidsafe-nfs/safe_nfs"
 
 [features]
 use-mock-routing = ["safe_core/use-mock-routing",
