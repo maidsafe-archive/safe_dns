@@ -26,7 +26,7 @@ pub struct DnsConfiguation {
 
 }
 
-pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<(), ::errors::DnsError> {
+pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>) -> Result<(), ::errors::DnsError> {
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file_helper = ::safe_nfs::helper::file_helper::FileHelper::new(client.clone());
@@ -40,7 +40,7 @@ pub fn initialise_dns_configuaration(client: ::std::sync::Arc<::std::sync::Mutex
     }
 }
 
-pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<Vec<DnsConfiguation>, ::errors::DnsError> {
+pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>) -> Result<Vec<DnsConfiguation>, ::errors::DnsError> {
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
     let file = try!(dir_listing.get_files().iter().find(|file| file.get_name() == DNS_CONFIG_FILE_NAME).ok_or(::errors::DnsError::DnsConfigFileNotFoundOrCorrupted));
@@ -49,13 +49,13 @@ pub fn get_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<:
     let mut reader = file_helper.read(file);
     let size = reader.size();
     if size != 0 {
-        Ok(try!(::safe_client::utility::deserialise(&try!(reader.read(0, size)))))
+        Ok(try!(::safe_core::utility::deserialise(&try!(reader.read(0, size)))))
     } else {
         Ok(vec![])
     }
 }
 
-pub fn write_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
+pub fn write_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>,
                                      config: &Vec<DnsConfiguation>) -> Result<(), ::errors::DnsError> {
     let dir_helper = ::safe_nfs::helper::directory_helper::DirectoryHelper::new(client.clone());
     let dir_listing = try!(dir_helper.get_configuration_directory_listing(DNS_CONFIG_DIR_NAME.to_string()));
@@ -63,7 +63,7 @@ pub fn write_dns_configuaration_data(client: ::std::sync::Arc<::std::sync::Mutex
     let file_helper = ::safe_nfs::helper::file_helper::FileHelper::new(client.clone());
     let mut writer = try!(file_helper.update_content(file, ::safe_nfs::helper::writer::Mode::Overwrite, dir_listing));
     debug!("Writing dns configuration data ...");
-    writer.write(&try!(::safe_client::utility::serialise(&config)), 0);
+    writer.write(&try!(::safe_core::utility::serialise(&config)), 0);
     let _ = try!(writer.close());
     Ok(())
 }
@@ -74,7 +74,7 @@ mod test {
 
     #[test]
     fn read_write_dns_configuration_file() {
-        let client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_client::utility::test_utils::get_client())));
+        let client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_core::utility::test_utils::get_client())));
 
         // Initialise Dns Configuration File
         eval_result!(initialise_dns_configuaration(client.clone()));
@@ -83,7 +83,7 @@ mod test {
         let mut config_vec = eval_result!(get_dns_configuaration_data(client.clone()));
         assert_eq!(config_vec.len(), 0);
 
-        let long_name = eval_result!(::safe_client::utility::generate_random_string(10));
+        let long_name = eval_result!(::safe_core::utility::generate_random_string(10));
 
         // Put in the 1st record
         let mut keypair = ::sodiumoxide::crypto::box_::gen_keypair();

@@ -12,8 +12,8 @@ homepage      = "http://maidsafe.net"
 [dependencies]
 # ---- Maidsafe ----
 routing         = "0.4.*"
-safe_nfs        = "0.2.*"
-safe_client     = "0.2.*"
+safe_nfs        = "0.3.*"
+safe_core       = "0.3.*"
 
 # ---- Others ----
 log             = "*"
@@ -24,5 +24,5 @@ rustc-serialize = "*"
 regex = "*"
 
 [features]
-use-mock-routing = ["safe_client/use-mock-routing",
+use-mock-routing = ["safe_core/use-mock-routing",
                     "safe_nfs/use-mock-routing"]

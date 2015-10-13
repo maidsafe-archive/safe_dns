@@ -21,13 +21,13 @@ const DNS_TAG: u64 = 5;
 
 /// This is a representational structure for all safe-dns operations
 pub struct DnsOperations {
-    client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>,
+    client: ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>,
 }
 
 impl DnsOperations {
     /// Create a new instance of DnsOperations. It is intended that only one of this be created as
     /// it operates on global data such as files.
-    pub fn new(client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> Result<DnsOperations, ::errors::DnsError> {
+    pub fn new(client: ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>) -> Result<DnsOperations, ::errors::DnsError> {
         try!(dns_configuration::initialise_dns_configuaration(client.clone()));
 
         Ok(DnsOperations {
@@ -40,7 +40,7 @@ impl DnsOperations {
     /// which only want to fetch from the Network, not mutate it.
     /// It is intended that only one of this be created as it operates on global data such as
     /// files.
-    pub fn new_unregistered(unregistered_client: ::std::sync::Arc<::std::sync::Mutex<::safe_client::client::Client>>) -> DnsOperations {
+    pub fn new_unregistered(unregistered_client: ::std::sync::Arc<::std::sync::Mutex<::safe_core::client::Client>>) -> DnsOperations {
         DnsOperations {
             client: unregistered_client,
         }
@@ -79,11 +79,11 @@ impl DnsOperations {
             });
             try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
 
-            Ok(try!(::safe_client::structured_data_operations::unversioned::create(self.client.clone(),
+            Ok(try!(::safe_core::structured_data_operations::unversioned::create(self.client.clone(),
                                                                                    DNS_TAG,
                                                                                    identifier,
                                                                                    0,
-                                                                                   try!(::safe_client::utility::serialise(&dns_record)),
+                                                                                   try!(::safe_core::utility::serialise(&dns_record)),
                                                                                    owners,
                                                                                    vec![],
                                                                                    private_signing_key,
@@ -104,7 +104,7 @@ impl DnsOperations {
         let _ = saved_configs.remove(pos);
         try!(dns_configuration::write_dns_configuaration_data(self.client.clone(), &saved_configs));
 
-        Ok(try!(::safe_client::structured_data_operations::unversioned::create(self.client.clone(),
+        Ok(try!(::safe_core::structured_data_operations::unversioned::create(self.client.clone(),
                                                                                DNS_TAG,
                                                                                prev_struct_data.get_identifier().clone(),
                                                                                prev_struct_data.get_version() + 1,
@@ -137,8 +137,8 @@ impl DnsOperations {
         // Allow unregistered clients to access this function
         match self.find_dns_record(long_name) {
             Ok(_) => (),
-            Err(::errors::DnsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient)) => (),
-            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient))) => (),
+            Err(::errors::DnsError::CoreError(::safe_core::errors::CoreError::OperationForbiddenForClient)) => (),
+            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::CoreError(::safe_core::errors::CoreError::OperationForbiddenForClient))) => (),
             Err(error) => return Err(error),
         };
 
@@ -156,8 +156,8 @@ impl DnsOperations {
         // Allow unregistered clients to access this function
         match self.find_dns_record(long_name) {
             Ok(_) => (),
-            Err(::errors::DnsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient)) => (),
-            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::ClientError(::safe_client::errors::ClientError::OperationForbiddenForClient))) => (),
+            Err(::errors::DnsError::CoreError(::safe_core::errors::CoreError::OperationForbiddenForClient)) => (),
+            Err(::errors::DnsError::NfsError(::safe_nfs::errors::NfsError::CoreError(::safe_core::errors::CoreError::OperationForbiddenForClient))) => (),
             Err(error) => return Err(error),
         };
 
@@ -218,11 +218,11 @@ impl DnsOperations {
                 let _ = dns_record.services.remove(&service.0);
             }
 
-            Ok(try!(::safe_client::structured_data_operations::unversioned::create(self.client.clone(),
+            Ok(try!(::safe_core::structured_data_operations::unversioned::create(self.client.clone(),
                                                                                    DNS_TAG,
                                                                                    prev_struct_data.get_identifier().clone(),
                                                                                    prev_struct_data.get_version() + 1,
-                                                                                   try!(::safe_client::utility::serialise(&dns_record)),
+                                                                                   try!(::safe_core::utility::serialise(&dns_record)),
                                                                                    prev_struct_data.get_owner_keys().clone(),
                                                                                    prev_struct_data.get_previous_owner_keys().clone(),
                                                                                    private_signing_key,
@@ -237,7 +237,7 @@ impl DnsOperations {
                                                                                 &::sodiumoxide::crypto::box_::Nonce)>) -> Result<(::routing::structured_data::StructuredData,
                                                                                                                                   Dns), ::errors::DnsError> {
         let struct_data = try!(self.get_housing_structured_data(long_name));
-        let dns_record = try!(::safe_client::utility::deserialise(&try!(::safe_client::structured_data_operations::unversioned::get_data(self.client.clone(),
+        let dns_record = try!(::safe_core::utility::deserialise(&try!(::safe_core::structured_data_operations::unversioned::get_data(self.client.clone(),
                                                                                                                                          &struct_data,
                                                                                                                                          data_decryption_keys))));
         Ok((struct_data, dns_record))
@@ -251,7 +251,7 @@ impl DnsOperations {
         if let ::routing::data::Data::StructuredData(struct_data) = try!(response_getter.get()) {
             Ok(struct_data)
         } else {
-            Err(::errors::DnsError::from(::safe_client::errors::ClientError::ReceivedUnexpectedData))
+            Err(::errors::DnsError::from(::safe_core::errors::CoreError::ReceivedUnexpectedData))
         }
     }
 }
@@ -269,10 +269,10 @@ mod test {
 
     #[test]
     fn register_and_delete_dns() {
-        let client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_client::utility::test_utils::get_client())));
+        let client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_core::utility::test_utils::get_client())));
         let dns_operations = eval_result!(DnsOperations::new(client.clone()));
 
-        let dns_name = eval_result!(::safe_client::utility::generate_random_string(10));
+        let dns_name = eval_result!(::safe_core::utility::generate_random_string(10));
         let messaging_keypair = ::sodiumoxide::crypto::box_::gen_keypair();
         let owners = vec![eval_result!(eval_result!(client.lock()).get_public_signing_key()).clone()];
 
@@ -322,10 +322,10 @@ mod test {
 
     #[test]
     fn manipulate_services() {
-        let client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_client::utility::test_utils::get_client())));
+        let client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_core::utility::test_utils::get_client())));
         let dns_operations = eval_result!(DnsOperations::new(client.clone()));
 
-        let dns_name = eval_result!(::safe_client::utility::generate_random_string(10));
+        let dns_name = eval_result!(::safe_core::utility::generate_random_string(10));
         let messaging_keypair = ::sodiumoxide::crypto::box_::gen_keypair();
 
         let mut services = vec![("www".to_string(),
@@ -364,7 +364,7 @@ mod test {
         assert_eq!(dns_records_vec.len(), 1);
 
         // Gets should be possible with unregistered clients
-        let unregistered_client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_client::client::Client::create_unregistered_client())));
+        let unregistered_client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_core::client::Client::create_unregistered_client())));
         let dns_operations_unregistered = DnsOperations::new_unregistered(unregistered_client);
 
         // Get all services for a dns-name
