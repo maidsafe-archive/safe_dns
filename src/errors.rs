@@ -22,7 +22,7 @@ pub const DNS_ERROR_START_RANGE: i32 = ::safe_nfs::errors::NFS_ERROR_START_RANGE
 /// Safe-Dns specific errors
 pub enum DnsError {
     /// Errors from Safe-Client
-    ClientError(::safe_client::errors::ClientError),
+    CoreError(::safe_core::errors::CoreError),
     /// Errors from Safe-Nfs
     NfsError(::safe_nfs::errors::NfsError),
     /// Dns record already exists
@@ -39,9 +39,9 @@ pub enum DnsError {
     Unexpected(String),
 }
 
-impl From<::safe_client::errors::ClientError> for DnsError {
-    fn from(error: ::safe_client::errors::ClientError) -> DnsError {
-        DnsError::ClientError(error)
+impl From<::safe_core::errors::CoreError> for DnsError {
+    fn from(error: ::safe_core::errors::CoreError) -> DnsError {
+        DnsError::CoreError(error)
     }
 }
 
@@ -60,7 +60,7 @@ impl<'a> From<&'a str> for DnsError {
 impl Into<i32> for DnsError {
     fn into(self) -> i32 {
         match self {
-            DnsError::ClientError(error)               => error.into(),
+            DnsError::CoreError(error)               => error.into(),
             DnsError::NfsError(error)                  => error.into(),
             DnsError::DnsNameAlreadyRegistered         => DNS_ERROR_START_RANGE,
             DnsError::DnsRecordNotFound                => DNS_ERROR_START_RANGE - 1,
@@ -75,7 +75,7 @@ impl Into<i32> for DnsError {
 impl ::std::fmt::Debug for DnsError {
     fn fmt(&self, f: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
         match *self {
-            DnsError::ClientError(ref error)           => write!(f, "DnsError::ClientError -> {:?}", error),
+            DnsError::CoreError(ref error)           => write!(f, "DnsError::CoreError -> {:?}", error),
             DnsError::NfsError(ref error)              => write!(f, "DnsError::NfsError -> {:?}", error),
             DnsError::DnsNameAlreadyRegistered         => write!(f, "DnsError::DnsNameAlreadyRegistered"),
             DnsError::DnsRecordNotFound                => write!(f, "DnsError::DnsRecordNotFound"),
