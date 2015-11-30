@@ -142,7 +142,7 @@ impl DnsOperations {
             Err(error) => return Err(error),
         };
 
-        let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
+        let (_, dns_record) = try!(self.get_housing_structured_data_and_dns_record(long_name, data_decryption_keys));
         Ok(dns_record.services.keys().map(|a| a.clone()).collect())
     }
 
@@ -161,7 +161,7 @@ impl DnsOperations {
             Err(error) => return Err(error),
         };
 
-        let (_, dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name, data_decryption_keys));
+        let (_, dns_record) = try!(self.get_housing_structured_data_and_dns_record(long_name, data_decryption_keys));
         dns_record.services.get(service_name).map(|v| v.clone()).ok_or(::errors::DnsError::ServiceNotFound)
     }
 
@@ -202,7 +202,7 @@ impl DnsOperations {
         let _ = try!(self.find_dns_record(long_name));
 
         let is_add_service = service.1.is_some();
-        let (prev_struct_data, mut dns_record) = try!(self.get_housing_sturctured_data_and_dns_record(long_name,
+        let (prev_struct_data, mut dns_record) = try!(self.get_housing_structured_data_and_dns_record(long_name,
                                                                                                       data_encryption_decryption_keys));
 
         if !is_add_service && !dns_record.services.contains_key(&service.0) {
@@ -230,7 +230,7 @@ impl DnsOperations {
         }
     }
 
-    fn get_housing_sturctured_data_and_dns_record(&self,
+    fn get_housing_structured_data_and_dns_record(&self,
                                                   long_name           : &String,
                                                   data_decryption_keys: Option<(&::sodiumoxide::crypto::box_::PublicKey,
                                                                                 &::sodiumoxide::crypto::box_::SecretKey,
