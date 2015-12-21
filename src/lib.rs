@@ -43,11 +43,13 @@
          missing_debug_implementations)]
 
 extern crate routing;
+extern crate xor_name;
 extern crate safe_nfs;
+extern crate safe_core;
 extern crate sodiumoxide;
 extern crate rustc_serialize;
 #[macro_use] extern crate log;
-#[macro_use] extern crate safe_core;
+#[macro_use] extern crate maidsafe_utilities;
 
 /// Safe-Dns errors
 pub mod errors;

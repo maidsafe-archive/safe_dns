@@ -1,28 +1,26 @@
 [package]
-name          = "safe_dns"
-version       = "0.3.1"
-authors       = ["MaidSafe Developers <dev@maidsafe.net>"]
-description   = "SAFE DNS API library"
+authors = ["MaidSafe Developers <dev@maidsafe.net>"]
+description = "SAFE DNS API library"
 documentation = "http://maidsafe.net/safe_dns/latest"
-repository    = "https://github.com/maidsafe/safe_dns"
-readme        = "README.md"
-license       = "GPL-3.0"
-homepage      = "http://maidsafe.net"
+homepage = "http://maidsafe.net"
+license = "GPL-3.0"
+name = "safe_dns"
+readme = "README.md"
+repository = "https://github.com/maidsafe/safe_dns"
+version = "0.3.1"
 
 [dependencies]
-# ---- Maidsafe ----
-routing         = "~0.4.2"
-safe_nfs        = "~0.3.1"
-safe_core       = "~0.3.1"
-
-# ---- Others ----
-log             = "~0.3.3"
-sodiumoxide     = "~0.0.9"
+log = "~0.3.4"
+maidsafe_utilities = "~0.1.5"
+routing = "~0.5.2"
 rustc-serialize = "~0.3.16"
+safe_core = "~0.4.0"
+safe_nfs = "~0.4.0"
+sodiumoxide = "~0.0.9"
+xor_name = "~0.0.1"
 
 [dev-dependencies]
-regex = "~0.1.41"
+regex = "~0.1.44"
 
 [features]
-use-mock-routing = ["safe_core/use-mock-routing",
-                    "safe_nfs/use-mock-routing"]
+use-mock-routing = ["safe_core/use-mock-routing", "safe_nfs/use-mock-routing"]
