@@ -18,9 +18,12 @@
 extern crate regex;
 extern crate routing;
 extern crate safe_dns;
+extern crate safe_core;
 extern crate safe_nfs;
 extern crate sodiumoxide;
-#[macro_use] extern crate safe_core;
+#[macro_use] extern crate maidsafe_utilities;
+
+use routing::Data;
 
 const DEFAULT_SERVICE: &'static str = "www";
 const HOME_PAGE_FILE_NAME: &'static str = "index.html";
@@ -52,7 +55,7 @@ fn handle_login() -> std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>
     // Account Creation
     {
         println!("\nTrying to create an account ...");
-        let _ = eval_result!(safe_core::client::Client::create_account(keyword.clone(), pin.clone(), password.clone()));
+        let _ = unwrap_result!(safe_core::client::Client::create_account(keyword.clone(), pin.clone(), password.clone()));
         println!("Account Creation Successful !!");
     }
 
@@ -61,7 +64,7 @@ fn handle_login() -> std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>
 
     // Log into the created account
     println!("\nTrying to log into the created account using supplied credentials ...");
-    std::sync::Arc::new(std::sync::Mutex::new(eval_result!(safe_core::client::Client::log_in(keyword, pin, password))))
+    std::sync::Arc::new(std::sync::Mutex::new(unwrap_result!(safe_core::client::Client::log_in(keyword, pin, password))))
 }
 
 fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>,
@@ -87,7 +90,7 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_core::
                                                            owners,
                                                            &secret_signing_key,
                                                            None));
-    Ok(try!(eval_result!(client.lock()).put(routing::data::Data::StructuredData(dns_struct_data), None)))
+    Ok(try!(unwrap_result!(client.lock()).put(Data::StructuredData(dns_struct_data), None)))
 }
 
 fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>,
@@ -104,7 +107,7 @@ fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_core::
     println!("Deleting Dns...");
 
     let dns_struct_data = try!(dns_operations.delete_dns(&long_name, &secret_signing_key));
-    Ok(try!(eval_result!(client.lock()).delete(routing::data::Data::StructuredData(dns_struct_data), None)))
+    Ok(try!(unwrap_result!(client.lock()).delete(Data::StructuredData(dns_struct_data), None)))
 }
 
 fn display_dns_records(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
@@ -164,7 +167,8 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_core::client
                                                       (service_name, dir_key.clone()),
                                                       &secret_signing_key,
                                                       None));
-    Ok(client.lock().unwrap().post(routing::data::Data::StructuredData(struct_data), None))
+
+    Ok(try!(client.lock().unwrap().post(Data::StructuredData(struct_data), None)))
 }
 
 fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>,
@@ -185,7 +189,7 @@ fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_core::cli
 
     let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
     let struct_data = try!(dns_operations.remove_service(&long_name, service_name, &secret_signing_key, None));
-    Ok(client.lock().unwrap().post(routing::data::Data::StructuredData(struct_data), None))
+    Ok(try!(client.lock().unwrap().post(Data::StructuredData(struct_data), None)))
 }
 
 fn display_services(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
@@ -259,14 +263,14 @@ fn parse_url_and_get_home_page(client        : std::sync::Arc<std::sync::Mutex<s
 
 fn main() {
     let client = handle_login();
-    let unregistered_client = ::std::sync::Arc::new(::std::sync::Mutex::new(eval_result!(::safe_core
+    let unregistered_client = ::std::sync::Arc::new(::std::sync::Mutex::new(unwrap_result!(::safe_core
                                                                                          ::client
                                                                                          ::Client
                                                                                          ::create_unregistered_client())));
     println!("Account Login Successful !!");
 
     println!("Initialising Dns...");
-    let dns_operations = eval_result!(safe_dns::dns_operations::DnsOperations::new(client.clone()));
+    let dns_operations = unwrap_result!(safe_dns::dns_operations::DnsOperations::new(client.clone()));
     let dns_operations_unregistered = safe_dns::dns_operations::DnsOperations::new_unregistered(unregistered_client.clone());
 
     let mut user_option = String::new();
