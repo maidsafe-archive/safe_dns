@@ -1,5 +1,8 @@
 # safe_dns - Change Log
 
+## [0.4.0]
+- Refactored to work with refactored routing, safe_core and safe_nfs api's
+
 ## [0.3.1]
 - Remove wildcard dependencies.
 
