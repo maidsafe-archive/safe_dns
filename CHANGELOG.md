@@ -1,5 +1,8 @@
 # safe_dns - Change Log
 
+## [0.5.0]
+- Dependencies updated to allow building with Rust stable
+
 ## [0.4.0]
 - Refactored to work with refactored routing, safe_core and safe_nfs api's
 
