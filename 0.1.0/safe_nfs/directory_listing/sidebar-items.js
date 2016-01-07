@@ -1,0 +1,1 @@
+initSidebarItems({"mod":[["directory_info","DirectoryInfo holds teh metadata information about the directory"]],"struct":[["DirectoryListing","DirectoryListing is the representation of a deserialised Directory in the network"]]});

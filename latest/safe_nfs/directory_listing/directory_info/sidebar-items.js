@@ -1,0 +1,1 @@
+initSidebarItems({"struct":[["DirectoryInfo","Contains Information pertaining to a Directory"]]});
