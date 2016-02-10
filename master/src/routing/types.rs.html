@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/routing-0.6.1/src/types.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/types.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>types.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -90,6 +91,13 @@
 <span id="48">48</span>
 <span id="49">49</span>
 <span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -108,37 +116,44 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>rand</span>::<span class='ident'>random</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
-<span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>box_</span>;
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Encoder</span>, <span class='ident'>Decoder</span>};
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>event_sender</span>::<span class='ident'>MaidSafeObserver</span>;
 
 <span class='kw'>pub</span> <span class='kw'>type</span> <span class='ident'>RoutingActionSender</span> <span class='op'>=</span> <span class='ident'>MaidSafeObserver</span><span class='op'>&lt;</span>::<span class='ident'>action</span>::<span class='ident'>Action</span><span class='op'>&gt;</span>;
 
 <span class='doccomment'>/// Unique ID for messages</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// This is used for deduplication: Since the network sends messages redundantly along different</span>
+<span class='doccomment'>/// routes, the same message will usually arrive more than once at any given node. A message with</span>
+<span class='doccomment'>/// an ID that is already in the cache will be ignored.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>Hash</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>MessageId</span>([<span class='ident'>u8</span>; <span class='ident'>box_</span>::<span class='ident'>NONCEBYTES</span>]);
+<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>MessageId</span>(<span class='ident'>XorName</span>);
 
 <span class='kw'>impl</span> <span class='ident'>MessageId</span> {
-    <span class='doccomment'>/// Generate a new MessageId with random content</span>
+    <span class='doccomment'>/// Generate a new `MessageId` with random content.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>() <span class='op'>-&gt;</span> <span class='ident'>MessageId</span> {
-        <span class='ident'>MessageId</span>(<span class='ident'>box_</span>::<span class='ident'>gen_nonce</span>().<span class='number'>0</span>)
+        <span class='ident'>MessageId</span>(<span class='ident'>random</span>::<span class='op'>&lt;</span><span class='ident'>XorName</span><span class='op'>&gt;</span>())
     }
 
-    <span class='doccomment'>/// Generate a new MessageId with contents extracted from given XorName</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>from_xor_name</span>(<span class='ident'>name</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='ident'>MessageId</span> {
-        <span class='ident'>MessageId</span>(<span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>box_</span>::<span class='ident'>Nonce</span>::<span class='ident'>from_slice</span>(<span class='kw-2'>&amp;</span><span class='ident'>name</span>.<span class='number'>0</span>[..<span class='ident'>box_</span>::<span class='ident'>NONCEBYTES</span>]),
-                                 <span class='string'>&quot;Failed generating MessageId from XorName&quot;</span>)
-                      .<span class='number'>0</span>)
+    <span class='doccomment'>/// Generate a new `MessageId` with contents extracted from lost node.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>from_lost_node</span>(<span class='kw-2'>mut</span> <span class='ident'>name</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='ident'>MessageId</span> {
+        <span class='ident'>name</span>.<span class='number'>0</span>[<span class='number'>0</span>] <span class='op'>=</span> <span class='string'>&#39;L&#39;</span> <span class='kw'>as</span> <span class='ident'>u8</span>;
+        <span class='ident'>MessageId</span>(<span class='ident'>name</span>)
     }
 
-    <span class='doccomment'>/// Generate a new MessageId after reversing self</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>from_reverse</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>MessageId</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>name_mut</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='number'>0</span>;
+    <span class='doccomment'>/// Generate a new `MessageId` with contents extracted from new node.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>from_added_node</span>(<span class='kw-2'>mut</span> <span class='ident'>name</span>: <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='ident'>MessageId</span> {
+        <span class='ident'>name</span>.<span class='number'>0</span>[<span class='number'>0</span>] <span class='op'>=</span> <span class='string'>&#39;A&#39;</span> <span class='kw'>as</span> <span class='ident'>u8</span>;
+        <span class='ident'>MessageId</span>(<span class='ident'>name</span>)
+    }
+
+    <span class='doccomment'>/// Generate the reverse of the given `MessageId`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>from_reverse</span>(<span class='ident'>name</span>: <span class='kw-2'>&amp;</span><span class='ident'>MessageId</span>) <span class='op'>-&gt;</span> <span class='ident'>MessageId</span> {
+        <span class='kw'>let</span> <span class='ident'>MessageId</span>(<span class='ident'>XorName</span>(<span class='kw-2'>mut</span> <span class='ident'>name_mut</span>)) <span class='op'>=</span> <span class='op'>*</span><span class='ident'>name</span>;
         <span class='ident'>name_mut</span>.<span class='ident'>reverse</span>();
-        <span class='ident'>MessageId</span>(<span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>box_</span>::<span class='ident'>Nonce</span>::<span class='ident'>from_slice</span>(<span class='kw-2'>&amp;</span><span class='ident'>name_mut</span>),
-                                 <span class='string'>&quot;Failed generating MessageId from XorName&quot;</span>)
-                      .<span class='number'>0</span>)
+        <span class='ident'>MessageId</span>(<span class='ident'>XorName</span>(<span class='ident'>name_mut</span>))
     }
 }
 </pre>
@@ -201,6 +216,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

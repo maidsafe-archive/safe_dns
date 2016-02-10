@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/routing-0.6.1/src/event.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/event.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>event.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -79,6 +80,11 @@
 <span id="37">37</span>
 <span id="38">38</span>
 <span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -101,22 +107,27 @@
 <span class='kw'>use</span> <span class='ident'>types</span>::<span class='ident'>MessageId</span>;
 <span class='kw'>use</span> <span class='ident'>messages</span>::{<span class='ident'>RequestMessage</span>, <span class='ident'>ResponseMessage</span>};
 
-<span class='doccomment'>/// An Event is received at the effective close group of B of a message flow &lt; A | B &gt;</span>
+<span class='doccomment'>/// An Event raised by a `Node` or `Client` via its event sender.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// These are sent by routing to the library&#39;s user. It allows the user to handle requests and</span>
+<span class='doccomment'>/// responses, and to react to changes in the network.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// `Request` and `Response` events from group authorities are only raised once the quorum has been</span>
+<span class='doccomment'>/// reached, i. e. enough members of the group have sent the same message.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>Clone</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Event</span> {
     <span class='doccomment'>/// Request.</span>
     <span class='ident'>Request</span>(<span class='ident'>RequestMessage</span>),
     <span class='doccomment'>/// Response.</span>
     <span class='ident'>Response</span>(<span class='ident'>ResponseMessage</span>),
-    <span class='doccomment'>/// Churn reports a change in close group and optionally a node that is no longer a part of</span>
-    <span class='doccomment'>/// close group</span>
+    <span class='doccomment'>/// A churn event: a node left or joined this node&#39;s close group.</span>
     <span class='ident'>Churn</span> {
-        <span class='doccomment'>/// Churn Id</span>
+        <span class='doccomment'>/// The unique ID of this `Churn` event.</span>
         <span class='ident'>id</span>: <span class='ident'>MessageId</span>,
-        <span class='doccomment'>/// If any close node was lost during this churn event</span>
+        <span class='doccomment'>/// The name of the node that left the close group, if any.</span>
         <span class='ident'>lost_close_node</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>XorName</span><span class='op'>&gt;</span>,
     },
-    <span class='doccomment'>/// Connected.</span>
+    <span class='doccomment'>/// The client has successfully connected to a proxy node on the network.</span>
     <span class='ident'>Connected</span>,
 }
 </pre>
@@ -179,6 +190,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

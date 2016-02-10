@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/routing-0.6.1/src/authority.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/authority.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>authority.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -124,6 +125,9 @@
 <span id="82">82</span>
 <span id="83">83</span>
 <span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -146,10 +150,13 @@
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::{<span class='ident'>hash</span>, <span class='ident'>sign</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
 
-<span class='doccomment'>/// Persona types recognised by network.</span>
+<span class='doccomment'>/// An entity that can act as a source or destination of a message.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// An `Authority` can be an individual `Client` or `ManagedNode`, or a group of nodes, like a</span>
+<span class='doccomment'>/// `NodeManager`, `ClientManager` or `NaeManager`.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Authority</span> {
-    <span class='doccomment'>/// Manager of Client.  XorName is the hash of the Client&#39;s `client_key`.</span>
+    <span class='doccomment'>/// Manager of a Client.  XorName is the hash of the Client&#39;s `client_key`.</span>
     <span class='ident'>ClientManager</span>(<span class='ident'>XorName</span>),
     <span class='doccomment'>/// Manager of a network-addressable element.  XorName is the name of the element in question.</span>
     <span class='ident'>NaeManager</span>(<span class='ident'>XorName</span>),
@@ -269,6 +276,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

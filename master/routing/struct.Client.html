@@ -9,6 +9,7 @@
 
     <title>routing::Client - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -45,24 +46,32 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-416' class='srclink' href='../src/routing/client.rs.html#35-40' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-417' class='srclink' href='../src/routing/client.rs.html#38-43' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Client {
     // some fields omitted
-}</pre><div class='docblock'><p>Client provides an actionable interface to Core.  On constructing a new Client object a
-Core will also be started.</p>
+}</pre><div class='docblock'><p>Interface for sending and receiving messages to and from a network of nodes in the role of a
+client.</p>
+
+<p>A client is connected to the network via one or more nodes. Messages are never routed via a
+client, and a client cannot be part of a group authority.</p>
 </div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../routing/struct.Client.html' title='routing::Client'>Client</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(event_sender: <a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.Sender.html' title='std::sync::mpsc::Sender'>Sender</a>&lt;<a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a>&gt;, keys: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../routing/struct.FullId.html' title='routing::FullId'>FullId</a>&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../routing/struct.Client.html' title='routing::Client'>Client</a>, <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a>&gt;</code></h4>
-<div class='docblock'><p>Starts a new RoutingIdentity, which will also start a new Core.
-The Core will only bootstrap to the network and not attempt to
-achieve full routing node status.
-If the client is started with a relocated id (ie the name has been reassigned),
-the core will instantly instantiate termination of the client.</p>
-</div><h4 id='method.send_get_request' class='method'><code>fn <a href='#method.send_get_request' class='fnname'>send_get_request</a>(&amp;mut self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data_request: <a class='enum' href='../routing/enum.DataRequest.html' title='routing::DataRequest'>DataRequest</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
+<div class='docblock'><p>Create a new <code>Client</code>.</p>
+
+<p>It will automatically connect to the network, but not attempt to achieve full routing node
+status. The name of the client will be the name of the <code>PublicId</code> of the <code>keys</code> and must
+equal the SHA512 hash of its public signing key, otherwise the client will be instantly
+terminated.</p>
+
+<p>Keys will be exchanged with the <code>ClientAuthority</code> so that communication with the network is
+cryptographically secure and uses group consensus. The restriction for the client name
+exists to ensure that the client cannot choose its <code>ClientAuthority</code>.</p>
+</div><h4 id='method.send_get_request' class='method'><code>fn <a href='#method.send_get_request' class='fnname'>send_get_request</a>(&amp;mut self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data_request: <a class='enum' href='../routing/enum.DataRequest.html' title='routing::DataRequest'>DataRequest</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
 <div class='docblock'><p>Send a Get message with a DataRequest to an Authority, signed with given keys.</p>
-</div><h4 id='method.send_put_request' class='method'><code>fn <a href='#method.send_put_request' class='fnname'>send_put_request</a>(&amp;self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data: <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
+</div><h4 id='method.send_put_request' class='method'><code>fn <a href='#method.send_put_request' class='fnname'>send_put_request</a>(&amp;self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data: <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
 <div class='docblock'><p>Add something to the network</p>
-</div><h4 id='method.send_post_request' class='method'><code>fn <a href='#method.send_post_request' class='fnname'>send_post_request</a>(&amp;self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data: <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
+</div><h4 id='method.send_post_request' class='method'><code>fn <a href='#method.send_post_request' class='fnname'>send_post_request</a>(&amp;self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data: <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
 <div class='docblock'><p>Change something already on the network</p>
-</div><h4 id='method.send_delete_request' class='method'><code>fn <a href='#method.send_delete_request' class='fnname'>send_delete_request</a>(&amp;self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data: <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
+</div><h4 id='method.send_delete_request' class='method'><code>fn <a href='#method.send_delete_request' class='fnname'>send_delete_request</a>(&amp;self, dst: <a class='enum' href='../routing/enum.Authority.html' title='routing::Authority'>Authority</a>, data: <a class='enum' href='../routing/enum.Data.html' title='routing::Data'>Data</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
 <div class='docblock'><p>Remove something from the network</p>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../routing/struct.Client.html' title='routing::Client'>Client</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
 </div></section>
@@ -124,6 +133,6 @@ the core will instantly instantiate termination of the client.</p>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>

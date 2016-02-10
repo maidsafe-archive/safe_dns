@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/itertools-0.4.5/src/misc.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/itertools-0.4.8/src/misc.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>misc.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     
@@ -272,6 +273,8 @@
 <span id="230">230</span>
 <span id="231">231</span>
 <span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
 </pre><pre class='rust '>
 <span class='doccomment'>//! A module of helper traits and iterators that are not intended to be used</span>
 <span class='doccomment'>//! directly.</span>
@@ -411,10 +414,12 @@
 }
 
 <span class='kw'>impl</span> <span class='ident'>ToFloat</span><span class='op'>&lt;</span><span class='ident'>f32</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>usize</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
     <span class='kw'>fn</span> <span class='ident'>to_float</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>f32</span> { <span class='self'>self</span> <span class='kw'>as</span> <span class='ident'>f32</span> }
 }
 
 <span class='kw'>impl</span> <span class='ident'>ToFloat</span><span class='op'>&lt;</span><span class='ident'>f64</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>usize</span> {
+    <span class='attribute'>#[<span class='ident'>inline</span>(<span class='ident'>always</span>)]</span>
     <span class='kw'>fn</span> <span class='ident'>to_float</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>f64</span> { <span class='self'>self</span> <span class='kw'>as</span> <span class='ident'>f64</span> }
 }
 
@@ -565,6 +570,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

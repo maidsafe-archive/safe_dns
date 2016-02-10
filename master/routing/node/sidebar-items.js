@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Node","Node provides an actionable interface to Core.  On constructing a new Node object a Core will also be started."]]});
+initSidebarItems({"struct":[["Node","Interface for sending and receiving messages to and from other nodes, in the role of a full routing node."]]});

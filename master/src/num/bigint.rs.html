@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/num-0.1.29/src/bigint.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/num-0.1.30/src/bigint.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>bigint.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://rust-num.github.io/num/favicon.ico">
@@ -4354,6 +4355,422 @@
 <span id="4312">4312</span>
 <span id="4313">4313</span>
 <span id="4314">4314</span>
+<span id="4315">4315</span>
+<span id="4316">4316</span>
+<span id="4317">4317</span>
+<span id="4318">4318</span>
+<span id="4319">4319</span>
+<span id="4320">4320</span>
+<span id="4321">4321</span>
+<span id="4322">4322</span>
+<span id="4323">4323</span>
+<span id="4324">4324</span>
+<span id="4325">4325</span>
+<span id="4326">4326</span>
+<span id="4327">4327</span>
+<span id="4328">4328</span>
+<span id="4329">4329</span>
+<span id="4330">4330</span>
+<span id="4331">4331</span>
+<span id="4332">4332</span>
+<span id="4333">4333</span>
+<span id="4334">4334</span>
+<span id="4335">4335</span>
+<span id="4336">4336</span>
+<span id="4337">4337</span>
+<span id="4338">4338</span>
+<span id="4339">4339</span>
+<span id="4340">4340</span>
+<span id="4341">4341</span>
+<span id="4342">4342</span>
+<span id="4343">4343</span>
+<span id="4344">4344</span>
+<span id="4345">4345</span>
+<span id="4346">4346</span>
+<span id="4347">4347</span>
+<span id="4348">4348</span>
+<span id="4349">4349</span>
+<span id="4350">4350</span>
+<span id="4351">4351</span>
+<span id="4352">4352</span>
+<span id="4353">4353</span>
+<span id="4354">4354</span>
+<span id="4355">4355</span>
+<span id="4356">4356</span>
+<span id="4357">4357</span>
+<span id="4358">4358</span>
+<span id="4359">4359</span>
+<span id="4360">4360</span>
+<span id="4361">4361</span>
+<span id="4362">4362</span>
+<span id="4363">4363</span>
+<span id="4364">4364</span>
+<span id="4365">4365</span>
+<span id="4366">4366</span>
+<span id="4367">4367</span>
+<span id="4368">4368</span>
+<span id="4369">4369</span>
+<span id="4370">4370</span>
+<span id="4371">4371</span>
+<span id="4372">4372</span>
+<span id="4373">4373</span>
+<span id="4374">4374</span>
+<span id="4375">4375</span>
+<span id="4376">4376</span>
+<span id="4377">4377</span>
+<span id="4378">4378</span>
+<span id="4379">4379</span>
+<span id="4380">4380</span>
+<span id="4381">4381</span>
+<span id="4382">4382</span>
+<span id="4383">4383</span>
+<span id="4384">4384</span>
+<span id="4385">4385</span>
+<span id="4386">4386</span>
+<span id="4387">4387</span>
+<span id="4388">4388</span>
+<span id="4389">4389</span>
+<span id="4390">4390</span>
+<span id="4391">4391</span>
+<span id="4392">4392</span>
+<span id="4393">4393</span>
+<span id="4394">4394</span>
+<span id="4395">4395</span>
+<span id="4396">4396</span>
+<span id="4397">4397</span>
+<span id="4398">4398</span>
+<span id="4399">4399</span>
+<span id="4400">4400</span>
+<span id="4401">4401</span>
+<span id="4402">4402</span>
+<span id="4403">4403</span>
+<span id="4404">4404</span>
+<span id="4405">4405</span>
+<span id="4406">4406</span>
+<span id="4407">4407</span>
+<span id="4408">4408</span>
+<span id="4409">4409</span>
+<span id="4410">4410</span>
+<span id="4411">4411</span>
+<span id="4412">4412</span>
+<span id="4413">4413</span>
+<span id="4414">4414</span>
+<span id="4415">4415</span>
+<span id="4416">4416</span>
+<span id="4417">4417</span>
+<span id="4418">4418</span>
+<span id="4419">4419</span>
+<span id="4420">4420</span>
+<span id="4421">4421</span>
+<span id="4422">4422</span>
+<span id="4423">4423</span>
+<span id="4424">4424</span>
+<span id="4425">4425</span>
+<span id="4426">4426</span>
+<span id="4427">4427</span>
+<span id="4428">4428</span>
+<span id="4429">4429</span>
+<span id="4430">4430</span>
+<span id="4431">4431</span>
+<span id="4432">4432</span>
+<span id="4433">4433</span>
+<span id="4434">4434</span>
+<span id="4435">4435</span>
+<span id="4436">4436</span>
+<span id="4437">4437</span>
+<span id="4438">4438</span>
+<span id="4439">4439</span>
+<span id="4440">4440</span>
+<span id="4441">4441</span>
+<span id="4442">4442</span>
+<span id="4443">4443</span>
+<span id="4444">4444</span>
+<span id="4445">4445</span>
+<span id="4446">4446</span>
+<span id="4447">4447</span>
+<span id="4448">4448</span>
+<span id="4449">4449</span>
+<span id="4450">4450</span>
+<span id="4451">4451</span>
+<span id="4452">4452</span>
+<span id="4453">4453</span>
+<span id="4454">4454</span>
+<span id="4455">4455</span>
+<span id="4456">4456</span>
+<span id="4457">4457</span>
+<span id="4458">4458</span>
+<span id="4459">4459</span>
+<span id="4460">4460</span>
+<span id="4461">4461</span>
+<span id="4462">4462</span>
+<span id="4463">4463</span>
+<span id="4464">4464</span>
+<span id="4465">4465</span>
+<span id="4466">4466</span>
+<span id="4467">4467</span>
+<span id="4468">4468</span>
+<span id="4469">4469</span>
+<span id="4470">4470</span>
+<span id="4471">4471</span>
+<span id="4472">4472</span>
+<span id="4473">4473</span>
+<span id="4474">4474</span>
+<span id="4475">4475</span>
+<span id="4476">4476</span>
+<span id="4477">4477</span>
+<span id="4478">4478</span>
+<span id="4479">4479</span>
+<span id="4480">4480</span>
+<span id="4481">4481</span>
+<span id="4482">4482</span>
+<span id="4483">4483</span>
+<span id="4484">4484</span>
+<span id="4485">4485</span>
+<span id="4486">4486</span>
+<span id="4487">4487</span>
+<span id="4488">4488</span>
+<span id="4489">4489</span>
+<span id="4490">4490</span>
+<span id="4491">4491</span>
+<span id="4492">4492</span>
+<span id="4493">4493</span>
+<span id="4494">4494</span>
+<span id="4495">4495</span>
+<span id="4496">4496</span>
+<span id="4497">4497</span>
+<span id="4498">4498</span>
+<span id="4499">4499</span>
+<span id="4500">4500</span>
+<span id="4501">4501</span>
+<span id="4502">4502</span>
+<span id="4503">4503</span>
+<span id="4504">4504</span>
+<span id="4505">4505</span>
+<span id="4506">4506</span>
+<span id="4507">4507</span>
+<span id="4508">4508</span>
+<span id="4509">4509</span>
+<span id="4510">4510</span>
+<span id="4511">4511</span>
+<span id="4512">4512</span>
+<span id="4513">4513</span>
+<span id="4514">4514</span>
+<span id="4515">4515</span>
+<span id="4516">4516</span>
+<span id="4517">4517</span>
+<span id="4518">4518</span>
+<span id="4519">4519</span>
+<span id="4520">4520</span>
+<span id="4521">4521</span>
+<span id="4522">4522</span>
+<span id="4523">4523</span>
+<span id="4524">4524</span>
+<span id="4525">4525</span>
+<span id="4526">4526</span>
+<span id="4527">4527</span>
+<span id="4528">4528</span>
+<span id="4529">4529</span>
+<span id="4530">4530</span>
+<span id="4531">4531</span>
+<span id="4532">4532</span>
+<span id="4533">4533</span>
+<span id="4534">4534</span>
+<span id="4535">4535</span>
+<span id="4536">4536</span>
+<span id="4537">4537</span>
+<span id="4538">4538</span>
+<span id="4539">4539</span>
+<span id="4540">4540</span>
+<span id="4541">4541</span>
+<span id="4542">4542</span>
+<span id="4543">4543</span>
+<span id="4544">4544</span>
+<span id="4545">4545</span>
+<span id="4546">4546</span>
+<span id="4547">4547</span>
+<span id="4548">4548</span>
+<span id="4549">4549</span>
+<span id="4550">4550</span>
+<span id="4551">4551</span>
+<span id="4552">4552</span>
+<span id="4553">4553</span>
+<span id="4554">4554</span>
+<span id="4555">4555</span>
+<span id="4556">4556</span>
+<span id="4557">4557</span>
+<span id="4558">4558</span>
+<span id="4559">4559</span>
+<span id="4560">4560</span>
+<span id="4561">4561</span>
+<span id="4562">4562</span>
+<span id="4563">4563</span>
+<span id="4564">4564</span>
+<span id="4565">4565</span>
+<span id="4566">4566</span>
+<span id="4567">4567</span>
+<span id="4568">4568</span>
+<span id="4569">4569</span>
+<span id="4570">4570</span>
+<span id="4571">4571</span>
+<span id="4572">4572</span>
+<span id="4573">4573</span>
+<span id="4574">4574</span>
+<span id="4575">4575</span>
+<span id="4576">4576</span>
+<span id="4577">4577</span>
+<span id="4578">4578</span>
+<span id="4579">4579</span>
+<span id="4580">4580</span>
+<span id="4581">4581</span>
+<span id="4582">4582</span>
+<span id="4583">4583</span>
+<span id="4584">4584</span>
+<span id="4585">4585</span>
+<span id="4586">4586</span>
+<span id="4587">4587</span>
+<span id="4588">4588</span>
+<span id="4589">4589</span>
+<span id="4590">4590</span>
+<span id="4591">4591</span>
+<span id="4592">4592</span>
+<span id="4593">4593</span>
+<span id="4594">4594</span>
+<span id="4595">4595</span>
+<span id="4596">4596</span>
+<span id="4597">4597</span>
+<span id="4598">4598</span>
+<span id="4599">4599</span>
+<span id="4600">4600</span>
+<span id="4601">4601</span>
+<span id="4602">4602</span>
+<span id="4603">4603</span>
+<span id="4604">4604</span>
+<span id="4605">4605</span>
+<span id="4606">4606</span>
+<span id="4607">4607</span>
+<span id="4608">4608</span>
+<span id="4609">4609</span>
+<span id="4610">4610</span>
+<span id="4611">4611</span>
+<span id="4612">4612</span>
+<span id="4613">4613</span>
+<span id="4614">4614</span>
+<span id="4615">4615</span>
+<span id="4616">4616</span>
+<span id="4617">4617</span>
+<span id="4618">4618</span>
+<span id="4619">4619</span>
+<span id="4620">4620</span>
+<span id="4621">4621</span>
+<span id="4622">4622</span>
+<span id="4623">4623</span>
+<span id="4624">4624</span>
+<span id="4625">4625</span>
+<span id="4626">4626</span>
+<span id="4627">4627</span>
+<span id="4628">4628</span>
+<span id="4629">4629</span>
+<span id="4630">4630</span>
+<span id="4631">4631</span>
+<span id="4632">4632</span>
+<span id="4633">4633</span>
+<span id="4634">4634</span>
+<span id="4635">4635</span>
+<span id="4636">4636</span>
+<span id="4637">4637</span>
+<span id="4638">4638</span>
+<span id="4639">4639</span>
+<span id="4640">4640</span>
+<span id="4641">4641</span>
+<span id="4642">4642</span>
+<span id="4643">4643</span>
+<span id="4644">4644</span>
+<span id="4645">4645</span>
+<span id="4646">4646</span>
+<span id="4647">4647</span>
+<span id="4648">4648</span>
+<span id="4649">4649</span>
+<span id="4650">4650</span>
+<span id="4651">4651</span>
+<span id="4652">4652</span>
+<span id="4653">4653</span>
+<span id="4654">4654</span>
+<span id="4655">4655</span>
+<span id="4656">4656</span>
+<span id="4657">4657</span>
+<span id="4658">4658</span>
+<span id="4659">4659</span>
+<span id="4660">4660</span>
+<span id="4661">4661</span>
+<span id="4662">4662</span>
+<span id="4663">4663</span>
+<span id="4664">4664</span>
+<span id="4665">4665</span>
+<span id="4666">4666</span>
+<span id="4667">4667</span>
+<span id="4668">4668</span>
+<span id="4669">4669</span>
+<span id="4670">4670</span>
+<span id="4671">4671</span>
+<span id="4672">4672</span>
+<span id="4673">4673</span>
+<span id="4674">4674</span>
+<span id="4675">4675</span>
+<span id="4676">4676</span>
+<span id="4677">4677</span>
+<span id="4678">4678</span>
+<span id="4679">4679</span>
+<span id="4680">4680</span>
+<span id="4681">4681</span>
+<span id="4682">4682</span>
+<span id="4683">4683</span>
+<span id="4684">4684</span>
+<span id="4685">4685</span>
+<span id="4686">4686</span>
+<span id="4687">4687</span>
+<span id="4688">4688</span>
+<span id="4689">4689</span>
+<span id="4690">4690</span>
+<span id="4691">4691</span>
+<span id="4692">4692</span>
+<span id="4693">4693</span>
+<span id="4694">4694</span>
+<span id="4695">4695</span>
+<span id="4696">4696</span>
+<span id="4697">4697</span>
+<span id="4698">4698</span>
+<span id="4699">4699</span>
+<span id="4700">4700</span>
+<span id="4701">4701</span>
+<span id="4702">4702</span>
+<span id="4703">4703</span>
+<span id="4704">4704</span>
+<span id="4705">4705</span>
+<span id="4706">4706</span>
+<span id="4707">4707</span>
+<span id="4708">4708</span>
+<span id="4709">4709</span>
+<span id="4710">4710</span>
+<span id="4711">4711</span>
+<span id="4712">4712</span>
+<span id="4713">4713</span>
+<span id="4714">4714</span>
+<span id="4715">4715</span>
+<span id="4716">4716</span>
+<span id="4717">4717</span>
+<span id="4718">4718</span>
+<span id="4719">4719</span>
+<span id="4720">4720</span>
+<span id="4721">4721</span>
+<span id="4722">4722</span>
+<span id="4723">4723</span>
+<span id="4724">4724</span>
+<span id="4725">4725</span>
+<span id="4726">4726</span>
+<span id="4727">4727</span>
+<span id="4728">4728</span>
+<span id="4729">4729</span>
+<span id="4730">4730</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2013-2014 The Rust Project Developers. See the COPYRIGHT</span>
 <span class='comment'>// file at the top-level directory of this distribution and at</span>
@@ -4400,6 +4817,8 @@
 <span class='doccomment'>//! ```rust</span>
 <span class='doccomment'>//! extern crate rand;</span>
 <span class='doccomment'>//! extern crate num;</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! # #[cfg(feature = &quot;rand&quot;)]</span>
 <span class='doccomment'>//! # fn main() {</span>
 <span class='doccomment'>//! use num::bigint::{ToBigInt, RandBigInt};</span>
 <span class='doccomment'>//!</span>
@@ -4413,6 +4832,10 @@
 <span class='doccomment'>//! // Probably an even larger number.</span>
 <span class='doccomment'>//! println!(&quot;{}&quot;, a * b);</span>
 <span class='doccomment'>//! # }</span>
+<span class='doccomment'>//!</span>
+<span class='doccomment'>//! # #[cfg(not(feature = &quot;rand&quot;))]</span>
+<span class='doccomment'>//! # fn main() {</span>
+<span class='doccomment'>//! # }</span>
 <span class='doccomment'>//! ```</span>
 
 <span class='kw'>use</span> <span class='ident'>Integer</span>;
@@ -4425,11 +4848,17 @@
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>str</span>::{<span class='self'>self</span>, <span class='ident'>FromStr</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>::{<span class='self'>self</span>, <span class='ident'>Less</span>, <span class='ident'>Greater</span>, <span class='ident'>Equal</span>};
+<span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>f32</span>, <span class='ident'>f64</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>u8</span>, <span class='ident'>i64</span>, <span class='ident'>u64</span>};
 
+<span class='comment'>// Some of the tests of non-RNG-based functionality are randomized using the</span>
+<span class='comment'>// RNG-based functionality, so the RNG-based functionality needs to be enabled</span>
+<span class='comment'>// for tests.</span>
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>any</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;rand&quot;</span>, <span class='ident'>test</span>))]</span>
 <span class='kw'>use</span> <span class='ident'>rand</span>::<span class='ident'>Rng</span>;
 
 <span class='kw'>use</span> <span class='ident'>traits</span>::{<span class='ident'>ToPrimitive</span>, <span class='ident'>FromPrimitive</span>};
+<span class='kw'>use</span> <span class='ident'>traits</span>::<span class='ident'>Float</span>;
 
 <span class='kw'>use</span> {<span class='ident'>Num</span>, <span class='ident'>Unsigned</span>, <span class='ident'>CheckedAdd</span>, <span class='ident'>CheckedSub</span>, <span class='ident'>CheckedMul</span>, <span class='ident'>CheckedDiv</span>, <span class='ident'>Signed</span>, <span class='ident'>Zero</span>, <span class='ident'>One</span>};
 <span class='kw'>use</span> <span class='self'>self</span>::<span class='ident'>Sign</span>::{<span class='ident'>Minus</span>, <span class='ident'>NoSign</span>, <span class='ident'>Plus</span>};
@@ -4528,11 +4957,13 @@
     <span class='kw'>let</span> <span class='ident'>rhs</span> <span class='op'>=</span> <span class='ident'>divisor</span> <span class='kw'>as</span> <span class='ident'>DoubleBigDigit</span>;
     ((<span class='ident'>lhs</span> <span class='op'>/</span> <span class='ident'>rhs</span>) <span class='kw'>as</span> <span class='ident'>BigDigit</span>, (<span class='ident'>lhs</span> <span class='op'>%</span> <span class='ident'>rhs</span>) <span class='kw'>as</span> <span class='ident'>BigDigit</span>)
 }
+
 <span class='doccomment'>/// A big unsigned integer type.</span>
 <span class='doccomment'>///</span>
 <span class='doccomment'>/// A `BigUint`-typed value `BigUint { data: vec!(a, b, c) }` represents a number</span>
 <span class='doccomment'>/// `(a + b * big_digit::BASE + c * big_digit::BASE^2)`.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>Debug</span>, <span class='ident'>Hash</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>Hash</span>)]</span>
+<span class='attribute'>#[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;rustc-serialize&quot;</span>, <span class='ident'>derive</span>(<span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>))]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>BigUint</span> {
     <span class='ident'>data</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>BigDigit</span><span class='op'>&gt;</span>
 }
@@ -5525,6 +5956,67 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
             _ <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>
         }
     }
+
+    <span class='comment'>// `DoubleBigDigit` size dependent</span>
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>to_f32</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>f32</span><span class='op'>&gt;</span> {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>data</span>.<span class='ident'>len</span>() {
+            <span class='number'>0</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>f32</span>::<span class='ident'>zero</span>()),
+            <span class='number'>1</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='self'>self</span>.<span class='ident'>data</span>[<span class='number'>0</span>] <span class='kw'>as</span> <span class='ident'>f32</span>),
+            <span class='ident'>len</span> <span class='op'>=&gt;</span> {
+                <span class='comment'>// this will prevent any overflow of exponent</span>
+                <span class='kw'>if</span> <span class='ident'>len</span> <span class='op'>&gt;</span> (<span class='ident'>f32</span>::<span class='ident'>MAX_EXP</span> <span class='kw'>as</span> <span class='ident'>usize</span>) <span class='op'>/</span> <span class='ident'>big_digit</span>::<span class='ident'>BITS</span> {
+                    <span class='prelude-val'>None</span>
+                } <span class='kw'>else</span> {
+                    <span class='kw'>let</span> <span class='ident'>exponent</span> <span class='op'>=</span> (<span class='ident'>len</span> <span class='op'>-</span> <span class='number'>2</span>) <span class='op'>*</span> <span class='ident'>big_digit</span>::<span class='ident'>BITS</span>;
+                    <span class='comment'>// we need 25 significant digits, 24 to be stored and 1 for rounding</span>
+                    <span class='comment'>// this gives at least 33 significant digits</span>
+                    <span class='kw'>let</span> <span class='ident'>mantissa</span> <span class='op'>=</span> <span class='ident'>big_digit</span>::<span class='ident'>to_doublebigdigit</span>(<span class='self'>self</span>.<span class='ident'>data</span>[<span class='ident'>len</span> <span class='op'>-</span> <span class='number'>1</span>], <span class='self'>self</span>.<span class='ident'>data</span>[<span class='ident'>len</span> <span class='op'>-</span> <span class='number'>2</span>]);
+                    <span class='comment'>// this cast handles rounding</span>
+                    <span class='kw'>let</span> <span class='ident'>ret</span> <span class='op'>=</span> (<span class='ident'>mantissa</span> <span class='kw'>as</span> <span class='ident'>f32</span>) <span class='op'>*</span> <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='ident'>exponent</span> <span class='kw'>as</span> <span class='ident'>i32</span>);
+                    <span class='kw'>if</span> <span class='ident'>ret</span>.<span class='ident'>is_infinite</span>() {
+                        <span class='prelude-val'>None</span>
+                    } <span class='kw'>else</span> {
+                        <span class='prelude-val'>Some</span>(<span class='ident'>ret</span>)
+                    }
+                }
+            }
+        }
+    }
+
+    <span class='comment'>// `DoubleBigDigit` size dependent</span>
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>to_f64</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>f64</span><span class='op'>&gt;</span> {
+        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>data</span>.<span class='ident'>len</span>() {
+            <span class='number'>0</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>f64</span>::<span class='ident'>zero</span>()),
+            <span class='number'>1</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='self'>self</span>.<span class='ident'>data</span>[<span class='number'>0</span>] <span class='kw'>as</span> <span class='ident'>f64</span>),
+            <span class='number'>2</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>(<span class='ident'>big_digit</span>::<span class='ident'>to_doublebigdigit</span>(<span class='self'>self</span>.<span class='ident'>data</span>[<span class='number'>1</span>], <span class='self'>self</span>.<span class='ident'>data</span>[<span class='number'>0</span>]) <span class='kw'>as</span> <span class='ident'>f64</span>),
+            <span class='ident'>len</span> <span class='op'>=&gt;</span> {
+                <span class='comment'>// this will prevent any overflow of exponent</span>
+                <span class='kw'>if</span> <span class='ident'>len</span> <span class='op'>&gt;</span> (<span class='ident'>f64</span>::<span class='ident'>MAX_EXP</span> <span class='kw'>as</span> <span class='ident'>usize</span>) <span class='op'>/</span> <span class='ident'>big_digit</span>::<span class='ident'>BITS</span> {
+                    <span class='prelude-val'>None</span>
+                } <span class='kw'>else</span> {
+                    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>exponent</span> <span class='op'>=</span> (<span class='ident'>len</span> <span class='op'>-</span> <span class='number'>2</span>) <span class='op'>*</span> <span class='ident'>big_digit</span>::<span class='ident'>BITS</span>;
+                    <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>mantissa</span> <span class='op'>=</span> <span class='ident'>big_digit</span>::<span class='ident'>to_doublebigdigit</span>(<span class='self'>self</span>.<span class='ident'>data</span>[<span class='ident'>len</span> <span class='op'>-</span> <span class='number'>1</span>], <span class='self'>self</span>.<span class='ident'>data</span>[<span class='ident'>len</span> <span class='op'>-</span> <span class='number'>2</span>]);
+                    <span class='comment'>// we need at least 54 significant bit digits, 53 to be stored and 1 for rounding</span>
+                    <span class='comment'>// so we take enough from the next BigDigit to make it up to 64</span>
+                    <span class='kw'>let</span> <span class='ident'>shift</span> <span class='op'>=</span> <span class='ident'>mantissa</span>.<span class='ident'>leading_zeros</span>() <span class='kw'>as</span> <span class='ident'>usize</span>;
+                    <span class='kw'>if</span> <span class='ident'>shift</span> <span class='op'>&gt;</span> <span class='number'>0</span> {
+                        <span class='ident'>mantissa</span> <span class='op'>&lt;&lt;=</span> <span class='ident'>shift</span>;
+                        <span class='ident'>mantissa</span> <span class='op'>|=</span> <span class='self'>self</span>.<span class='ident'>data</span>[<span class='ident'>len</span> <span class='op'>-</span> <span class='number'>3</span>] <span class='kw'>as</span> <span class='ident'>u64</span> <span class='op'>&gt;&gt;</span> (<span class='ident'>big_digit</span>::<span class='ident'>BITS</span> <span class='op'>-</span> <span class='ident'>shift</span>);
+                        <span class='ident'>exponent</span> <span class='op'>-=</span> <span class='ident'>shift</span>;
+                    }
+                    <span class='comment'>// this cast handles rounding</span>
+                    <span class='kw'>let</span> <span class='ident'>ret</span> <span class='op'>=</span> (<span class='ident'>mantissa</span> <span class='kw'>as</span> <span class='ident'>f64</span>) <span class='op'>*</span> <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='ident'>exponent</span> <span class='kw'>as</span> <span class='ident'>i32</span>);
+                    <span class='kw'>if</span> <span class='ident'>ret</span>.<span class='ident'>is_infinite</span>() {
+                        <span class='prelude-val'>None</span>
+                    } <span class='kw'>else</span> {
+                        <span class='prelude-val'>Some</span>(<span class='ident'>ret</span>)
+                    }
+                }
+            }
+        }
+    }
 }
 
 <span class='kw'>impl</span> <span class='ident'>FromPrimitive</span> <span class='kw'>for</span> <span class='ident'>BigUint</span> {
@@ -5540,6 +6032,36 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>from_u64</span>(<span class='ident'>n</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>BigUint</span><span class='op'>&gt;</span> {
         <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='ident'>n</span>))
+    }
+
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>from_f64</span>(<span class='kw-2'>mut</span> <span class='ident'>n</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>BigUint</span><span class='op'>&gt;</span> {
+        <span class='comment'>// handle NAN, INFINITY, NEG_INFINITY</span>
+        <span class='kw'>if</span> <span class='op'>!</span><span class='ident'>n</span>.<span class='ident'>is_finite</span>() {
+            <span class='kw'>return</span> <span class='prelude-val'>None</span>;
+        }
+
+        <span class='comment'>// match the rounding of casting from float to int</span>
+        <span class='ident'>n</span> <span class='op'>=</span> <span class='ident'>n</span>.<span class='ident'>trunc</span>();
+
+        <span class='comment'>// handle 0.x, -0.x</span>
+        <span class='kw'>if</span> <span class='ident'>n</span>.<span class='ident'>is_zero</span>() {
+            <span class='kw'>return</span> <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>());
+        }
+
+        <span class='kw'>let</span> (<span class='ident'>mantissa</span>, <span class='ident'>exponent</span>, <span class='ident'>sign</span>) <span class='op'>=</span> <span class='ident'>Float</span>::<span class='ident'>integer_decode</span>(<span class='ident'>n</span>);
+
+        <span class='kw'>if</span> <span class='ident'>sign</span> <span class='op'>==</span> <span class='op'>-</span><span class='number'>1</span> {
+            <span class='kw'>return</span> <span class='prelude-val'>None</span>;
+        }
+
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>ret</span> <span class='op'>=</span> <span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='ident'>mantissa</span>);
+        <span class='kw'>if</span> <span class='ident'>exponent</span> <span class='op'>&gt;</span> <span class='number'>0</span> {
+            <span class='ident'>ret</span> <span class='op'>=</span> <span class='ident'>ret</span> <span class='op'>&lt;&lt;</span> <span class='ident'>exponent</span> <span class='kw'>as</span> <span class='ident'>usize</span>;
+        } <span class='kw'>else</span> <span class='kw'>if</span> <span class='ident'>exponent</span> <span class='op'>&lt;</span> <span class='number'>0</span> {
+            <span class='ident'>ret</span> <span class='op'>=</span> <span class='ident'>ret</span> <span class='op'>&gt;&gt;</span> (<span class='op'>-</span><span class='ident'>exponent</span>) <span class='kw'>as</span> <span class='ident'>usize</span>;
+        }
+        <span class='prelude-val'>Some</span>(<span class='ident'>ret</span>)
     }
 }
 
@@ -5618,6 +6140,8 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
 <span class='macro'>impl_to_biguint</span><span class='macro'>!</span>(<span class='ident'>u16</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_u16</span>);
 <span class='macro'>impl_to_biguint</span><span class='macro'>!</span>(<span class='ident'>u32</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_u32</span>);
 <span class='macro'>impl_to_biguint</span><span class='macro'>!</span>(<span class='ident'>u64</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_u64</span>);
+<span class='macro'>impl_to_biguint</span><span class='macro'>!</span>(<span class='ident'>f32</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_f32</span>);
+<span class='macro'>impl_to_biguint</span><span class='macro'>!</span>(<span class='ident'>f64</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_f64</span>);
 
 <span class='comment'>// Extract bitwise digits that evenly divide BigDigit</span>
 <span class='kw'>fn</span> <span class='ident'>to_bitwise_digits_le</span>(<span class='ident'>u</span>: <span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>, <span class='ident'>bits</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span> {
@@ -5991,7 +6515,8 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
 }
 
 <span class='doccomment'>/// A Sign is a `BigInt`&#39;s composing element.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>Hash</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>PartialEq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>Ord</span>, <span class='ident'>Copy</span>, <span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>Hash</span>)]</span>
+<span class='attribute'>#[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;rustc-serialize&quot;</span>, <span class='ident'>derive</span>(<span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>))]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Sign</span> { <span class='ident'>Minus</span>, <span class='ident'>NoSign</span>, <span class='ident'>Plus</span> }
 
 <span class='kw'>impl</span> <span class='ident'>Neg</span> <span class='kw'>for</span> <span class='ident'>Sign</span> {
@@ -6022,7 +6547,8 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
 }
 
 <span class='doccomment'>/// A big signed integer type.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>Debug</span>, <span class='ident'>Hash</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>Hash</span>)]</span>
+<span class='attribute'>#[<span class='ident'>cfg_attr</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;rustc-serialize&quot;</span>, <span class='ident'>derive</span>(<span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>))]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>BigInt</span> {
     <span class='ident'>sign</span>: <span class='ident'>Sign</span>,
     <span class='ident'>data</span>: <span class='ident'>BigUint</span>
@@ -6480,6 +7006,16 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
             <span class='ident'>Minus</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>
         }
     }
+
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>to_f32</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>f32</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>data</span>.<span class='ident'>to_f32</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>sign</span> <span class='op'>==</span> <span class='ident'>Minus</span> { <span class='op'>-</span><span class='ident'>n</span> } <span class='kw'>else</span> { <span class='ident'>n</span> })
+    }
+
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>to_f64</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>f64</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>data</span>.<span class='ident'>to_f64</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>n</span><span class='op'>|</span> <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>sign</span> <span class='op'>==</span> <span class='ident'>Minus</span> { <span class='op'>-</span><span class='ident'>n</span> } <span class='kw'>else</span> { <span class='ident'>n</span> })
+    }
 }
 
 <span class='kw'>impl</span> <span class='ident'>FromPrimitive</span> <span class='kw'>for</span> <span class='ident'>BigInt</span> {
@@ -6491,6 +7027,15 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <span class='attribute'>#[<span class='ident'>inline</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>from_u64</span>(<span class='ident'>n</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>BigInt</span><span class='op'>&gt;</span> {
         <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='ident'>n</span>))
+    }
+
+    <span class='attribute'>#[<span class='ident'>inline</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>from_f64</span>(<span class='ident'>n</span>: <span class='ident'>f64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>BigInt</span><span class='op'>&gt;</span> {
+        <span class='kw'>if</span> <span class='ident'>n</span> <span class='op'>&gt;=</span> <span class='number'>0.0</span> {
+            <span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>n</span>).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>BigInt</span>::<span class='ident'>from_biguint</span>(<span class='ident'>Plus</span>, <span class='ident'>x</span>))
+        } <span class='kw'>else</span> {
+            <span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='ident'>n</span>).<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>x</span><span class='op'>|</span> <span class='ident'>BigInt</span>::<span class='ident'>from_biguint</span>(<span class='ident'>Minus</span>, <span class='ident'>x</span>))
+        }
     }
 }
 
@@ -6605,6 +7150,8 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
 <span class='macro'>impl_to_bigint</span><span class='macro'>!</span>(<span class='ident'>u16</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_u16</span>);
 <span class='macro'>impl_to_bigint</span><span class='macro'>!</span>(<span class='ident'>u32</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_u32</span>);
 <span class='macro'>impl_to_bigint</span><span class='macro'>!</span>(<span class='ident'>u64</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_u64</span>);
+<span class='macro'>impl_to_bigint</span><span class='macro'>!</span>(<span class='ident'>f32</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_f32</span>);
+<span class='macro'>impl_to_bigint</span><span class='macro'>!</span>(<span class='ident'>f64</span>,  <span class='ident'>FromPrimitive</span>::<span class='ident'>from_f64</span>);
 
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>RandBigInt</span> {
     <span class='doccomment'>/// Generate a random `BigUint` of the given bit size.</span>
@@ -6628,6 +7175,7 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <span class='kw'>fn</span> <span class='ident'>gen_bigint_range</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>lbound</span>: <span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>, <span class='ident'>ubound</span>: <span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>) <span class='op'>-&gt;</span> <span class='ident'>BigInt</span>;
 }
 
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>any</span>(<span class='ident'>feature</span> <span class='op'>=</span> <span class='string'>&quot;rand&quot;</span>, <span class='ident'>test</span>))]</span>
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>R</span>: <span class='ident'>Rng</span><span class='op'>&gt;</span> <span class='ident'>RandBigInt</span> <span class='kw'>for</span> <span class='ident'>R</span> {
     <span class='kw'>fn</span> <span class='ident'>gen_biguint</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>bit_size</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>BigUint</span> {
         <span class='kw'>let</span> (<span class='ident'>digits</span>, <span class='ident'>rem</span>) <span class='op'>=</span> <span class='ident'>bit_size</span>.<span class='ident'>div_rem</span>(<span class='kw-2'>&amp;</span><span class='ident'>big_digit</span>::<span class='ident'>BITS</span>);
@@ -6901,6 +7449,7 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>Sign</span>::<span class='ident'>Plus</span>;
 
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>::{<span class='ident'>Less</span>, <span class='ident'>Equal</span>, <span class='ident'>Greater</span>};
+    <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>f32</span>, <span class='ident'>f64</span>};
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>i64</span>;
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>iter</span>::<span class='ident'>repeat</span>;
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>FromStr</span>;
@@ -6909,6 +7458,7 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <span class='kw'>use</span> <span class='ident'>rand</span>::<span class='ident'>thread_rng</span>;
     <span class='kw'>use</span> {<span class='ident'>Num</span>, <span class='ident'>Zero</span>, <span class='ident'>One</span>, <span class='ident'>CheckedAdd</span>, <span class='ident'>CheckedSub</span>, <span class='ident'>CheckedMul</span>, <span class='ident'>CheckedDiv</span>};
     <span class='kw'>use</span> {<span class='ident'>ToPrimitive</span>, <span class='ident'>FromPrimitive</span>};
+    <span class='kw'>use</span> <span class='ident'>Float</span>;
 
     <span class='doccomment'>/// Assert that an op works for all val/ref combinations</span>
     <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>assert_op</span> {
@@ -7386,6 +7936,137 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>new</span>(<span class='macro'>vec</span><span class='macro'>!</span>( <span class='number'>0</span>,  <span class='number'>0</span>,  <span class='number'>1</span>)).<span class='ident'>to_u64</span>(), <span class='prelude-val'>None</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>new</span>(<span class='macro'>vec</span><span class='macro'>!</span>(<span class='ident'>N1</span>, <span class='ident'>N1</span>, <span class='ident'>N1</span>)).<span class='ident'>to_u64</span>(), <span class='prelude-val'>None</span>);
+    }
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>test_convert_f32</span>() {
+        <span class='kw'>fn</span> <span class='ident'>check</span>(<span class='ident'>b1</span>: <span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>, <span class='ident'>f</span>: <span class='ident'>f32</span>) {
+            <span class='kw'>let</span> <span class='ident'>b2</span> <span class='op'>=</span> <span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f</span>).<span class='ident'>unwrap</span>();
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>, <span class='kw-2'>&amp;</span><span class='ident'>b2</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>.<span class='ident'>to_f32</span>().<span class='ident'>unwrap</span>(), <span class='ident'>f</span>);
+        }
+
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>zero</span>(), <span class='number'>0.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>one</span>(), <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='ident'>u16</span>::<span class='ident'>MAX</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>16</span>) <span class='op'>-</span> <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>32</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>32</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>from_slice</span>(<span class='kw-2'>&amp;</span>[<span class='number'>0</span>, <span class='number'>0</span>, <span class='number'>1</span>]), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>64</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>((<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>100</span>) <span class='op'>+</span> (<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>123</span>)), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>100</span>) <span class='op'>+</span> <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>123</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>127</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>127</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>24</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='op'>&lt;&lt;</span> (<span class='number'>128</span> <span class='op'>-</span> <span class='number'>24</span>)), <span class='ident'>f32</span>::<span class='ident'>MAX</span>);
+
+        <span class='comment'>// keeping all 24 digits with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='ident'>x</span>: <span class='ident'>u32</span> <span class='op'>=</span> <span class='number'>0b00000000101111011111011011011101</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>f32</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='ident'>x</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>64</span> {
+            <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>b</span>, <span class='ident'>f</span>);
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// this number when rounded to f64 then f32 isn&#39;t the same as when rounded straight to f32</span>
+        <span class='kw'>let</span> <span class='ident'>n</span>: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>0b0000000000111111111111111111111111011111111111111111111111111111</span>;
+        <span class='macro'>assert</span><span class='macro'>!</span>((<span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f64</span>) <span class='kw'>as</span> <span class='ident'>f32</span> <span class='op'>!=</span> <span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f32</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='ident'>n</span>).<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f32</span>));
+
+        <span class='comment'>// test rounding up with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> ((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>25</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='kw'>as</span> <span class='ident'>f32</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>25</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>64</span> {
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b</span>.<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f</span>));
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// rounding</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='number'>1.0</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='number'>0.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>MIN_POSITIVE</span> <span class='op'>/</span> <span class='number'>2.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>MIN_POSITIVE</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>consts</span>::<span class='ident'>E</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>2u32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>consts</span>::<span class='ident'>PI</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>3u32</span>)));
+
+        <span class='comment'>// special float values</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>NAN</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>INFINITY</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>NEG_INFINITY</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>MIN</span>), <span class='prelude-val'>None</span>);
+
+        <span class='comment'>// largest BigUint that will round to a finite f32 value</span>
+        <span class='kw'>let</span> <span class='ident'>big_num</span> <span class='op'>=</span> (<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>) <span class='op'>-</span> <span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>-</span> (<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> (<span class='number'>128</span> <span class='op'>-</span> <span class='number'>25</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>big_num</span>.<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f32</span>::<span class='ident'>MAX</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='ident'>big_num</span> <span class='op'>+</span> <span class='ident'>BigUint</span>::<span class='ident'>one</span>()).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(((<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>) <span class='op'>-</span> <span class='ident'>BigUint</span>::<span class='ident'>one</span>()).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+    }
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>test_convert_f64</span>() {
+        <span class='kw'>fn</span> <span class='ident'>check</span>(<span class='ident'>b1</span>: <span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>, <span class='ident'>f</span>: <span class='ident'>f64</span>) {
+            <span class='kw'>let</span> <span class='ident'>b2</span> <span class='op'>=</span> <span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f</span>).<span class='ident'>unwrap</span>();
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>, <span class='kw-2'>&amp;</span><span class='ident'>b2</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>.<span class='ident'>to_f64</span>().<span class='ident'>unwrap</span>(), <span class='ident'>f</span>);
+        }
+
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>zero</span>(), <span class='number'>0.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>one</span>(), <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='ident'>u32</span>::<span class='ident'>MAX</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>32</span>) <span class='op'>-</span> <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>32</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>32</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigUint</span>::<span class='ident'>from_slice</span>(<span class='kw-2'>&amp;</span>[<span class='number'>0</span>, <span class='number'>0</span>, <span class='number'>1</span>]), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>64</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>((<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>100</span>) <span class='op'>+</span> (<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>152</span>)), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>100</span>) <span class='op'>+</span> <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>152</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1023</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>1023</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>53</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='op'>&lt;&lt;</span> (<span class='number'>1024</span> <span class='op'>-</span> <span class='number'>53</span>)), <span class='ident'>f64</span>::<span class='ident'>MAX</span>);
+
+        <span class='comment'>// keeping all 53 digits with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='ident'>x</span>: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>0b0000000000011110111110110111111101110111101111011111011011011101</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>f64</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='ident'>x</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>128</span> {
+            <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>b</span>, <span class='ident'>f</span>);
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// test rounding up with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> ((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>54</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='kw'>as</span> <span class='ident'>f64</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>54</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>128</span> {
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b</span>.<span class='ident'>to_f64</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f</span>));
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// rounding</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='number'>1.0</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='number'>0.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>MIN_POSITIVE</span> <span class='op'>/</span> <span class='number'>2.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>MIN_POSITIVE</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>consts</span>::<span class='ident'>E</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>2u32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>consts</span>::<span class='ident'>PI</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigUint</span>::<span class='ident'>from</span>(<span class='number'>3u32</span>)));
+
+        <span class='comment'>// special float values</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>NAN</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>INFINITY</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>NEG_INFINITY</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigUint</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>MIN</span>), <span class='prelude-val'>None</span>);
+
+        <span class='comment'>// largest BigUint that will round to a finite f64 value</span>
+        <span class='kw'>let</span> <span class='ident'>big_num</span> <span class='op'>=</span> (<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>) <span class='op'>-</span> <span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>-</span> (<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> (<span class='number'>1024</span> <span class='op'>-</span> <span class='number'>54</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>big_num</span>.<span class='ident'>to_f64</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f64</span>::<span class='ident'>MAX</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='ident'>big_num</span> <span class='op'>+</span> <span class='ident'>BigUint</span>::<span class='ident'>one</span>()).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
+
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>()).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='ident'>BigUint</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -7942,6 +8623,7 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='ident'>Sign</span>::{<span class='ident'>Minus</span>, <span class='ident'>NoSign</span>, <span class='ident'>Plus</span>};
 
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>::{<span class='ident'>Less</span>, <span class='ident'>Equal</span>, <span class='ident'>Greater</span>};
+    <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>f32</span>, <span class='ident'>f64</span>};
     <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>i8</span>, <span class='ident'>i16</span>, <span class='ident'>i32</span>, <span class='ident'>i64</span>, <span class='ident'>isize</span>};
     <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>iter</span>::<span class='ident'>repeat</span>;
     <span class='kw'>use</span> <span class='ident'>std</span>::{<span class='ident'>u8</span>, <span class='ident'>u16</span>, <span class='ident'>u32</span>, <span class='ident'>u64</span>, <span class='ident'>usize</span>};
@@ -7950,6 +8632,7 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <span class='kw'>use</span> <span class='ident'>rand</span>::<span class='ident'>thread_rng</span>;
 
     <span class='kw'>use</span> {<span class='ident'>Zero</span>, <span class='ident'>One</span>, <span class='ident'>Signed</span>, <span class='ident'>ToPrimitive</span>, <span class='ident'>FromPrimitive</span>, <span class='ident'>Num</span>};
+    <span class='kw'>use</span> <span class='ident'>Float</span>;
 
     <span class='doccomment'>/// Assert that an op works for all val/ref combinations</span>
     <span class='macro'>macro_rules</span><span class='macro'>!</span> <span class='ident'>assert_op</span> {
@@ -8148,6 +8831,156 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
         <span class='kw'>let</span> <span class='ident'>max_value</span>: <span class='ident'>BigUint</span> <span class='op'>=</span> <span class='ident'>FromPrimitive</span>::<span class='ident'>from_u64</span>(<span class='ident'>u64</span>::<span class='ident'>MAX</span>).<span class='ident'>unwrap</span>();
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_biguint</span>(<span class='ident'>Minus</span>, <span class='ident'>max_value</span>).<span class='ident'>to_u64</span>(), <span class='prelude-val'>None</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_biguint</span>(<span class='ident'>Minus</span>, <span class='ident'>BigUint</span>::<span class='ident'>new</span>(<span class='macro'>vec</span><span class='macro'>!</span>(<span class='number'>1</span>, <span class='number'>2</span>, <span class='number'>3</span>, <span class='number'>4</span>, <span class='number'>5</span>))).<span class='ident'>to_u64</span>(), <span class='prelude-val'>None</span>);
+    }
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>test_convert_f32</span>() {
+        <span class='kw'>fn</span> <span class='ident'>check</span>(<span class='ident'>b1</span>: <span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>, <span class='ident'>f</span>: <span class='ident'>f32</span>) {
+            <span class='kw'>let</span> <span class='ident'>b2</span> <span class='op'>=</span> <span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f</span>).<span class='ident'>unwrap</span>();
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>, <span class='kw-2'>&amp;</span><span class='ident'>b2</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>.<span class='ident'>to_f32</span>().<span class='ident'>unwrap</span>(), <span class='ident'>f</span>);
+            <span class='kw'>let</span> <span class='ident'>neg_b1</span> <span class='op'>=</span> <span class='op'>-</span><span class='ident'>b1</span>;
+            <span class='kw'>let</span> <span class='ident'>neg_b2</span> <span class='op'>=</span> <span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='ident'>f</span>).<span class='ident'>unwrap</span>();
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>neg_b1</span>, <span class='ident'>neg_b2</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>neg_b1</span>.<span class='ident'>to_f32</span>().<span class='ident'>unwrap</span>(), <span class='op'>-</span><span class='ident'>f</span>);
+        }
+
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>zero</span>(), <span class='number'>0.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>one</span>(), <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='ident'>u16</span>::<span class='ident'>MAX</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>16</span>) <span class='op'>-</span> <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>32</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>32</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>from_slice</span>(<span class='ident'>Plus</span>, <span class='kw-2'>&amp;</span>[<span class='number'>0</span>, <span class='number'>0</span>, <span class='number'>1</span>]), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>64</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>100</span>) <span class='op'>+</span> (<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>123</span>)), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>100</span>) <span class='op'>+</span> <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>123</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>127</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>127</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>24</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='op'>&lt;&lt;</span> (<span class='number'>128</span> <span class='op'>-</span> <span class='number'>24</span>)), <span class='ident'>f32</span>::<span class='ident'>MAX</span>);
+
+        <span class='comment'>// keeping all 24 digits with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='ident'>x</span>: <span class='ident'>u32</span> <span class='op'>=</span> <span class='number'>0b00000000101111011111011011011101</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>f32</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='ident'>x</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>64</span> {
+            <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>b</span>, <span class='ident'>f</span>);
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// this number when rounded to f64 then f32 isn&#39;t the same as when rounded straight to f32</span>
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>n</span>: <span class='ident'>i64</span> <span class='op'>=</span> <span class='number'>0b0000000000111111111111111111111111011111111111111111111111111111</span>;
+        <span class='macro'>assert</span><span class='macro'>!</span>((<span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f64</span>) <span class='kw'>as</span> <span class='ident'>f32</span> <span class='op'>!=</span> <span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f32</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='ident'>n</span>).<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f32</span>));
+        <span class='ident'>n</span> <span class='op'>=</span> <span class='op'>-</span><span class='ident'>n</span>;
+        <span class='macro'>assert</span><span class='macro'>!</span>((<span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f64</span>) <span class='kw'>as</span> <span class='ident'>f32</span> <span class='op'>!=</span> <span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f32</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='ident'>n</span>).<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>n</span> <span class='kw'>as</span> <span class='ident'>f32</span>));
+
+        <span class='comment'>// test rounding up with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> ((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>25</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='kw'>as</span> <span class='ident'>f32</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>25</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>64</span> {
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b</span>.<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f</span>));
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// rounding</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='ident'>f32</span>::<span class='ident'>consts</span>::<span class='ident'>PI</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='op'>-</span><span class='number'>3i32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='ident'>f32</span>::<span class='ident'>consts</span>::<span class='ident'>E</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='op'>-</span><span class='number'>2i32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='op'>-</span><span class='number'>0.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>MIN_POSITIVE</span> <span class='op'>/</span> <span class='number'>2.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>MIN_POSITIVE</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>consts</span>::<span class='ident'>E</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>2u32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>consts</span>::<span class='ident'>PI</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>3u32</span>)));
+
+        <span class='comment'>// special float values</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>NAN</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>INFINITY</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f32</span>(<span class='ident'>f32</span>::<span class='ident'>NEG_INFINITY</span>), <span class='prelude-val'>None</span>);
+
+        <span class='comment'>// largest BigInt that will round to a finite f32 value</span>
+        <span class='kw'>let</span> <span class='ident'>big_num</span> <span class='op'>=</span> (<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>-</span> (<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> (<span class='number'>128</span> <span class='op'>-</span> <span class='number'>25</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>big_num</span>.<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f32</span>::<span class='ident'>MAX</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='kw-2'>&amp;</span><span class='ident'>big_num</span> <span class='op'>+</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>()).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='op'>-</span><span class='kw-2'>&amp;</span><span class='ident'>big_num</span>).<span class='ident'>to_f32</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f32</span>::<span class='ident'>MIN</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(((<span class='op'>-</span><span class='kw-2'>&amp;</span><span class='ident'>big_num</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>()).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>()).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='op'>-</span>((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>())).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='op'>-</span>(<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>128</span>)).<span class='ident'>to_f32</span>(), <span class='prelude-val'>None</span>);
+    }
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>test_convert_f64</span>() {
+        <span class='kw'>fn</span> <span class='ident'>check</span>(<span class='ident'>b1</span>: <span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>, <span class='ident'>f</span>: <span class='ident'>f64</span>) {
+            <span class='kw'>let</span> <span class='ident'>b2</span> <span class='op'>=</span>  <span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f</span>).<span class='ident'>unwrap</span>();
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>, <span class='kw-2'>&amp;</span><span class='ident'>b2</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b1</span>.<span class='ident'>to_f64</span>().<span class='ident'>unwrap</span>(), <span class='ident'>f</span>);
+            <span class='kw'>let</span> <span class='ident'>neg_b1</span> <span class='op'>=</span> <span class='op'>-</span><span class='ident'>b1</span>;
+            <span class='kw'>let</span> <span class='ident'>neg_b2</span> <span class='op'>=</span> <span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='ident'>f</span>).<span class='ident'>unwrap</span>();
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>neg_b1</span>, <span class='ident'>neg_b2</span>);
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>neg_b1</span>.<span class='ident'>to_f64</span>().<span class='ident'>unwrap</span>(), <span class='op'>-</span><span class='ident'>f</span>);
+        }
+
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>zero</span>(), <span class='number'>0.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>one</span>(), <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='ident'>u32</span>::<span class='ident'>MAX</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>32</span>) <span class='op'>-</span> <span class='number'>1.0</span>);
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>32</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>32</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>BigInt</span>::<span class='ident'>from_slice</span>(<span class='ident'>Plus</span>, <span class='kw-2'>&amp;</span>[<span class='number'>0</span>, <span class='number'>0</span>, <span class='number'>1</span>]), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>64</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>100</span>) <span class='op'>+</span> (<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>152</span>)), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>100</span>) <span class='op'>+</span> <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>152</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1023</span>), <span class='number'>2.0</span>.<span class='ident'>powi</span>(<span class='number'>1023</span>));
+        <span class='ident'>check</span>(<span class='kw-2'>&amp;</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>53</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='op'>&lt;&lt;</span> (<span class='number'>1024</span> <span class='op'>-</span> <span class='number'>53</span>)), <span class='ident'>f64</span>::<span class='ident'>MAX</span>);
+
+        <span class='comment'>// keeping all 53 digits with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='ident'>x</span>: <span class='ident'>u64</span> <span class='op'>=</span> <span class='number'>0b0000000000011110111110110111111101110111101111011111011011011101</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> <span class='ident'>x</span> <span class='kw'>as</span> <span class='ident'>f64</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='ident'>x</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>128</span> {
+            <span class='ident'>check</span>(<span class='kw-2'>&amp;</span><span class='ident'>b</span>, <span class='ident'>f</span>);
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// test rounding up with the bits at different offsets to the BigDigits</span>
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>f</span> <span class='op'>=</span> ((<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>54</span>) <span class='op'>-</span> <span class='number'>1</span>) <span class='kw'>as</span> <span class='ident'>f64</span>;
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>1u64</span> <span class='op'>&lt;&lt;</span> <span class='number'>54</span>);
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>128</span> {
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>b</span>.<span class='ident'>to_f64</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f</span>));
+            <span class='ident'>f</span> <span class='op'>*=</span> <span class='number'>2.0</span>;
+            <span class='ident'>b</span> <span class='op'>=</span> <span class='ident'>b</span> <span class='op'>&lt;&lt;</span> <span class='number'>1</span>;
+        }
+
+        <span class='comment'>// rounding</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='ident'>f64</span>::<span class='ident'>consts</span>::<span class='ident'>PI</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='op'>-</span><span class='number'>3i32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='ident'>f64</span>::<span class='ident'>consts</span>::<span class='ident'>E</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='op'>-</span><span class='number'>2i32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='op'>-</span><span class='number'>0.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>MIN_POSITIVE</span> <span class='op'>/</span> <span class='number'>2.0</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>MIN_POSITIVE</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='number'>0.5</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='number'>0.99999</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>zero</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>consts</span>::<span class='ident'>E</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>2u32</span>)));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>consts</span>::<span class='ident'>PI</span>), <span class='prelude-val'>Some</span>(<span class='ident'>BigInt</span>::<span class='ident'>from</span>(<span class='number'>3u32</span>)));
+
+        <span class='comment'>// special float values</span>
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>NAN</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>INFINITY</span>), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>BigInt</span>::<span class='ident'>from_f64</span>(<span class='ident'>f64</span>::<span class='ident'>NEG_INFINITY</span>), <span class='prelude-val'>None</span>);
+
+        <span class='comment'>// largest BigInt that will round to a finite f64 value</span>
+        <span class='kw'>let</span> <span class='ident'>big_num</span> <span class='op'>=</span> (<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>-</span> (<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> (<span class='number'>1024</span> <span class='op'>-</span> <span class='number'>54</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>big_num</span>.<span class='ident'>to_f64</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f64</span>::<span class='ident'>MAX</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='kw-2'>&amp;</span><span class='ident'>big_num</span> <span class='op'>+</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>()).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='op'>-</span><span class='kw-2'>&amp;</span><span class='ident'>big_num</span>).<span class='ident'>to_f64</span>(), <span class='prelude-val'>Some</span>(<span class='ident'>f64</span>::<span class='ident'>MIN</span>));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(((<span class='op'>-</span><span class='kw-2'>&amp;</span><span class='ident'>big_num</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>()).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
+
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>()).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='op'>-</span>((<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>) <span class='op'>-</span> <span class='ident'>BigInt</span>::<span class='ident'>one</span>())).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>((<span class='op'>-</span>(<span class='ident'>BigInt</span>::<span class='ident'>one</span>() <span class='op'>&lt;&lt;</span> <span class='number'>1024</span>)).<span class='ident'>to_f64</span>(), <span class='prelude-val'>None</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -8729,6 +9562,6 @@ impl&lt;&#39;a&gt; Add&lt;&amp;&#39;a [BigDigit]&gt; for BigUint {
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     <script src="../../playpen.js"></script>
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

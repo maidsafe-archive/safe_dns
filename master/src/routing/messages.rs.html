@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/routing-0.6.1/src/messages.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/messages.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>messages.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -376,6 +377,213 @@
 <span id="334">334</span>
 <span id="335">335</span>
 <span id="336">336</span>
+<span id="337">337</span>
+<span id="338">338</span>
+<span id="339">339</span>
+<span id="340">340</span>
+<span id="341">341</span>
+<span id="342">342</span>
+<span id="343">343</span>
+<span id="344">344</span>
+<span id="345">345</span>
+<span id="346">346</span>
+<span id="347">347</span>
+<span id="348">348</span>
+<span id="349">349</span>
+<span id="350">350</span>
+<span id="351">351</span>
+<span id="352">352</span>
+<span id="353">353</span>
+<span id="354">354</span>
+<span id="355">355</span>
+<span id="356">356</span>
+<span id="357">357</span>
+<span id="358">358</span>
+<span id="359">359</span>
+<span id="360">360</span>
+<span id="361">361</span>
+<span id="362">362</span>
+<span id="363">363</span>
+<span id="364">364</span>
+<span id="365">365</span>
+<span id="366">366</span>
+<span id="367">367</span>
+<span id="368">368</span>
+<span id="369">369</span>
+<span id="370">370</span>
+<span id="371">371</span>
+<span id="372">372</span>
+<span id="373">373</span>
+<span id="374">374</span>
+<span id="375">375</span>
+<span id="376">376</span>
+<span id="377">377</span>
+<span id="378">378</span>
+<span id="379">379</span>
+<span id="380">380</span>
+<span id="381">381</span>
+<span id="382">382</span>
+<span id="383">383</span>
+<span id="384">384</span>
+<span id="385">385</span>
+<span id="386">386</span>
+<span id="387">387</span>
+<span id="388">388</span>
+<span id="389">389</span>
+<span id="390">390</span>
+<span id="391">391</span>
+<span id="392">392</span>
+<span id="393">393</span>
+<span id="394">394</span>
+<span id="395">395</span>
+<span id="396">396</span>
+<span id="397">397</span>
+<span id="398">398</span>
+<span id="399">399</span>
+<span id="400">400</span>
+<span id="401">401</span>
+<span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
+<span id="408">408</span>
+<span id="409">409</span>
+<span id="410">410</span>
+<span id="411">411</span>
+<span id="412">412</span>
+<span id="413">413</span>
+<span id="414">414</span>
+<span id="415">415</span>
+<span id="416">416</span>
+<span id="417">417</span>
+<span id="418">418</span>
+<span id="419">419</span>
+<span id="420">420</span>
+<span id="421">421</span>
+<span id="422">422</span>
+<span id="423">423</span>
+<span id="424">424</span>
+<span id="425">425</span>
+<span id="426">426</span>
+<span id="427">427</span>
+<span id="428">428</span>
+<span id="429">429</span>
+<span id="430">430</span>
+<span id="431">431</span>
+<span id="432">432</span>
+<span id="433">433</span>
+<span id="434">434</span>
+<span id="435">435</span>
+<span id="436">436</span>
+<span id="437">437</span>
+<span id="438">438</span>
+<span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
+<span id="521">521</span>
+<span id="522">522</span>
+<span id="523">523</span>
+<span id="524">524</span>
+<span id="525">525</span>
+<span id="526">526</span>
+<span id="527">527</span>
+<span id="528">528</span>
+<span id="529">529</span>
+<span id="530">530</span>
+<span id="531">531</span>
+<span id="532">532</span>
+<span id="533">533</span>
+<span id="534">534</span>
+<span id="535">535</span>
+<span id="536">536</span>
+<span id="537">537</span>
+<span id="538">538</span>
+<span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -394,6 +602,7 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
 <span class='kw'>use</span> <span class='ident'>data</span>::{<span class='ident'>Data</span>, <span class='ident'>DataRequest</span>};
 <span class='kw'>use</span> <span class='ident'>id</span>::{<span class='ident'>FullId</span>, <span class='ident'>PublicId</span>};
 <span class='kw'>use</span> <span class='ident'>types</span>::<span class='ident'>MessageId</span>;
@@ -406,57 +615,66 @@
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Decoder</span>, <span class='ident'>Encoder</span>};
 
 <span class='doccomment'>/// Wrapper of all messages.</span>
-<span class='doccomment'>/// This is the only type allowed to be sent / received on the network</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// This is the only type allowed to be sent / received on the network.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Message</span> {
-    <span class='doccomment'>/// A message sent between w nodes directly</span>
+    <span class='doccomment'>/// A message sent between two nodes directly</span>
     <span class='ident'>DirectMessage</span>(<span class='ident'>DirectMessage</span>),
-    <span class='doccomment'>/// A message ent across the network (in transit)</span>
+    <span class='doccomment'>/// A message sent across the network (in transit)</span>
     <span class='ident'>HopMessage</span>(<span class='ident'>HopMessage</span>),
 }
 
-<span class='doccomment'>/// Messages sent direct to a node</span>
-<span class='doccomment'>/// Allows routing to directly send specific messages between nodes</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
+<span class='doccomment'>/// Messages sent via a direct connection.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// Allows routing to directly send specific messages between nodes.</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>DirectMessage</span> {
-    <span class='doccomment'>/// Sent from bootstrap node to client</span>
+    <span class='doccomment'>/// Sent from the bootstrap node to a client in response to `ClientIdentify`.</span>
     <span class='ident'>BootstrapIdentify</span> {
-        <span class='doccomment'>/// keys and clamed name</span>
+        <span class='doccomment'>/// The bootstrape node&#39;s keys and name.</span>
         <span class='ident'>public_id</span>: ::<span class='ident'>id</span>::<span class='ident'>PublicId</span>,
-        <span class='doccomment'>/// quorum size, dynamically calculated</span>
+        <span class='doccomment'>/// The dynamically calculated quorum size the client&#39;s accumulator should use.</span>
         <span class='ident'>current_quorum_size</span>: <span class='ident'>usize</span>,
     },
-    <span class='doccomment'>/// Sent form client -&gt; bootstrap node</span>
+    <span class='doccomment'>/// Sent to the client to indicate that this node is not available as a bootstrap node.</span>
+    <span class='ident'>BootstrapDeny</span>,
+    <span class='doccomment'>/// Sent from a newly connected client to the bootstrap node to inform it about the client&#39;s</span>
+    <span class='doccomment'>/// public ID.</span>
     <span class='ident'>ClientIdentify</span> {
-        <span class='doccomment'>/// keys and claimed name. Serialised outside routing</span>
+        <span class='doccomment'>/// Serialised keys and claimed name.</span>
         <span class='ident'>serialised_public_id</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-        <span class='doccomment'>/// Signature of the originator of this message</span>
+        <span class='doccomment'>/// Signature of the client.</span>
         <span class='ident'>signature</span>: <span class='ident'>sign</span>::<span class='ident'>Signature</span>,
+        <span class='doccomment'>/// Indicate whether we intend to remain a client, as opposed to becoming a routing node.</span>
+        <span class='ident'>client_restriction</span>: <span class='ident'>bool</span>,
     },
-    <span class='doccomment'>/// Sent form a node to a node</span>
+    <span class='doccomment'>/// Sent from a node to a node, to allow the latter to add the former to its routing table.</span>
     <span class='ident'>NodeIdentify</span> {
-        <span class='doccomment'>/// keys and claimed name, serialised outside routing</span>
+        <span class='doccomment'>/// Keys and claimed name, serialised outside routing.</span>
         <span class='ident'>serialised_public_id</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-        <span class='doccomment'>/// Signature of the originator of this message</span>
+        <span class='doccomment'>/// Signature of the originator of this message.</span>
         <span class='ident'>signature</span>: <span class='ident'>sign</span>::<span class='ident'>Signature</span>,
     },
 }
 
-<span class='doccomment'>/// A wrapper for all messages sent form node to node.</span>
-<span class='doccomment'>/// Allows nodes to be sure there has been no alteration of message in transit. Also defeats</span>
-<span class='doccomment'>/// MiTM attacks</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
+<span class='doccomment'>/// And individual hop message that represents a part of the route of a message in transit.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// To relay a `SignedMessage` via another node, the `SignedMessage` is wrapped in a `HopMessage`.</span>
+<span class='doccomment'>/// The `signature` is from the node that sends this directly to a node in its routing table. To</span>
+<span class='doccomment'>/// prevent Man-in-the-middle attacks, the `content` is signed by the original sender.</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>HopMessage</span> {
-    <span class='doccomment'>/// wrapped signed message</span>
+    <span class='doccomment'>/// Wrapped signed message.</span>
     <span class='ident'>content</span>: <span class='ident'>SignedMessage</span>,
-    <span class='doccomment'>/// name claimed to have sent hop message</span>
+    <span class='doccomment'>/// Name of the previous node in the `content`&#39;s route.</span>
     <span class='ident'>name</span>: <span class='ident'>XorName</span>,
-    <span class='doccomment'>/// signatire to be validated against public key held by name</span>
+    <span class='doccomment'>/// Signature to be validated against `name`&#39;s public key.</span>
     <span class='ident'>signature</span>: <span class='ident'>sign</span>::<span class='ident'>Signature</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>HopMessage</span> {
-    <span class='doccomment'>/// Wrap a signed message for transmission to next hop.</span>
+    <span class='doccomment'>/// Wrap `content` for transmission to the next hop and sign it.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>content</span>: <span class='ident'>SignedMessage</span>,
                <span class='ident'>name</span>: <span class='ident'>XorName</span>,
                <span class='ident'>sign_key</span>: <span class='kw-2'>&amp;</span><span class='ident'>sign</span>::<span class='ident'>SecretKey</span>)
@@ -468,9 +686,11 @@
             <span class='ident'>signature</span>: <span class='ident'>sign</span>::<span class='ident'>sign_detached</span>(<span class='kw-2'>&amp;</span><span class='ident'>bytes_to_sign</span>, <span class='ident'>sign_key</span>),
         })
     }
-    <span class='doccomment'>/// Validate message is signed by public key contained in message.</span>
-    <span class='doccomment'>/// this does not validate the message came from know node. That requires a check against</span>
-    <span class='doccomment'>/// the routing table of the node to identify the name associated with the PublicKey</span>
+
+    <span class='doccomment'>/// Validate that the message is signed by `verification_key` contained in message.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// This does not imply that the message came from a known node. That requires a check against</span>
+    <span class='doccomment'>/// the routing table to identify the name associated with the `verification_key`.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>verify</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>verification_key</span>: <span class='kw-2'>&amp;</span><span class='ident'>sign</span>::<span class='ident'>PublicKey</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>signed_bytes</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>content</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>name</span>)));
         <span class='kw'>if</span> <span class='ident'>sign</span>::<span class='ident'>verify_detached</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>signature</span>, <span class='kw-2'>&amp;</span><span class='ident'>signed_bytes</span>, <span class='ident'>verification_key</span>) {
@@ -479,30 +699,36 @@
             <span class='prelude-val'>Err</span>(<span class='ident'>RoutingError</span>::<span class='ident'>FailedSignature</span>)
         }
     }
-    <span class='doccomment'>/// return a signed message, does not validate message. [#verify] must be called prior</span>
-    <span class='doccomment'>/// to ensure sender is valid and validly signed he message</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>extract</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> (<span class='ident'>SignedMessage</span>, <span class='ident'>XorName</span>) {
-        (<span class='self'>self</span>.<span class='ident'>content</span>.<span class='ident'>clone</span>(), <span class='self'>self</span>.<span class='ident'>name</span>.<span class='ident'>clone</span>())
+
+    <span class='doccomment'>/// Returns the `SignedMessage` and the `name` of the previous routing node.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Does not validate the message! [#verify] must be called to ensure that the sender is valid</span>
+    <span class='doccomment'>/// and signed the message.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>content</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>SignedMessage</span> {
+        <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>content</span>
     }
-    <span class='doccomment'>/// The name asociated with te hop message.</span>
+
+    <span class='doccomment'>/// The name of the previous node in the signed message&#39;s route.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>XorName</span> {
         <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>name</span>
     }
 }
 
 <span class='doccomment'>/// Wrapper around a routing message, signed by the originator of the message.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>SignedMessage</span> {
     <span class='doccomment'>/// A request or response type message.</span>
     <span class='ident'>content</span>: <span class='ident'>RoutingMessage</span>,
-    <span class='doccomment'>/// Claimed public_id of a node/client. If cline then it is self verifyable. For nodes we need</span>
-    <span class='doccomment'>/// to confirm this PublicId via a network message to the group of the claimed name.</span>
+    <span class='doccomment'>/// Claimed public ID of a node or client.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// For clients this is easily verifiable since their name is computed from the ID. For nodes it</span>
+    <span class='doccomment'>/// needs to be confirmed by their `NodeManager`.</span>
     <span class='ident'>public_id</span>: <span class='ident'>PublicId</span>,
     <span class='ident'>signature</span>: <span class='ident'>sign</span>::<span class='ident'>Signature</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>SignedMessage</span> {
-    <span class='doccomment'>/// Construct a signed message wrapper around a routing message.</span>
+    <span class='doccomment'>/// Creates a `SignedMessage` with the given `content` and signed by the given `full_id`.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>content</span>: <span class='ident'>RoutingMessage</span>, <span class='ident'>full_id</span>: <span class='kw-2'>&amp;</span><span class='ident'>FullId</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>SignedMessage</span>, <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>bytes_to_sign</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span>(<span class='kw-2'>&amp;</span><span class='ident'>content</span>, <span class='ident'>full_id</span>.<span class='ident'>public_id</span>())));
         <span class='prelude-val'>Ok</span>(<span class='ident'>SignedMessage</span> {
@@ -511,7 +737,8 @@
             <span class='ident'>signature</span>: <span class='ident'>sign</span>::<span class='ident'>sign_detached</span>(<span class='kw-2'>&amp;</span><span class='ident'>bytes_to_sign</span>, <span class='ident'>full_id</span>.<span class='ident'>signing_private_key</span>()),
         })
     }
-    <span class='doccomment'>/// confirm signature against `claimed` PublicId contained in signed message</span>
+
+    <span class='doccomment'>/// Confirms the signature against the claimed public ID.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>check_integrity</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>RoutingError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>signed_bytes</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>content</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>public_id</span>)));
         <span class='kw'>if</span> <span class='ident'>sign</span>::<span class='ident'>verify_detached</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>signature</span>,
@@ -523,35 +750,36 @@
         }
     }
 
-    <span class='doccomment'>/// The routing message that was singed.</span>
+    <span class='doccomment'>/// The routing message that was signed.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>content</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>RoutingMessage</span> {
         <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>content</span>
     }
 
-    <span class='doccomment'>/// PublicId associated with the signed message</span>
+    <span class='doccomment'>/// The `PublicId` associated with the signed message</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>public_id</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>PublicId</span> {
         <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>public_id</span>
     }
 }
 
-<span class='doccomment'>/// Variant type to old `either` a request or response</span>
+<span class='doccomment'>/// Variant type to hold `either` a request or response.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>RoutingMessage</span> {
-    <span class='doccomment'>/// outgoing RPC type message.</span>
+    <span class='doccomment'>/// Outgoing RPC type message.</span>
     <span class='ident'>Request</span>(<span class='ident'>RequestMessage</span>),
     <span class='doccomment'>/// Incoming answer to request RPC.</span>
     <span class='ident'>Response</span>(<span class='ident'>ResponseMessage</span>),
 }
 
 <span class='kw'>impl</span> <span class='ident'>RoutingMessage</span> {
-    <span class='doccomment'>/// Return source authority of routing message.</span>
+    <span class='doccomment'>/// Returns the sender, i. e. the source authority of the routing message.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>src</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>Authority</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>RoutingMessage</span>::<span class='ident'>Request</span>(<span class='kw-2'>ref</span> <span class='ident'>msg</span>) <span class='op'>=&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>msg</span>.<span class='ident'>src</span>,
             <span class='ident'>RoutingMessage</span>::<span class='ident'>Response</span>(<span class='kw-2'>ref</span> <span class='ident'>msg</span>) <span class='op'>=&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>msg</span>.<span class='ident'>src</span>,
         }
     }
-    <span class='doccomment'>/// Return destination authority of routing message.</span>
+
+    <span class='doccomment'>/// Returns the recipient, i. e. the destination authority of routing message.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>dst</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>Authority</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
             <span class='ident'>RoutingMessage</span>::<span class='ident'>Request</span>(<span class='kw-2'>ref</span> <span class='ident'>msg</span>) <span class='op'>=&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>msg</span>.<span class='ident'>dst</span>,
@@ -563,61 +791,66 @@
 <span class='doccomment'>/// A request message wrapper</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>RequestMessage</span> {
-    <span class='doccomment'>/// Source address and persona type</span>
+    <span class='doccomment'>/// Source authority</span>
     <span class='kw'>pub</span> <span class='ident'>src</span>: <span class='ident'>Authority</span>,
-    <span class='doccomment'>/// Destination target address (may be a group)</span>
+    <span class='doccomment'>/// Destination authority</span>
     <span class='kw'>pub</span> <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
-    <span class='doccomment'>/// Varient of request types</span>
+    <span class='doccomment'>/// The request content</span>
     <span class='kw'>pub</span> <span class='ident'>content</span>: <span class='ident'>RequestContent</span>,
 }
 
 <span class='doccomment'>/// A response message wrapper</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>ResponseMessage</span> {
-    <span class='doccomment'>/// Source address and persona type</span>
+    <span class='doccomment'>/// Source authority</span>
     <span class='kw'>pub</span> <span class='ident'>src</span>: <span class='ident'>Authority</span>,
-    <span class='doccomment'>/// Destination target address (may be a group)</span>
+    <span class='doccomment'>/// Destination authority</span>
     <span class='kw'>pub</span> <span class='ident'>dst</span>: <span class='ident'>Authority</span>,
-    <span class='doccomment'>/// varient of response types</span>
+    <span class='doccomment'>/// The response content</span>
     <span class='kw'>pub</span> <span class='ident'>content</span>: <span class='ident'>ResponseContent</span>,
 }
 
-<span class='doccomment'>/// types of requests allowed on network</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
+<span class='doccomment'>/// The request types</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>RequestContent</span> {
     <span class='comment'>// ---------- Internal ------------</span>
-    <span class='doccomment'>/// Ask network to alter your PublciId name and forward to appropriate group</span>
-    <span class='doccomment'>/// Client -&gt; NaeManager</span>
+    <span class='doccomment'>/// Ask the network to alter your `PublicId` name.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// This is sent by a `Client` to its `NaeManager` with the intent to become a routing node with</span>
+    <span class='doccomment'>/// a new name chosen by the `NaeManager`.</span>
     <span class='ident'>GetNetworkName</span> {
-        <span class='doccomment'>/// Your PublicId (public keys and name)</span>
+        <span class='doccomment'>/// The client&#39;s `PublicId` (public keys and name)</span>
         <span class='ident'>current_id</span>: <span class='ident'>PublicId</span>,
     },
-    <span class='doccomment'>/// Receiving group of relocatted name will get this message</span>
+    <span class='doccomment'>/// Notify a joining node&#39;s `NodeManager` so that it expects a `GetCloseGroup` request from it.</span>
     <span class='ident'>ExpectCloseNode</span> {
-        <span class='doccomment'>/// Your PublicId (public keys and name)</span>
+        <span class='doccomment'>/// The joining node&#39;s `PublicId` (public keys and name)</span>
         <span class='ident'>expect_id</span>: <span class='ident'>PublicId</span>,
     },
-    <span class='doccomment'>/// Ask each memeber of a group near an address for the PublicId of that node</span>
+    <span class='doccomment'>/// Request the `PublicId`s of the recipient&#39;s close group.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// This is sent from a joining node to its `NodeManager` to request the `PublicId`s of the</span>
+    <span class='doccomment'>/// `NodeManager`&#39;s members.</span>
     <span class='ident'>GetCloseGroup</span>,
-    <span class='doccomment'>/// Request a connection to this node</span>
+    <span class='doccomment'>/// Request a direct connection to the recipient.</span>
     <span class='ident'>Connect</span>,
-    <span class='doccomment'>/// Send our endpoints encrypted toa node we wish to connect to and have the keys for</span>
+    <span class='doccomment'>/// Send our endpoints encrypted to a node we wish to connect to and have the keys for.</span>
     <span class='ident'>Endpoints</span> {
-        <span class='doccomment'>/// encrypted crust endpoints (socket addr and protocol)</span>
+        <span class='doccomment'>/// Encrypted crust endpoints (socket address and protocol).</span>
         <span class='ident'>encrypted_endpoints</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-        <span class='doccomment'>/// nonce used to provide a salt in the encrytped message</span>
+        <span class='doccomment'>/// Nonce used to provide a salt in the encrytped message.</span>
         <span class='ident'>nonce_bytes</span>: [<span class='ident'>u8</span>; <span class='ident'>box_</span>::<span class='ident'>NONCEBYTES</span>],
     },
-    <span class='doccomment'>/// Ask each memeber of a group near a node address for the PublicId</span>
+    <span class='doccomment'>/// Ask each member of a group near a node address for the `PublicId`.</span>
     <span class='ident'>GetPublicId</span>,
-    <span class='doccomment'>/// Ask for a publicId but provide our endpoints encrytped</span>
+    <span class='doccomment'>/// Ask for a `PublicId` but provide our endpoints encrytped.</span>
     <span class='ident'>GetPublicIdWithEndpoints</span> {
-        <span class='doccomment'>/// encrypted crust endpoints (socket addr and protocol)</span>
+        <span class='doccomment'>/// Encrypted crust endpoints (socket address and protocol).</span>
         <span class='ident'>encrypted_endpoints</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-        <span class='doccomment'>/// nonce used to provide a salt in the encrytped message</span>
+        <span class='doccomment'>/// Nonce used to provide a salt in the encrytped message.</span>
         <span class='ident'>nonce_bytes</span>: [<span class='ident'>u8</span>; <span class='ident'>box_</span>::<span class='ident'>NONCEBYTES</span>],
     },
-    <span class='doccomment'>/// Message from upper layers sending network state on any network churn event</span>
+    <span class='doccomment'>/// Message from upper layers sending network state on any network churn event.</span>
     <span class='ident'>Refresh</span>(<span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>),
     <span class='comment'>// ---------- External ------------</span>
     <span class='doccomment'>/// Ask for data from network, passed from API with data name as parameter</span>
@@ -630,45 +863,50 @@
     <span class='ident'>Delete</span>(<span class='ident'>Data</span>, <span class='ident'>MessageId</span>),
 }
 
-<span class='doccomment'>/// Types of respnses to exepect on the network.</span>
-<span class='doccomment'>/// All responses will map to a specific request and where request was from a single node</span>
-<span class='doccomment'>/// or client the response will contatin the singed request. This prevents forgery or co-ersion</span>
-<span class='doccomment'>/// attacks.</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
+<span class='doccomment'>/// The response types</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// All responses map to a specific request, and where the request was from a single node</span>
+<span class='doccomment'>/// or client, the response will contain the signed request to prevent forgery.</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Clone</span>, <span class='ident'>Hash</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>ResponseContent</span> {
     <span class='comment'>// ---------- Internal ------------</span>
-    <span class='doccomment'>/// Reply with the altered publicId</span>
-    <span class='doccomment'>/// NaeManager -&gt; Client</span>
+    <span class='doccomment'>/// Reply with the new `PublicId` for the joining node.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Sent from the `NaeManager` to the `Client`.</span>
     <span class='ident'>GetNetworkName</span> {
-        <span class='doccomment'>/// Supplied publicId with name altered</span>
+        <span class='doccomment'>/// Supplied `PublicId`, but with the new name</span>
         <span class='ident'>relocated_id</span>: <span class='ident'>PublicId</span>,
     },
-    <span class='doccomment'>/// Reply with the requested PublciId</span>
-    <span class='doccomment'>/// NodeManager -&gt; Client | ManagedNode</span>
+    <span class='doccomment'>/// Reply with the requested `PublicId`.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Sent from the `NodeManager` to the joining node.</span>
     <span class='ident'>GetPublicId</span> {
-        <span class='doccomment'>/// The relocatted PublciId</span>
+        <span class='doccomment'>/// The requested `PublicId`</span>
         <span class='ident'>public_id</span>: <span class='ident'>PublicId</span>,
     },
-    <span class='doccomment'>/// Send our publicId along with senders encrypted endpoints bak to sender</span>
-    <span class='doccomment'>/// ManagedNode -&gt; ManagedNode | client</span>
+    <span class='doccomment'>/// Reply with the `PublicId` along with the sender&#39;s encrypted endpoints</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Sent from a `ManagedNode` to another node or client.</span>
     <span class='ident'>GetPublicIdWithEndpoints</span> {
-        <span class='doccomment'>/// Our publicId</span>
+        <span class='doccomment'>/// Our `PublicId`</span>
         <span class='ident'>public_id</span>: <span class='ident'>PublicId</span>,
-        <span class='doccomment'>/// their endpoints</span>
+        <span class='doccomment'>/// Their endpoints</span>
         <span class='ident'>encrypted_endpoints</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-        <span class='doccomment'>/// message salt</span>
+        <span class='doccomment'>/// Message salt</span>
         <span class='ident'>nonce_bytes</span>: [<span class='ident'>u8</span>; <span class='ident'>box_</span>::<span class='ident'>NONCEBYTES</span>],
     },
-    <span class='doccomment'>/// Return the close PublicId&#39;s back to requestor</span>
-    <span class='doccomment'>/// NodeManager -&gt; client | ManagedNode</span>
+    <span class='doccomment'>/// Return the close `PublicId`s back to the requestor.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Sent from a `NodeManager` to a node or client.</span>
     <span class='ident'>GetCloseGroup</span> {
-        <span class='doccomment'>/// Our close group publci Id&#39;s</span>
+        <span class='doccomment'>/// Our close group `PublicId`s.</span>
         <span class='ident'>close_group_ids</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>PublicId</span><span class='op'>&gt;</span>,
     },
     <span class='comment'>// ---------- External ------------</span>
-    <span class='doccomment'>/// Should not be ignored. The data requested sent back</span>
-    <span class='doccomment'>/// (ManagedNode (cache) | NaeManagers) -&gt; client</span>
-    <span class='doccomment'>/// ManagedNode -&gt; NaeManagers</span>
+    <span class='doccomment'>/// Reply with the requested data (may not be ignored)</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// Sent from a `ManagedNode` to an `NaeManager`, and from there to a `Client`, although this</span>
+    <span class='doccomment'>/// may be shortcut if the data is in a node&#39;s cache.</span>
     <span class='ident'>GetSuccess</span>(<span class='ident'>Data</span>, <span class='ident'>MessageId</span>),
     <span class='doccomment'>/// Success token for Put (may be ignored)</span>
     <span class='ident'>PutSuccess</span>(<span class='ident'>sha512</span>::<span class='ident'>Digest</span>, <span class='ident'>MessageId</span>),
@@ -676,42 +914,219 @@
     <span class='ident'>PostSuccess</span>(<span class='ident'>sha512</span>::<span class='ident'>Digest</span>, <span class='ident'>MessageId</span>),
     <span class='doccomment'>/// Success token for delete  (may be ignored)</span>
     <span class='ident'>DeleteSuccess</span>(<span class='ident'>sha512</span>::<span class='ident'>Digest</span>, <span class='ident'>MessageId</span>),
-    <span class='doccomment'>/// Error for Get, includes signed request to prevent injection attacks</span>
+    <span class='doccomment'>/// Error for `Get`, includes signed request to prevent injection attacks</span>
     <span class='ident'>GetFailure</span> {
         <span class='doccomment'>/// Unique message identifier</span>
         <span class='ident'>id</span>: <span class='ident'>MessageId</span>,
-        <span class='doccomment'>/// Originators signed request</span>
+        <span class='doccomment'>/// Originator&#39;s signed request</span>
         <span class='ident'>request</span>: <span class='ident'>RequestMessage</span>,
-        <span class='doccomment'>/// Error type sent back, may be injected form upper layers</span>
+        <span class='doccomment'>/// Error type sent back, may be injected from upper layers</span>
         <span class='ident'>external_error_indicator</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
     },
     <span class='doccomment'>/// Error for Put, includes signed request to prevent injection attacks</span>
     <span class='ident'>PutFailure</span> {
         <span class='doccomment'>/// Unique message identifier</span>
         <span class='ident'>id</span>: <span class='ident'>MessageId</span>,
-        <span class='doccomment'>/// Originators signed request</span>
+        <span class='doccomment'>/// Originator&#39;s signed request</span>
         <span class='ident'>request</span>: <span class='ident'>RequestMessage</span>,
-        <span class='doccomment'>/// Error type sent back, may be injected form upper layers</span>
+        <span class='doccomment'>/// Error type sent back, may be injected from upper layers</span>
         <span class='ident'>external_error_indicator</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
     },
     <span class='doccomment'>/// Error for Post, includes signed request to prevent injection attacks</span>
     <span class='ident'>PostFailure</span> {
         <span class='doccomment'>/// Unique message identifier</span>
         <span class='ident'>id</span>: <span class='ident'>MessageId</span>,
-        <span class='doccomment'>/// Originators signed request</span>
+        <span class='doccomment'>/// Originator&#39;s signed request</span>
         <span class='ident'>request</span>: <span class='ident'>RequestMessage</span>,
-        <span class='doccomment'>/// Error type sent back, may be injected form upper layers</span>
+        <span class='doccomment'>/// Error type sent back, may be injected from upper layers</span>
         <span class='ident'>external_error_indicator</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
     },
     <span class='doccomment'>/// Error for delete, includes signed request to prevent injection attacks</span>
     <span class='ident'>DeleteFailure</span> {
         <span class='doccomment'>/// Unique message identifier</span>
         <span class='ident'>id</span>: <span class='ident'>MessageId</span>,
-        <span class='doccomment'>/// Originators signed request</span>
+        <span class='doccomment'>/// Originator&#39;s signed request</span>
         <span class='ident'>request</span>: <span class='ident'>RequestMessage</span>,
-        <span class='doccomment'>/// Error type sent back, may be injected form upper layers</span>
+        <span class='doccomment'>/// Error type sent back, may be injected from upper layers</span>
         <span class='ident'>external_error_indicator</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
     },
+}
+
+<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>DirectMessage</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+        <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
+            <span class='ident'>DirectMessage</span>::<span class='ident'>BootstrapIdentify</span> { <span class='kw-2'>ref</span> <span class='ident'>public_id</span>, <span class='kw-2'>ref</span> <span class='ident'>current_quorum_size</span> } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;DirectMessage {{ BootstrapIdentify {{ {:?}, {:?} }} }}&quot;</span>,
+                    <span class='ident'>public_id</span>, <span class='ident'>current_quorum_size</span>),
+            <span class='ident'>DirectMessage</span>::<span class='ident'>BootstrapDeny</span> <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;DirectMessage {{ BootstrapDeny }}&quot;</span>),
+            <span class='ident'>DirectMessage</span>::<span class='ident'>ClientIdentify</span> { <span class='kw-2'>ref</span> <span class='ident'>client_restriction</span>, .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;DirectMessage {{ ClientIdentify {{ .., {:?} }} }}&quot;</span>, <span class='ident'>client_restriction</span>),
+            <span class='ident'>DirectMessage</span>::<span class='ident'>NodeIdentify</span> { .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;DirectMessage {{ NodeIdentify {{ .. }} }}&quot;</span>),
+        }
+    }
+}
+
+<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>HopMessage</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+        <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;HopMessage {{ content: {:?}, name: {:?}, signature: .. }}&quot;</span>,
+            <span class='self'>self</span>.<span class='ident'>content</span>, <span class='self'>self</span>.<span class='ident'>name</span>)
+    }
+}
+
+<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>SignedMessage</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+        <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;SignedMessage {{ content: {:?}, public_id: {:?}, signature: .. }}&quot;</span>,
+            <span class='self'>self</span>.<span class='ident'>content</span>, <span class='self'>self</span>.<span class='ident'>public_id</span>)
+    }
+}
+
+<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>RequestContent</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+        <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
+            <span class='ident'>RequestContent</span>::<span class='ident'>GetNetworkName</span> { <span class='kw-2'>ref</span> <span class='ident'>current_id</span> } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ GetNetworkName {{ {:?} }} }}&quot;</span>, <span class='ident'>current_id</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>ExpectCloseNode</span> { <span class='kw-2'>ref</span> <span class='ident'>expect_id</span> } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ ExpectCloseNode {{ {:?} }} }}&quot;</span>, <span class='ident'>expect_id</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>GetCloseGroup</span> <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ GetCloseGroup }}&quot;</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>Connect</span> <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ Connect }}&quot;</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>Endpoints</span> { .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ Endpoints {{ .. }} }}&quot;</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>GetPublicId</span> <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ GetPublicId }}&quot;</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>GetPublicIdWithEndpoints</span> { .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ GetPublicIdWithEndpoints {{ .. }} }}&quot;</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>Refresh</span>(..) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ Refresh(..) }}&quot;</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>Get</span>(<span class='kw-2'>ref</span> <span class='ident'>data_request</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ Get( {:?}, {:?} ) }}&quot;</span>, <span class='ident'>data_request</span>, <span class='ident'>message_id</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>Put</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ Put( {:?}, {:?} ) }}&quot;</span>, <span class='ident'>data</span>, <span class='ident'>message_id</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>Post</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ Post( {:?}, {:?} ) }}&quot;</span>, <span class='ident'>data</span>, <span class='ident'>message_id</span>),
+            <span class='ident'>RequestContent</span>::<span class='ident'>Delete</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;RequestContent {{ Delete( {:?}, {:?} ) }}&quot;</span>, <span class='ident'>data</span>, <span class='ident'>message_id</span>),
+        }
+    }
+}
+
+<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>ResponseContent</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+        <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
+            <span class='ident'>ResponseContent</span>::<span class='ident'>GetNetworkName</span> { <span class='kw-2'>ref</span> <span class='ident'>relocated_id</span> } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ GetNetworkName {{ {:?} }} }}&quot;</span>, <span class='ident'>relocated_id</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>GetPublicId</span> { <span class='kw-2'>ref</span> <span class='ident'>public_id</span> } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ GetPublicId {{ {:?} }} }}&quot;</span>, <span class='ident'>public_id</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>GetPublicIdWithEndpoints</span> { <span class='kw-2'>ref</span> <span class='ident'>public_id</span>, .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ GetPublicIdWithEndpoints {{ {:?}, .. }} }}&quot;</span>, <span class='ident'>public_id</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>GetCloseGroup</span> { <span class='kw-2'>ref</span> <span class='ident'>close_group_ids</span> } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ GetCloseGroup {{ {:?} }} }}&quot;</span>, <span class='ident'>close_group_ids</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>GetSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>data</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ GetSuccess {{ {:?}, {:?} }} }}&quot;</span>, <span class='ident'>data</span>, <span class='ident'>message_id</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>PutSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>digest</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ PutSuccess {{ {:?}, {:?} }} }}&quot;</span>, <span class='ident'>digest</span>, <span class='ident'>message_id</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>PostSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>digest</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ PostSuccess {{ {:?}, {:?} }} }}&quot;</span>, <span class='ident'>digest</span>, <span class='ident'>message_id</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>DeleteSuccess</span>(<span class='kw-2'>ref</span> <span class='ident'>digest</span>, <span class='kw-2'>ref</span> <span class='ident'>message_id</span>) <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ DeleteSuccess {{ {:?}, {:?} }} }}&quot;</span>, <span class='ident'>digest</span>, <span class='ident'>message_id</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>GetFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>id</span>, <span class='kw-2'>ref</span> <span class='ident'>request</span>, .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ GetFailure {{ {:?}, {:?}, .. }} }}&quot;</span>, <span class='ident'>id</span>, <span class='ident'>request</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>PutFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>id</span>, <span class='kw-2'>ref</span> <span class='ident'>request</span>, .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ PutFailure {{ {:?}, {:?}, .. }} }}&quot;</span>, <span class='ident'>id</span>, <span class='ident'>request</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>PostFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>id</span>, <span class='kw-2'>ref</span> <span class='ident'>request</span>, .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ PostFailure {{ {:?}, {:?}, .. }} }}&quot;</span>, <span class='ident'>id</span>, <span class='ident'>request</span>),
+            <span class='ident'>ResponseContent</span>::<span class='ident'>DeleteFailure</span> { <span class='kw-2'>ref</span> <span class='ident'>id</span>, <span class='kw-2'>ref</span> <span class='ident'>request</span>, .. } <span class='op'>=&gt;</span>
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>formatter</span>, <span class='string'>&quot;ResponseContent {{ DeleteFailure {{ {:?}, {:?}, .. }} }}&quot;</span>, <span class='ident'>id</span>, <span class='ident'>request</span>),
+        }
+    }
+}
+
+
+<span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
+<span class='kw'>mod</span> <span class='ident'>test</span> {
+    <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rand</span>;
+
+    <span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>HopMessage</span>, <span class='ident'>SignedMessage</span>, <span class='ident'>RoutingMessage</span>, <span class='ident'>RequestMessage</span>, <span class='ident'>RequestContent</span>};
+    <span class='kw'>use</span> <span class='ident'>id</span>::<span class='ident'>FullId</span>;
+    <span class='kw'>use</span> <span class='ident'>authority</span>::<span class='ident'>Authority</span>;
+    <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
+    <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>;
+    <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>serialise</span>;
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>signed_message_check_integrity</span>() {
+        <span class='kw'>let</span> <span class='ident'>name</span>: <span class='ident'>XorName</span> <span class='op'>=</span> <span class='ident'>rand</span>::<span class='ident'>random</span>();
+        <span class='kw'>let</span> <span class='ident'>routing_message</span> <span class='op'>=</span> <span class='ident'>RoutingMessage</span>::<span class='ident'>Request</span>(
+            <span class='ident'>RequestMessage</span> {
+                <span class='ident'>src</span>: <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='ident'>name</span>),
+                <span class='ident'>dst</span>: <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='ident'>name</span>),
+                <span class='ident'>content</span>: <span class='ident'>RequestContent</span>::<span class='ident'>Connect</span>,
+            }
+        );
+        <span class='kw'>let</span> <span class='ident'>full_id</span> <span class='op'>=</span> <span class='ident'>FullId</span>::<span class='ident'>new</span>();
+        <span class='kw'>let</span> <span class='ident'>signed_message_result</span> <span class='op'>=</span> <span class='ident'>SignedMessage</span>::<span class='ident'>new</span>(<span class='ident'>routing_message</span>.<span class='ident'>clone</span>(), <span class='kw-2'>&amp;</span><span class='ident'>full_id</span>);
+
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>signed_message_result</span>.<span class='ident'>is_ok</span>());
+
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>signed_message</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>signed_message_result</span>);
+
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>routing_message</span>, <span class='op'>*</span><span class='ident'>signed_message</span>.<span class='ident'>content</span>());
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>full_id</span>.<span class='ident'>public_id</span>(), <span class='ident'>signed_message</span>.<span class='ident'>public_id</span>());
+
+        <span class='kw'>let</span> <span class='ident'>check_integrity_result</span> <span class='op'>=</span> <span class='ident'>signed_message</span>.<span class='ident'>check_integrity</span>();
+
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>check_integrity_result</span>.<span class='ident'>is_ok</span>());
+
+        <span class='kw'>let</span> <span class='ident'>full_id</span> <span class='op'>=</span> <span class='ident'>FullId</span>::<span class='ident'>new</span>();
+        <span class='kw'>let</span> <span class='ident'>bytes_to_sign</span> <span class='op'>=</span> <span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span>(<span class='kw-2'>&amp;</span><span class='ident'>routing_message</span>, <span class='ident'>full_id</span>.<span class='ident'>public_id</span>())).<span class='ident'>unwrap</span>();
+        <span class='kw'>let</span> <span class='ident'>signature</span> <span class='op'>=</span> <span class='ident'>sign</span>::<span class='ident'>sign_detached</span>(<span class='kw-2'>&amp;</span><span class='ident'>bytes_to_sign</span>, <span class='ident'>full_id</span>.<span class='ident'>signing_private_key</span>());
+
+        <span class='ident'>signed_message</span>.<span class='ident'>signature</span> <span class='op'>=</span> <span class='ident'>signature</span>;
+
+        <span class='kw'>let</span> <span class='ident'>check_integrity_result</span> <span class='op'>=</span> <span class='ident'>signed_message</span>.<span class='ident'>check_integrity</span>();
+
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>check_integrity_result</span>.<span class='ident'>is_err</span>());
+    }
+
+    <span class='attribute'>#[<span class='ident'>test</span>]</span>
+    <span class='kw'>fn</span> <span class='ident'>hop_message_verify</span>() {
+        <span class='kw'>let</span> <span class='ident'>name</span>: <span class='ident'>XorName</span> <span class='op'>=</span> <span class='ident'>rand</span>::<span class='ident'>random</span>();
+        <span class='kw'>let</span> <span class='ident'>routing_message</span> <span class='op'>=</span> <span class='ident'>RoutingMessage</span>::<span class='ident'>Request</span>(
+            <span class='ident'>RequestMessage</span> {
+                <span class='ident'>src</span>: <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='ident'>name</span>),
+                <span class='ident'>dst</span>: <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='ident'>name</span>),
+                <span class='ident'>content</span>: <span class='ident'>RequestContent</span>::<span class='ident'>Connect</span>,
+            }
+        );
+        <span class='kw'>let</span> <span class='ident'>full_id</span> <span class='op'>=</span> <span class='ident'>FullId</span>::<span class='ident'>new</span>();
+        <span class='kw'>let</span> <span class='ident'>signed_message_result</span> <span class='op'>=</span> <span class='ident'>SignedMessage</span>::<span class='ident'>new</span>(<span class='ident'>routing_message</span>.<span class='ident'>clone</span>(), <span class='kw-2'>&amp;</span><span class='ident'>full_id</span>);
+
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>signed_message_result</span>.<span class='ident'>is_ok</span>());
+
+        <span class='kw'>let</span> <span class='ident'>signed_message</span> <span class='op'>=</span> <span class='ident'>signed_message_result</span>.<span class='ident'>unwrap</span>();
+        <span class='kw'>let</span> <span class='ident'>hop_name</span>: <span class='ident'>XorName</span> <span class='op'>=</span> <span class='ident'>rand</span>::<span class='ident'>random</span>();
+        <span class='kw'>let</span> (<span class='ident'>public_signing_key</span>, <span class='ident'>secret_signing_key</span>) <span class='op'>=</span> <span class='ident'>sign</span>::<span class='ident'>gen_keypair</span>();
+        <span class='kw'>let</span> <span class='ident'>hop_message_result</span> <span class='op'>=</span> <span class='ident'>HopMessage</span>::<span class='ident'>new</span>(<span class='ident'>signed_message</span>.<span class='ident'>clone</span>(), <span class='ident'>hop_name</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_signing_key</span>);
+
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>hop_message_result</span>.<span class='ident'>is_ok</span>());
+
+        <span class='kw'>let</span> <span class='ident'>hop_message</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>hop_message_result</span>);
+
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>signed_message</span>, <span class='op'>*</span><span class='ident'>hop_message</span>.<span class='ident'>content</span>());
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>hop_name</span>, <span class='op'>*</span><span class='ident'>hop_message</span>.<span class='ident'>name</span>());
+
+        <span class='kw'>let</span> <span class='ident'>verify_result</span> <span class='op'>=</span> <span class='ident'>hop_message</span>.<span class='ident'>verify</span>(<span class='kw-2'>&amp;</span><span class='ident'>public_signing_key</span>);
+
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>verify_result</span>.<span class='ident'>is_ok</span>());
+
+        <span class='kw'>let</span> (<span class='ident'>public_signing_key</span>, _) <span class='op'>=</span> <span class='ident'>sign</span>::<span class='ident'>gen_keypair</span>();
+        <span class='kw'>let</span> <span class='ident'>verify_result</span> <span class='op'>=</span> <span class='ident'>hop_message</span>.<span class='ident'>verify</span>(<span class='kw-2'>&amp;</span><span class='ident'>public_signing_key</span>);
+
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>verify_result</span>.<span class='ident'>is_err</span>());
+    }
 }
 </pre>
 </section>
@@ -773,6 +1188,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

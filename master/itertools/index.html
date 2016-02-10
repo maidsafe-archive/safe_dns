@@ -9,6 +9,7 @@
 
     <title>itertools - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     
@@ -45,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/itertools/lib.rs.html#1-1399' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-0' class='srclink' href='../src/itertools/lib.rs.html#1-1414' title='goto source code'>[src]</a></span></h1>
 <div class='docblock'><p>Itertools — extra iterator adaptors, functions and macros.</p>
 
 <p>To use the iterator methods in this crate, import the <a href="./trait.Itertools.html"><code>Itertools</code> trait</a>:</p>
@@ -68,8 +69,18 @@
 <a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>, at your
 option. This file may not be copied, modified, or distributed
 except according to those terms.</p>
-</div><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
+</div><h2 id='reexports' class='section-header'><a href="#reexports">Reexports</a></h2>
+<table><tr><td><code>pub use free::{<a class='fn' href='../itertools/free/fn.enumerate.html' title='itertools::free::enumerate'>enumerate</a>, <a class='fn' href='../itertools/free/fn.rev.html' title='itertools::free::rev'>rev</a>};</code></td></tr></table><h2 id='modules' class='section-header'><a href="#modules">Modules</a></h2>
 <table>
+                    <tr class=' module-item'>
+                        <td><a class='mod' href='free/index.html'
+                               title='itertools::free'>free</a></td>
+                        <td class='docblock short'>
+                             <p>Free functions that create iterator adaptors or call iterator methods.</p>
+
+                        </td>
+                    </tr>
+                
                     <tr class=' module-item'>
                         <td><a class='mod' href='misc/index.html'
                                title='itertools::misc'>misc</a></td>
@@ -160,6 +171,15 @@ and may pick off as many elements as it likes, to produce the next iterator elem
                                title='itertools::Combinations'>Combinations</a></td>
                         <td class='docblock short'>
                              <p>An iterator to iterate through all the combinations of pairs in a <code>Clone</code>-able iterator.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.CombinationsN.html'
+                               title='itertools::CombinationsN'>CombinationsN</a></td>
+                        <td class='docblock short'>
+                             <p>An iterator to iterate through all the <code>n</code>-length combinations in an iterator.</p>
 
                         </td>
                     </tr>
@@ -498,6 +518,15 @@ and produces <code>A</code>. Stops on the first <code>None</code> encountered.</
                 </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
 <table>
                     <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Diff.html'
+                               title='itertools::Diff'>Diff</a></td>
+                        <td class='docblock short'>
+                             <p>A type returned by the <a href="./fn.diff_with.html"><code>diff_with</code></a> function.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
                         <td><a class='enum' href='enum.EitherOrBoth.html'
                                title='itertools::EitherOrBoth'>EitherOrBoth</a></td>
                         <td class='docblock short'>
@@ -529,10 +558,11 @@ semantics as <em>equal(a, b)</em>.</p>
                     </tr>
                 
                     <tr class=' module-item'>
-                        <td><a class='fn' href='fn.enumerate.html'
-                               title='itertools::enumerate'>enumerate</a></td>
+                        <td><a class='fn' href='fn.diff_with.html'
+                               title='itertools::diff_with'>diff_with</a></td>
                         <td class='docblock short'>
-                             <p>Iterate <code>iterable</code> with a running index.</p>
+                             <p>Compares every element yielded by both <code>i</code> and <code>j</code> with the given function in lock-step and
+returns a <code>Diff</code> which describes how <code>j</code> differs from <code>i</code>.</p>
 
                         </td>
                     </tr>
@@ -563,15 +593,6 @@ semantics as <em>equal(a, b)</em>.</p>
                         <td class='docblock short'>
                              <p>Partition a sequence using predicate <code>pred</code> so that elements
 that map to <code>true</code> are placed before elements which map to <code>false</code>.</p>
-
-                        </td>
-                    </tr>
-                
-                    <tr class=' module-item'>
-                        <td><a class='fn' href='fn.rev.html'
-                               title='itertools::rev'>rev</a></td>
-                        <td class='docblock short'>
-                             <p>Iterate <code>iterable</code> in reverse.</p>
 
                         </td>
                     </tr>
@@ -644,6 +665,6 @@ that map to <code>true</code> are placed before elements which map to <code>fals
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>

@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/routing-0.6.1/src/immutable_data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/immutable_data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>immutable_data.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -192,6 +193,10 @@
 <span id="150">150</span>
 <span id="151">151</span>
 <span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -217,18 +222,22 @@
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>;
 
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Hash</span>, <span class='ident'>Clone</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>Debug</span>)]</span>
-<span class='doccomment'>/// ImmutableDataType.</span>
+<span class='doccomment'>/// The type of an individual copy of immutable data.</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>ImmutableDataType</span> {
-    <span class='doccomment'>/// Normal.</span>
+    <span class='doccomment'>/// Used in normal operation. The name of the data is the SHA512 hash of its value.</span>
     <span class='ident'>Normal</span>,
-    <span class='doccomment'>/// Backup.</span>
+    <span class='doccomment'>/// Used only when no normal copies are left, or if copies need to be relocated. Its name is</span>
+    <span class='doccomment'>/// `hash(hash(value))`.</span>
     <span class='ident'>Backup</span>,
-    <span class='doccomment'>/// Sacrificial.</span>
+    <span class='doccomment'>/// Only kept if there is unused space left. If storage space becomes scarce, this copy will be</span>
+    <span class='doccomment'>/// sacrificed. Its name is `hash(hash(hash(value)))`.</span>
     <span class='ident'>Sacrificial</span>,
 }
 
-<span class='doccomment'>/// ImmutableData</span>
-<span class='doccomment'>/// hash == SHA512</span>
+<span class='doccomment'>/// An immutable chunk of data.</span>
+<span class='doccomment'>///</span>
+<span class='doccomment'>/// Its name is computed from its content by applying the SHA512 hash up to three times, depending</span>
+<span class='doccomment'>/// on the `ImmutableDataType`.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Hash</span>, <span class='ident'>Clone</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Ord</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>ImmutableData</span> {
     <span class='ident'>type_tag</span>: <span class='ident'>ImmutableDataType</span>,
@@ -405,6 +414,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

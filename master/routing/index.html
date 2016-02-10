@@ -9,6 +9,7 @@
 
     <title>routing - Rust</title>
 
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -45,34 +46,123 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-0' class='srclink' href='../src/routing/lib.rs.html#18-107' title='goto source code'>[src]</a></span></h1>
-<div class='docblock'><p>The API for routing nodes (this is where you give the network its rules)</p>
+        </span><a id='src-0' class='srclink' href='../src/routing/lib.rs.html#18-203' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'><p>Client and node implementations for a resilient decentralised network.</p>
 
-<p>The network will report <strong>from authority your authority</strong> and validate cryptographically any
-message via group consensus or direct (clients). This means any facade you implement
-will set out what you deem to be a valid operation.
-Routing will provide</p>
+<p>The network is based on the <a href="../kademlia_routing_table/index.html">kademlia_routing_table</a> and uses the XOR metric to define the
+&quot;distance&quot; between two <a href="../xor_name/struct.XorName.html"><code>XorName</code></a>s. <code>XorName</code>s are used as addresses of nodes, clients as
+well as data.</p>
 
-<ol>
-<li><p>Valid message sender</p></li>
-<li><p>Confirmed from authority</p></li>
-<li><p>Confirmed your authority</p></li>
-<li><p>Exactly 1 copy of each message</p></li>
-</ol>
+<p>Messages are exchanged between <em>authorities</em>, where an <code>Authority</code> can be an
+individual client or node, or a group of nodes. In both cases, messages are cryptographically
+signed by the sender, and in the latter case it is verified that a sufficient number of group
+members agree on the message: Only if that quorum is reached, the message is delivered. In
+addition, each message has a unique ID, and is delivered only once.</p>
 
-<p>This should allow relatively easy set up many decentralised services. Setting rules for
-data types and what can be done with such types at different personas will allow a fairly
-complex network to be configured with relative ease.</p>
+<p>Group authorities are also addressed using a single <code>XorName</code>. The members of that group are
+the nodes that are closest to that name. Since nodes are assigned their name by the network,
+this provides redundancy and resilience: A node has no control over which group authorities it
+will be a member of, and without a majority in the group it cannot forge a message from that
+group.</p>
 
-<p>The data types are encoded with Concise Binary Object Representation (CBOR).</p>
+<p>The library also provides different types for the messages&#39; data. The data types are encoded
+with Concise Binary Object Representation (CBOR).</p>
+
+<h2 id='usage' class='section-header'><a href='#usage'>Usage</a></h2>
+<p>A decentralised service based on the <code>routing</code> library uses <code>Client</code> to send requests to the
+network of nodes and receive responses.</p>
+
+<p><code>Node</code> is used to handle and send requests within that network, and to implement its
+functionality, e. g. storing and retrieving data, validating permissions, managing metadata etc.</p>
+
+<h1 id='client-creation' class='section-header'><a href='#client-creation'>Client creation</a></h1>
+<p>A client&#39;s name is a hash of its public keys. Upon creation, the client will attempt to connect
+to the network through any node, and exchange public keys with it. That node becomes a
+bootstrap node for the client, and messages to and from the client will be routed over it.</p>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>;
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>Client</span>, <span class='ident'>Event</span>, <span class='ident'>FullId</span>};
+
+<span class='kw'>let</span> (<span class='ident'>sender</span>, <span class='ident'>_receiver</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>::<span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>();
+<span class='kw'>let</span> <span class='ident'>full_id</span> <span class='op'>=</span> <span class='ident'>FullId</span>::<span class='ident'>new</span>(); <span class='comment'>// Generate new keys.</span>
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>Client</span>::<span class='ident'>new</span>(<span class='ident'>sender</span>, <span class='prelude-val'>Some</span>(<span class='ident'>full_id</span>.<span class='ident'>clone</span>())).<span class='ident'>unwrap</span>();
+
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>full_id</span>.<span class='ident'>public_id</span>().<span class='ident'>name</span>();</pre>
+
+<p>Messages can be sent using the methods of <code>client</code>, and received as <code>Event</code>s from the
+<code>receiver</code>.</p>
+
+<h1 id='node-creation' class='section-header'><a href='#node-creation'>Node creation</a></h1>
+<p>Creating a node looks even simpler:</p>
+<pre class='rust rust-example-rendered'>
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>;
+<span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>Node</span>, <span class='ident'>Event</span>};
+
+<span class='kw'>let</span> (<span class='ident'>sender</span>, <span class='ident'>_receiver</span>) <span class='op'>=</span> <span class='ident'>mpsc</span>::<span class='ident'>channel</span>::<span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>();
+<span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>Node</span>::<span class='ident'>new</span>(<span class='ident'>sender</span>).<span class='ident'>unwrap</span>();</pre>
+
+<p>Upon creation, the node will first connect to the network as a client. Once it has client
+status, it requests a new name from the network, and then integrates itself in the network with
+that new name, adding close nodes to its routing table.</p>
+
+<p>Messages can be sent using the methods of <code>node</code>, and received as <code>Event</code>s from the <code>receiver</code>.
+The node can act as an individual node or as part of a group authority. Sending a message as a
+group authority only has an effect if sufficiently many other nodes in that authority send the
+same message.</p>
+
+<h1 id='example-put-message-flow-for-immutable-data' class='section-header'><a href='#example-put-message-flow-for-immutable-data'>Example: Put message flow for immutable data</a></h1>
+<p>An example implementation of a vault for storing and retrieving <code>ImmutableData</code> is included
+with the code of this library. The flow of a <code>Put</code> request there moves through the following
+authorities:</p>
+
+<ul>
+<li>A <code>Client</code> that wants to store a piece of data on the network.</li>
+<li>The <code>ClientManager</code> group authority that is responsible for that particular client. The nodes
+in this group have access to metadata about this client and can e. g. verify that it has
+required permissions or quota to store the data. The <code>ClientManager</code>&#39;s address is the <code>XorName</code>
+of the client itself, so it consists of the nodes closest to that name.</li>
+<li>The <code>NaeManager</code> group authority which is responsible for that particular piece of data and
+knows where in the network it should be stored. Its address is the <code>XorName</code> of the data.</li>
+<li>The <code>ManagedNode</code>s are the individual nodes that actually store the data. This could be just
+one, but let&#39;s assume that data is stored redundantly in more than one place.</li>
+</ul>
+
+<p>The message flow from the client to the managed nodes looks like this:</p>
+
+<ul>
+<li>The client sends a <code>Put</code> request to the <code>ClientManager</code>, i. e. the sender is the individual
+<code>Client</code> and the receiver is a group of nodes with addresses close to the client&#39;s name.</li>
+<li>Each node in the <code>ClientManager</code> group performs validation and updates metadata (which may
+involve further messages not considered in this example). If valid, it sends a <code>PutSuccess</code>
+response back to the client, and a <code>Put</code> request to the <code>NaeManager</code> with the data&#39;s <code>XorName</code>.
+In both cases, the sender is the <code>ClientManager</code>, not the individual node.</li>
+<li>Each node in the <code>NaeManager</code> chooses a number of individual nodes that are responsible for
+storing this specific piece of data. This needs to happen in a deterministic way so that the
+members of the <code>NaeManager</code> agree on the responsible nodes. Then they finally send a <code>Put</code>
+request to each of these. Here the sender is the <code>NaeManager</code>, but the recipient is the
+individual <code>ManagedNode</code>.</li>
+<li>Each <code>ManagedNode</code> locally stores the data.</li>
+</ul>
+
+<p>These steps need to be implemented by the user of the library. Each node needs to handle all
+these cases, as it can be simultaneously a <code>ManagedNode</code> and a member of several different
+<code>ClientManager</code>s and <code>NaeManager</code>s. A client, however, does not act as a node or vice versa.</p>
+
+<p>Transparently to the user, the <code>routing</code> library deals with message quora, so the user will only
+receive a message from a <code>Client</code> or <code>Node</code> if it was either sent</p>
+
+<ul>
+<li>by a client or individual node, or</li>
+<li>by a sufficient number of members of a group authority.</li>
+</ul>
 </div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
 <table>
                     <tr class=' module-item'>
                         <td><a class='struct' href='struct.Client.html'
                                title='routing::Client'>Client</a></td>
                         <td class='docblock short'>
-                             <p>Client provides an actionable interface to Core.  On constructing a new Client object a
-Core will also be started.</p>
+                             <p>Interface for sending and receiving messages to and from a network of nodes in the role of a
+client.</p>
 
                         </td>
                     </tr>
@@ -90,8 +180,7 @@ Core will also be started.</p>
                         <td><a class='struct' href='struct.ImmutableData.html'
                                title='routing::ImmutableData'>ImmutableData</a></td>
                         <td class='docblock short'>
-                             <p>ImmutableData
-hash == SHA512</p>
+                             <p>An immutable chunk of data.</p>
 
                         </td>
                     </tr>
@@ -109,8 +198,8 @@ hash == SHA512</p>
                         <td><a class='struct' href='struct.Node.html'
                                title='routing::Node'>Node</a></td>
                         <td class='docblock short'>
-                             <p>Node provides an actionable interface to Core.  On constructing a new Node object a
-Core will also be started.</p>
+                             <p>Interface for sending and receiving messages to and from other nodes, in the role of a full
+routing node.</p>
 
                         </td>
                     </tr>
@@ -119,7 +208,7 @@ Core will also be started.</p>
                         <td><a class='struct' href='struct.PlainData.html'
                                title='routing::PlainData'>PlainData</a></td>
                         <td class='docblock short'>
-                             <p>PlainData</p>
+                             <p>Plain data with a name and a value.</p>
 
                         </td>
                     </tr>
@@ -128,7 +217,7 @@ Core will also be started.</p>
                         <td><a class='struct' href='struct.PublicId.html'
                                title='routing::PublicId'>PublicId</a></td>
                         <td class='docblock short'>
-                             <p>PublicId.</p>
+                             <p>Network identity component containing name and public keys.</p>
 
                         </td>
                     </tr>
@@ -164,9 +253,7 @@ Core will also be started.</p>
                         <td><a class='struct' href='struct.StructuredData.html'
                                title='routing::StructuredData'>StructuredData</a></td>
                         <td class='docblock short'>
-                             <p>StructuredData
-These types may be stored unsigned with previous and current owner keys
-set to the same keys. Updates though require a signature to validate</p>
+                             <p>Mutable structured data.</p>
 
                         </td>
                     </tr>
@@ -176,7 +263,7 @@ set to the same keys. Updates though require a signature to validate</p>
                         <td><a class='enum' href='enum.Authority.html'
                                title='routing::Authority'>Authority</a></td>
                         <td class='docblock short'>
-                             <p>Persona types recognised by network.</p>
+                             <p>An entity that can act as a source or destination of a message.</p>
 
                         </td>
                     </tr>
@@ -203,7 +290,7 @@ set to the same keys. Updates though require a signature to validate</p>
                         <td><a class='enum' href='enum.Event.html'
                                title='routing::Event'>Event</a></td>
                         <td class='docblock short'>
-                             <p>An Event is received at the effective close group of B of a message flow &lt; A | B &gt;</p>
+                             <p>An Event raised by a <code>Node</code> or <code>Client</code> via its event sender.</p>
 
                         </td>
                     </tr>
@@ -212,7 +299,7 @@ set to the same keys. Updates though require a signature to validate</p>
                         <td><a class='enum' href='enum.ImmutableDataType.html'
                                title='routing::ImmutableDataType'>ImmutableDataType</a></td>
                         <td class='docblock short'>
-                             <p>ImmutableDataType.</p>
+                             <p>The type of an individual copy of immutable data.</p>
 
                         </td>
                     </tr>
@@ -230,7 +317,7 @@ set to the same keys. Updates though require a signature to validate</p>
                         <td><a class='enum' href='enum.RequestContent.html'
                                title='routing::RequestContent'>RequestContent</a></td>
                         <td class='docblock short'>
-                             <p>types of requests allowed on network</p>
+                             <p>The request types</p>
 
                         </td>
                     </tr>
@@ -239,10 +326,7 @@ set to the same keys. Updates though require a signature to validate</p>
                         <td><a class='enum' href='enum.ResponseContent.html'
                                title='routing::ResponseContent'>ResponseContent</a></td>
                         <td class='docblock short'>
-                             <p>Types of respnses to exepect on the network.
-All responses will map to a specific request and where request was from a single node
-or client the response will contatin the singed request. This prevents forgery or co-ersion
-attacks.</p>
+                             <p>The response types</p>
 
                         </td>
                     </tr>
@@ -260,7 +344,7 @@ attacks.</p>
                         <td><a class='enum' href='enum.RoutingMessage.html'
                                title='routing::RoutingMessage'>RoutingMessage</a></td>
                         <td class='docblock short'>
-                             <p>Variant type to old <code>either</code> a request or response</p>
+                             <p>Variant type to hold <code>either</code> a request or response.</p>
 
                         </td>
                     </tr>
@@ -333,6 +417,6 @@ attacks.</p>
     <script src="../jquery.js"></script>
     <script src="../main.js"></script>
     
-    <script async src="../search-index.js"></script>
+    <script defer src="../search-index.js"></script>
 </body>
 </html>

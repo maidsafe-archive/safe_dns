@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/kademlia_routing_table-0.0.4/src/lib.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/kademlia_routing_table-0.0.5/src/lib.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>lib.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -1287,6 +1288,32 @@
 <span id="1245">1245</span>
 <span id="1246">1246</span>
 <span id="1247">1247</span>
+<span id="1248">1248</span>
+<span id="1249">1249</span>
+<span id="1250">1250</span>
+<span id="1251">1251</span>
+<span id="1252">1252</span>
+<span id="1253">1253</span>
+<span id="1254">1254</span>
+<span id="1255">1255</span>
+<span id="1256">1256</span>
+<span id="1257">1257</span>
+<span id="1258">1258</span>
+<span id="1259">1259</span>
+<span id="1260">1260</span>
+<span id="1261">1261</span>
+<span id="1262">1262</span>
+<span id="1263">1263</span>
+<span id="1264">1264</span>
+<span id="1265">1265</span>
+<span id="1266">1266</span>
+<span id="1267">1267</span>
+<span id="1268">1268</span>
+<span id="1269">1269</span>
+<span id="1270">1270</span>
+<span id="1271">1271</span>
+<span id="1272">1272</span>
+<span id="1273">1273</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -1350,14 +1377,14 @@
 
 <span class='doccomment'>/// Defines the size of close group</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>group_size</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
-	<span class='ident'>GROUP_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
+    <span class='ident'>GROUP_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
 }
 
 <span class='doccomment'>/// Used as number of nodes agreed to represnet a quorum</span>
 <span class='kw'>const</span> <span class='ident'>QUORUM_SIZE</span>: <span class='ident'>u8</span> <span class='op'>=</span> <span class='number'>5</span>;
 <span class='comment'>// Quorum size as usize</span>
 <span class='kw'>fn</span> <span class='ident'>quorum_size</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
-	<span class='ident'>QUORUM_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
+    <span class='ident'>QUORUM_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
 }
 <span class='doccomment'>/// Defines the number of contacts which should be returned by the `target_nodes` function for a</span>
 <span class='doccomment'>/// target which is outwith our close group and is not a contact in the table.</span>
@@ -1365,7 +1392,7 @@
 
 <span class='doccomment'>/// parallelism as u64</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>parallelism</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
-	<span class='ident'>PARALLELISM</span> <span class='kw'>as</span> <span class='ident'>usize</span>
+    <span class='ident'>PARALLELISM</span> <span class='kw'>as</span> <span class='ident'>usize</span>
 }
 <span class='doccomment'>/// Defines the target max number of contacts per bucket.  This is not a hard limit; buckets can</span>
 <span class='doccomment'>/// exceed this size if required.</span>
@@ -1373,7 +1400,7 @@
 
 <span class='doccomment'>/// Bucket size</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>bucket_size</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
-	<span class='ident'>BUCKET_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
+    <span class='ident'>BUCKET_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
 }
 
 <span class='doccomment'>/// Defines the target max number of contacts for the whole routing table. This is not a hard limit;</span>
@@ -1382,7 +1409,7 @@
 
 <span class='doccomment'>/// optimal table size as usize</span>
 <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>optimal_table_size</span>() <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
-	<span class='ident'>OPTIMAL_TABLE_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
+    <span class='ident'>OPTIMAL_TABLE_SIZE</span> <span class='kw'>as</span> <span class='ident'>usize</span>
 }
 <span class='doccomment'>/// required trait for the info held on a node by routing_table</span>
 <span class='kw'>pub</span> <span class='kw'>trait</span> <span class='ident'>HasName</span> {
@@ -1397,24 +1424,23 @@
     <span class='kw'>pub</span> <span class='ident'>public_id</span>: <span class='ident'>T</span>,
     <span class='doccomment'>/// connection object, may be socket etc.</span>
     <span class='kw'>pub</span> <span class='ident'>connections</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;</span>,
-	<span class='ident'>bucket_index</span>: <span class='ident'>usize</span>,
+    <span class='ident'>bucket_index</span>: <span class='ident'>usize</span>,
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>PartialEq</span> <span class='op'>+</span> <span class='ident'>HasName</span> <span class='op'>+</span> ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Debug</span>, <span class='ident'>U</span>: <span class='ident'>PartialEq</span><span class='op'>&gt;</span> <span class='ident'>NodeInfo</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>U</span><span class='op'>&gt;</span> {
-<span class='doccomment'>/// constructor</span>
+    <span class='doccomment'>/// constructor</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>public_id</span>: <span class='ident'>T</span>, <span class='ident'>connections</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>U</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeInfo</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>U</span><span class='op'>&gt;</span> {
         <span class='ident'>NodeInfo</span> {
             <span class='ident'>public_id</span>: <span class='ident'>public_id</span>,
             <span class='ident'>connections</span>: <span class='ident'>connections</span>,
-			<span class='ident'>bucket_index</span>: <span class='number'>0</span>,
+            <span class='ident'>bucket_index</span>: <span class='number'>0</span>,
         }
     }
 
-<span class='doccomment'>/// name of routing table entry</span>
+    <span class='doccomment'>/// name of routing table entry</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span> {
         <span class='self'>self</span>.<span class='ident'>public_id</span>.<span class='ident'>name</span>()
     }
-
 }
 
 <span class='doccomment'>/// The RoutingTable class is used to maintain a list of contacts to which the node is connected.</span>
@@ -1459,7 +1485,7 @@
 
         <span class='kw'>let</span> <span class='ident'>removal_node_index</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>find_candidate_for_removal</span>();
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>new_node_is_better_than_existing</span>(<span class='ident'>their_info</span>.<span class='ident'>name</span>(), <span class='ident'>removal_node_index</span>) {
-            <span class='kw'>let</span> <span class='ident'>removal_node</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>remove</span>(<span class='ident'>removal_node_index</span>.<span class='ident'>unwrap</span>());
+            <span class='kw'>let</span> <span class='ident'>removal_node</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>remove</span>(<span class='ident'>removal_node_index</span>.<span class='ident'>expect</span>(<span class='string'>&quot;Could not remove a value we just calculated, perhaps non atomic &quot;</span>));
             <span class='self'>self</span>.<span class='ident'>push_back_then_sort</span>(<span class='ident'>their_info</span>);
             <span class='kw'>return</span> (<span class='boolval'>true</span>, <span class='prelude-val'>Some</span>(<span class='ident'>removal_node</span>))
         }
@@ -1494,13 +1520,13 @@
 <span class='doccomment'>/// check in step 1.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>want_to_add</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>their_name</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>our_name</span> <span class='op'>==</span> <span class='op'>*</span><span class='ident'>their_name</span> <span class='op'>||</span> <span class='self'>self</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>their_name</span>).<span class='ident'>is_some</span>()  {
-            <span class='kw'>return</span> <span class='boolval'>false</span>
+            <span class='boolval'>false</span>
         } <span class='kw'>else</span> <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>() <span class='op'>&lt;</span> <span class='ident'>optimal_table_size</span>() {
-            <span class='kw'>return</span> <span class='boolval'>true</span>
+            <span class='boolval'>true</span>
         } <span class='kw'>else</span>  <span class='kw'>if</span> ::<span class='ident'>xor_name</span>::<span class='ident'>closer_to_target</span>(<span class='ident'>their_name</span>,
                                                 <span class='self'>self</span>.<span class='ident'>nodes</span>[<span class='self'>self</span>.<span class='ident'>dynamic_group_size</span>()].<span class='ident'>name</span>(),
                                                 <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>our_name</span>) {
-            <span class='kw'>return</span> <span class='boolval'>true</span>
+            <span class='boolval'>true</span>
         } <span class='kw'>else</span> {
             <span class='self'>self</span>.<span class='ident'>new_node_is_better_than_existing</span>(<span class='kw-2'>&amp;</span><span class='ident'>their_name</span>, <span class='self'>self</span>.<span class='ident'>find_candidate_for_removal</span>())
         }
@@ -1509,7 +1535,8 @@
 <span class='doccomment'>/// returns the current calculated quorum size. This is dependent on routing table size at any time</span>
 	<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>dynamic_quorum_size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
 		<span class='kw'>let</span> <span class='ident'>factor</span> :<span class='ident'>f32</span> <span class='op'>=</span> <span class='ident'>QUORUM_SIZE</span> <span class='kw'>as</span> <span class='ident'>f32</span> <span class='op'>/</span> <span class='ident'>GROUP_SIZE</span> <span class='kw'>as</span> <span class='ident'>f32</span>;
-		::<span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>min</span>((<span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>() <span class='kw'>as</span> <span class='ident'>f32</span> <span class='op'>*</span> <span class='ident'>factor</span>) <span class='kw'>as</span> <span class='ident'>usize</span> , <span class='ident'>quorum_size</span>())
+		::<span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>min</span>((
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>() <span class='kw'>as</span> <span class='ident'>f32</span> <span class='op'>*</span> <span class='ident'>factor</span>).<span class='ident'>round</span>() <span class='kw'>as</span> <span class='ident'>usize</span>, <span class='ident'>quorum_size</span>())
 	}
 
 <span class='doccomment'>/// This unconditionally removes the contact from the table.</span>
@@ -1541,33 +1568,39 @@
         <span class='prelude-val'>None</span>
     }
 
-<span class='doccomment'>/// This returns a collection of contacts to which a message should be sent onwards.  It will</span>
-<span class='doccomment'>/// return all of our close group (comprising &#39;group_size()&#39; contacts) if the closest one to the</span>
-<span class='doccomment'>/// target is within our close group.  If not, it will return either the &#39;parallelism()&#39; closest</span>
-<span class='doccomment'>/// contacts to the target or a single contact if &#39;target&#39; is the name of a contact in the table.</span>
+    <span class='doccomment'>/// Returns the `n` nodes in our routing table that are closest to `target`.</span>
+    <span class='kw'>fn</span> <span class='ident'>closest_nodes_to</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>target</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span>, <span class='ident'>n</span>: <span class='ident'>usize</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeInfo</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>U</span><span class='op'>&gt;&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>()
+                  .<span class='ident'>sorted_by</span>(<span class='op'>|</span><span class='ident'>a</span>, <span class='ident'>b</span><span class='op'>|</span> <span class='kw'>if</span> ::<span class='ident'>xor_name</span>::<span class='ident'>closer_to_target</span>(<span class='kw-2'>&amp;</span><span class='ident'>a</span>.<span class='ident'>name</span>(), <span class='kw-2'>&amp;</span><span class='ident'>b</span>.<span class='ident'>name</span>(), <span class='kw-2'>&amp;</span><span class='ident'>target</span>) {
+                                        ::<span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>::<span class='ident'>Less</span>
+                                    } <span class='kw'>else</span> {
+                                        ::<span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>::<span class='ident'>Greater</span>
+                                    })
+                  .<span class='ident'>into_iter</span>()
+                  .<span class='ident'>take</span>(<span class='ident'>n</span>)
+                  .<span class='ident'>cloned</span>()
+                  .<span class='ident'>collect</span>()
+    }
+
+    <span class='doccomment'>/// Returns a collection of nodes to which a message should be sent onwards.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// It will return `group_size()` contacts if we are close to the `target`. Otherwise, it will</span>
+    <span class='doccomment'>/// return only the target node itself, if it is in our contacts. If not, it returns the</span>
+    <span class='doccomment'>/// `parallelism()` closest contacts to the target.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>target_nodes</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>target</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeInfo</span><span class='op'>&lt;</span><span class='ident'>T</span>, <span class='ident'>U</span><span class='op'>&gt;&gt;</span> {
-<span class='comment'>// if in range of close_group send to all close_group</span>
+        <span class='comment'>// if in range of close_group send to all close_group</span>
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>is_close</span>(<span class='ident'>target</span>) {
-            <span class='kw'>return</span> <span class='self'>self</span>.<span class='ident'>our_close_group</span>()
+            <span class='kw'>return</span> <span class='self'>self</span>.<span class='ident'>closest_nodes_to</span>(<span class='ident'>target</span>, <span class='ident'>group_size</span>());
         }
 
-<span class='comment'>// if not in close group but connected then send direct</span>
+        <span class='comment'>// if not in close group but connected then send direct</span>
         <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='kw-2'>ref</span> <span class='ident'>found</span>) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>find</span>(<span class='op'>|</span><span class='kw-2'>ref</span> <span class='ident'>node</span><span class='op'>|</span> <span class='ident'>node</span>.<span class='ident'>name</span>() <span class='op'>==</span> <span class='ident'>target</span>) {
             <span class='kw'>return</span> <span class='macro'>vec</span><span class='macro'>!</span>[(<span class='op'>*</span><span class='ident'>found</span>).<span class='ident'>clone</span>()]
         }
 
-<span class='comment'>// not in close group or routing table so send to closest known nodes up to parallelism</span>
-<span class='comment'>// count</span>
-        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>()
-               .<span class='ident'>sorted_by</span>(<span class='op'>|</span><span class='ident'>a</span>, <span class='ident'>b</span><span class='op'>|</span> <span class='kw'>if</span> ::<span class='ident'>xor_name</span>::<span class='ident'>closer_to_target</span>(<span class='kw-2'>&amp;</span><span class='ident'>a</span>.<span class='ident'>name</span>(), <span class='kw-2'>&amp;</span><span class='ident'>b</span>.<span class='ident'>name</span>(), <span class='kw-2'>&amp;</span><span class='ident'>target</span>) {
-                                     ::<span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>::<span class='ident'>Less</span>
-                                 } <span class='kw'>else</span> {
-                                     ::<span class='ident'>std</span>::<span class='ident'>cmp</span>::<span class='ident'>Ordering</span>::<span class='ident'>Greater</span>
-                                 })
-               .<span class='ident'>into_iter</span>()
-               .<span class='ident'>cloned</span>()
-               .<span class='ident'>take</span>(<span class='ident'>parallelism</span>())
-               .<span class='ident'>collect</span>::<span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;&gt;</span>()
+        <span class='comment'>// not in close group or routing table so send to closest known nodes up to parallelism</span>
+        <span class='comment'>// count</span>
+        <span class='self'>self</span>.<span class='ident'>closest_nodes_to</span>(<span class='ident'>target</span>, <span class='ident'>parallelism</span>())
     }
 
 <span class='doccomment'>/// This returns our close group, i.e. the &#39;group_size()&#39; contacts closest to our name (or the</span>
@@ -1576,15 +1609,22 @@
         <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>take</span>(<span class='ident'>group_size</span>()).<span class='ident'>cloned</span>().<span class='ident'>collect</span>()
     }
 
-<span class='doccomment'>/// This returns true if the provided name is closer than or equal to the furthest node in our</span>
-<span class='doccomment'>/// close group. If the routing table contains less than group_size() nodes, then every address is</span>
-<span class='doccomment'>/// considered to be close.</span>
+    <span class='doccomment'>/// Returns `true` if there are fewer than `group_size()` nodes in our routing table that are</span>
+    <span class='doccomment'>/// closer to `name` than we are.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// In other words, it returns `true` whenever we cannot rule out that we might be among the</span>
+    <span class='doccomment'>/// `group_size()` closest nodes to `name`.</span>
+    <span class='doccomment'>///</span>
+    <span class='doccomment'>/// If the routing table is filled in such a way that each bucket contains `group_size()`</span>
+    <span class='doccomment'>/// elements unless there aren&#39;t enough such nodes in the network, then this criterion is</span>
+    <span class='doccomment'>/// actually sufficient! In that case, `true` is returned if and only if we are among the</span>
+    <span class='doccomment'>/// `group_size()` closest node to `name` in the network.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>is_close</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>name</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-        <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>().<span class='ident'>nth</span>(<span class='ident'>group_size</span>() <span class='op'>-</span> <span class='number'>1</span>) {
-            <span class='prelude-val'>Some</span>(<span class='ident'>node</span>) <span class='op'>=&gt;</span> ::<span class='ident'>xor_name</span>::<span class='ident'>closer_to_target_or_equal</span>(<span class='ident'>name</span>, <span class='ident'>node</span>.<span class='ident'>name</span>(), <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>our_name</span>),
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='boolval'>true</span>
-        }
+        <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>iter</span>()
+            .<span class='ident'>filter</span>(<span class='op'>|</span><span class='ident'>node</span><span class='op'>|</span> ::<span class='ident'>xor_name</span>::<span class='ident'>closer_to_target_or_equal</span>(<span class='ident'>node</span>.<span class='ident'>name</span>(), <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>our_name</span>, <span class='ident'>name</span>))
+            .<span class='ident'>count</span>() <span class='op'>&lt;</span> <span class='ident'>group_size</span>()
     }
+
 <span class='doccomment'>/// number of elements</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>len</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='self'>self</span>.<span class='ident'>nodes</span>.<span class='ident'>len</span>()
@@ -1729,8 +1769,9 @@
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>test</span> {
     <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>bit_vec</span>;
-    <span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>RoutingTable</span>, <span class='ident'>NodeInfo</span>, <span class='ident'>group_size</span>, <span class='ident'>optimal_table_size</span>, <span class='ident'>parallelism</span>, <span class='ident'>quorum_size</span>,
-                <span class='ident'>HasName</span>};
+    <span class='kw'>use</span> <span class='ident'>super</span>::{<span class='ident'>RoutingTable</span>, <span class='ident'>NodeInfo</span>, <span class='ident'>group_size</span>, <span class='ident'>optimal_table_size</span>, <span class='ident'>parallelism</span>, <span class='ident'>HasName</span>};
+    <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>;
+    <span class='kw'>use</span> <span class='ident'>itertools</span>::<span class='ident'>Itertools</span>;
 
     <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>)]</span>
     <span class='kw'>struct</span> <span class='ident'>TestNodeInfo</span> {
@@ -1751,6 +1792,11 @@
             <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>name</span>
         }
     }
+
+    <span class='kw'>fn</span> <span class='ident'>to_node_info</span>(<span class='ident'>name</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='ident'>NodeInfo</span><span class='op'>&lt;</span><span class='ident'>TestNodeInfo</span>, <span class='ident'>u64</span><span class='op'>&gt;</span> {
+        <span class='ident'>NodeInfo</span>::<span class='ident'>new</span>(<span class='ident'>TestNodeInfo</span> { <span class='ident'>name</span>: <span class='ident'>name</span>.<span class='ident'>clone</span>() }, <span class='macro'>vec</span><span class='macro'>!</span>())
+    }
+
     <span class='kw'>enum</span> <span class='ident'>ContactType</span> {
         <span class='ident'>Far</span>,
         <span class='ident'>Mid</span>,
@@ -1895,7 +1941,7 @@
         <span class='ident'>NodeInfo</span> {
             <span class='ident'>public_id</span>: <span class='ident'>TestNodeInfo</span>::<span class='ident'>new</span>(),
             <span class='ident'>connections</span>: <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-			<span class='ident'>bucket_index</span>: <span class='number'>0</span>
+            <span class='ident'>bucket_index</span>: <span class='number'>0</span>,
         }
     }
 
@@ -2232,7 +2278,7 @@
         <span class='comment'>// Try with nodes close to us, first time *not* in table and second time *in* table (should</span>
         <span class='comment'>// return group_size() closest to target)</span>
         <span class='kw'>for</span> <span class='ident'>count</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>2</span> {
-            <span class='kw'>for</span> <span class='ident'>i</span> <span class='kw'>in</span> (<span class='ident'>optimal_table_size</span>() <span class='op'>-</span> <span class='ident'>group_size</span>())..<span class='ident'>optimal_table_size</span>() {
+            <span class='kw'>for</span> <span class='ident'>i</span> <span class='kw'>in</span> (<span class='ident'>optimal_table_size</span>() <span class='op'>-</span> <span class='ident'>group_size</span>() <span class='op'>+</span> <span class='number'>1</span>)..<span class='ident'>optimal_table_size</span>() {
                 <span class='ident'>target</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='ident'>count</span> <span class='op'>==</span> <span class='number'>0</span> {
                     <span class='ident'>test</span>.<span class='ident'>buckets</span>[<span class='ident'>i</span>].<span class='ident'>close_contact</span>.<span class='ident'>clone</span>()
                 } <span class='kw'>else</span> {
@@ -2283,39 +2329,45 @@
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>our_close_group_and_is_close</span>() {
-        <span class='comment'>// unchecked - could be merged with one above?</span>
-        <span class='comment'>// independent double verification of our_close_group()</span>
-        <span class='comment'>// this test verifies that the close group is returned sorted</span>
-        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> ::<span class='ident'>rand</span>::<span class='ident'>random</span>::<span class='op'>&lt;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span><span class='op'>&gt;</span>();
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>routing_table</span> <span class='op'>=</span> <span class='ident'>RoutingTable</span>::<span class='ident'>new</span>(<span class='kw-2'>&amp;</span><span class='ident'>name</span>);
-
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>count</span>: <span class='ident'>usize</span> <span class='op'>=</span> <span class='number'>0</span>;
-        <span class='kw'>loop</span> {
-            <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>routing_table</span>.<span class='ident'>add_node</span>(<span class='ident'>NodeInfo</span>::<span class='ident'>new</span>(<span class='ident'>TestNodeInfo</span>::<span class='ident'>new</span>(), <span class='macro'>vec</span><span class='macro'>!</span>[]));
-            <span class='ident'>count</span> <span class='op'>+=</span> <span class='number'>1</span>;
-            <span class='kw'>if</span> <span class='ident'>routing_table</span>.<span class='ident'>len</span>() <span class='op'>&gt;=</span> <span class='ident'>optimal_table_size</span>() {
-                <span class='kw'>break</span>;
-            }
-            <span class='kw'>if</span> <span class='ident'>count</span> <span class='op'>&gt;=</span> <span class='number'>2</span> <span class='op'>*</span> <span class='ident'>optimal_table_size</span>() {
-                <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Routing table does not fill up.&quot;</span>);
-            }
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>tables</span> <span class='op'>=</span> <span class='ident'>collections</span>::<span class='ident'>HashMap</span>::<span class='ident'>new</span>();
+        <span class='comment'>// Create nodes such that each can exactly fill up its routing table.</span>
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..(<span class='ident'>optimal_table_size</span>() <span class='op'>+</span> <span class='number'>1</span>) {
+            <span class='kw'>let</span> <span class='ident'>node_info</span> <span class='op'>=</span> <span class='ident'>create_random_node_info</span>();
+            <span class='kw'>let</span> <span class='ident'>table</span> <span class='op'>=</span> <span class='ident'>RoutingTable</span>::<span class='op'>&lt;</span><span class='ident'>TestNodeInfo</span>, <span class='ident'>u64</span><span class='op'>&gt;</span>::<span class='ident'>new</span>(<span class='ident'>node_info</span>.<span class='ident'>name</span>());
+            <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>tables</span>.<span class='ident'>insert</span>(<span class='ident'>node_info</span>.<span class='ident'>name</span>().<span class='ident'>clone</span>(), <span class='ident'>table</span>);
         }
-        <span class='kw'>let</span> <span class='ident'>our_close_group</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>NodeInfo</span><span class='op'>&lt;</span><span class='ident'>TestNodeInfo</span>, <span class='ident'>u64</span><span class='op'>&gt;&gt;</span> <span class='op'>=</span> <span class='ident'>routing_table</span>.<span class='ident'>our_close_group</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>our_close_group</span>.<span class='ident'>len</span>(), <span class='ident'>group_size</span>());
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>closer_name</span>: ::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span> <span class='op'>=</span> <span class='ident'>name</span>.<span class='ident'>clone</span>();
-        <span class='kw'>for</span> <span class='ident'>close_node</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>our_close_group</span> {
-            <span class='macro'>assert</span><span class='macro'>!</span>(::<span class='ident'>xor_name</span>::<span class='ident'>closer_to_target</span>(<span class='kw-2'>&amp;</span><span class='ident'>closer_name</span>, <span class='ident'>close_node</span>.<span class='ident'>name</span>(), <span class='kw-2'>&amp;</span><span class='ident'>name</span>));
-            <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>routing_table</span>.<span class='ident'>is_close</span>(<span class='ident'>close_node</span>.<span class='ident'>name</span>()));
-            <span class='ident'>closer_name</span> <span class='op'>=</span> <span class='ident'>close_node</span>.<span class='ident'>name</span>().<span class='ident'>clone</span>();
-        }
-        <span class='kw'>for</span> <span class='ident'>node</span> <span class='kw'>in</span> <span class='kw-2'>&amp;</span><span class='ident'>routing_table</span>.<span class='ident'>nodes</span> {
-            <span class='kw'>if</span> <span class='ident'>our_close_group</span>.<span class='ident'>iter</span>()
-                              .<span class='ident'>filter</span>(<span class='op'>|</span><span class='ident'>close_node</span><span class='op'>|</span> <span class='ident'>close_node</span>.<span class='ident'>name</span>() <span class='op'>==</span> <span class='ident'>node</span>.<span class='ident'>name</span>())
-                              .<span class='ident'>count</span>() <span class='op'>&gt;</span> <span class='number'>0</span> {
-                <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>routing_table</span>.<span class='ident'>is_close</span>(<span class='ident'>node</span>.<span class='ident'>name</span>()));
-            } <span class='kw'>else</span> {
-                <span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>routing_table</span>.<span class='ident'>is_close</span>(<span class='ident'>node</span>.<span class='ident'>name</span>()));
+        <span class='kw'>let</span> <span class='ident'>keys</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>::<span class='ident'>xor_name</span>::<span class='ident'>XorName</span><span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>tables</span>.<span class='ident'>keys</span>().<span class='ident'>cloned</span>().<span class='ident'>collect</span>();
+        <span class='comment'>// Add each node to each other node&#39;s routing table.</span>
+        <span class='kw'>for</span> <span class='ident'>name0</span> <span class='kw'>in</span> <span class='ident'>keys</span>.<span class='ident'>iter</span>() {
+            <span class='kw'>for</span> <span class='ident'>name1</span> <span class='kw'>in</span> <span class='ident'>keys</span>.<span class='ident'>iter</span>() {
+                <span class='kw'>if</span> <span class='ident'>tables</span>[<span class='ident'>name0</span>].<span class='ident'>want_to_add</span>(<span class='ident'>name1</span>) {
+                    <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>tables</span>.<span class='ident'>get_mut</span>(<span class='ident'>name0</span>).<span class='ident'>unwrap</span>().<span class='ident'>add_node</span>(<span class='ident'>to_node_info</span>(<span class='ident'>name1</span>));
+                }
             }
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>optimal_table_size</span>(), <span class='ident'>tables</span>[<span class='ident'>name0</span>].<span class='ident'>len</span>());
+        }
+        <span class='comment'>// Check close groups of addresses that are not nodes.</span>
+        <span class='kw'>for</span> _ <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>1000</span> {
+            <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> ::<span class='ident'>rand</span>::<span class='ident'>random</span>();
+            <span class='kw'>let</span> <span class='ident'>close_group_size</span> <span class='op'>=</span> <span class='ident'>tables</span>.<span class='ident'>values</span>().<span class='ident'>filter</span>(<span class='op'>|</span><span class='ident'>t</span><span class='op'>|</span> <span class='ident'>t</span>.<span class='ident'>is_close</span>(<span class='kw-2'>&amp;</span><span class='ident'>name</span>)).<span class='ident'>count</span>();
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>group_size</span>(), <span class='ident'>close_group_size</span>);
+            <span class='comment'>// TODO: Find a way to ensure at least the following for more than 65 nodes.</span>
+            <span class='comment'>// assert!(quorum_size() &lt;= close_group_size &amp;&amp; close_group_size &lt; 2 * quorum_size(),</span>
+            <span class='comment'>//         &quot;Close group has {} elements&quot;, close_group_size);</span>
+        }
+        <span class='comment'>// Check close groups of the nodes&#39; addresses.</span>
+        <span class='kw'>for</span> <span class='ident'>name</span> <span class='kw'>in</span> <span class='ident'>keys</span> {
+            <span class='kw'>let</span> <span class='ident'>close_group</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>tables</span>.<span class='ident'>values</span>()
+                                            .<span class='ident'>filter</span>(<span class='op'>|</span><span class='ident'>t</span><span class='op'>|</span> <span class='ident'>t</span>.<span class='ident'>is_close</span>(<span class='kw-2'>&amp;</span><span class='ident'>name</span>))
+                                            .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>t</span><span class='op'>|</span> <span class='ident'>t</span>.<span class='ident'>our_name</span>().<span class='ident'>clone</span>())
+                                            .<span class='ident'>sorted_by</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>make_sort_predicate</span>(<span class='ident'>name</span>.<span class='ident'>clone</span>()));
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>group_size</span>(), <span class='ident'>close_group</span>.<span class='ident'>len</span>());
+            <span class='kw'>let</span> <span class='ident'>our_close_group</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span>_<span class='op'>&gt;</span> <span class='op'>=</span> <span class='ident'>tables</span>[<span class='kw-2'>&amp;</span><span class='ident'>name</span>].<span class='ident'>our_close_group</span>()
+                                                       .<span class='ident'>into_iter</span>()
+                                                       .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>ni</span><span class='op'>|</span> <span class='ident'>ni</span>.<span class='ident'>name</span>().<span class='ident'>clone</span>())
+                                                       .<span class='ident'>collect</span>();
+            <span class='comment'>// The node itself is not in `our_close_group`, but it is in `close_group`:</span>
+            <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>close_group</span>[<span class='number'>1</span>..].<span class='ident'>to_vec</span>(), <span class='ident'>our_close_group</span>[..(<span class='ident'>group_size</span>() <span class='op'>-</span> <span class='number'>1</span>)].<span class='ident'>to_vec</span>());
         }
     }
 
@@ -2419,18 +2471,19 @@
             }
         }
 
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>tested_close_target</span> <span class='op'>=</span> <span class='boolval'>false</span>;
         <span class='kw'>for</span> <span class='ident'>i</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='ident'>tables</span>.<span class='ident'>len</span>() {
             <span class='ident'>addresses</span>.<span class='ident'>sort_by</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='ident'>make_sort_predicate</span>(<span class='ident'>tables</span>[<span class='ident'>i</span>].<span class='ident'>our_name</span>.<span class='ident'>clone</span>()));
             <span class='comment'>// if target is in close group return the whole close group excluding target</span>
-            <span class='kw'>for</span> <span class='ident'>j</span> <span class='kw'>in</span> <span class='number'>1</span>..(<span class='ident'>group_size</span>() <span class='op'>-</span> <span class='ident'>quorum_size</span>()) {
-                <span class='kw'>let</span> <span class='ident'>target_close_group</span> <span class='op'>=</span> <span class='ident'>tables</span>[<span class='ident'>i</span>].<span class='ident'>target_nodes</span>(<span class='kw-2'>&amp;</span><span class='ident'>addresses</span>[<span class='ident'>j</span>]);
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>group_size</span>(), <span class='ident'>target_close_group</span>.<span class='ident'>len</span>());
-                <span class='comment'>// should contain our close group</span>
-                <span class='kw'>for</span> <span class='ident'>k</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='ident'>target_close_group</span>.<span class='ident'>len</span>() {
-                    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>target_close_group</span>[<span class='ident'>k</span>].<span class='ident'>name</span>(), <span class='ident'>addresses</span>[<span class='ident'>k</span> <span class='op'>+</span> <span class='number'>1</span>]);
+            <span class='kw'>for</span> <span class='ident'>j</span> <span class='kw'>in</span> <span class='number'>1</span>..<span class='ident'>group_size</span>() {
+                <span class='kw'>if</span> <span class='ident'>tables</span>[<span class='ident'>i</span>].<span class='ident'>is_close</span>(<span class='kw-2'>&amp;</span><span class='ident'>addresses</span>[<span class='ident'>j</span>]) {
+                    <span class='kw'>let</span> <span class='ident'>target_close_group</span> <span class='op'>=</span> <span class='ident'>tables</span>[<span class='ident'>i</span>].<span class='ident'>target_nodes</span>(<span class='kw-2'>&amp;</span><span class='ident'>addresses</span>[<span class='ident'>j</span>]);
+                    <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>group_size</span>(), <span class='ident'>target_close_group</span>.<span class='ident'>len</span>());
+                    <span class='ident'>tested_close_target</span> <span class='op'>=</span> <span class='boolval'>true</span>;
                 }
             }
         }
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>tested_close_target</span>, <span class='string'>&quot;No node in the sample was close.&quot;</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -2595,6 +2648,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>

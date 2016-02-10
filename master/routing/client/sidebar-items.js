@@ -1,1 +1,1 @@
-initSidebarItems({"struct":[["Client","Client provides an actionable interface to Core.  On constructing a new Client object a Core will also be started."]]});
+initSidebarItems({"struct":[["Client","Interface for sending and receiving messages to and from a network of nodes in the role of a client."]]});

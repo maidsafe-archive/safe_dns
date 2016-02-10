@@ -4,11 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-0a35038f75765ae4/routing-0.6.1/src/error.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/error.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>error.rs.html -- source</title>
 
+    <link rel="stylesheet" type="text/css" href="../../rustdoc.css">
     <link rel="stylesheet" type="text/css" href="../../main.css">
 
     <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
@@ -235,11 +236,11 @@
     <span class='ident'>NotBootstrapped</span>,
     <span class='doccomment'>/// Invalid State</span>
     <span class='ident'>Terminated</span>,
-    <span class='doccomment'>/// invalid requester or handler authorities</span>
+    <span class='doccomment'>/// Invalid requester or handler authorities</span>
     <span class='ident'>BadAuthority</span>,
-    <span class='doccomment'>/// failure to connect to an already connected node</span>
+    <span class='doccomment'>/// Failure to connect to an already connected node</span>
     <span class='ident'>AlreadyConnected</span>,
-    <span class='doccomment'>/// received message having unknown type</span>
+    <span class='doccomment'>/// Received message having unknown type</span>
     <span class='ident'>UnknownMessageType</span>,
     <span class='doccomment'>/// Failed signature check</span>
     <span class='ident'>FailedSignature</span>,
@@ -247,24 +248,24 @@
     <span class='ident'>NotEnoughSignatures</span>,
     <span class='doccomment'>/// Duplicate signatures</span>
     <span class='ident'>DuplicateSignatures</span>,
-    <span class='doccomment'>/// duplicate request received</span>
+    <span class='doccomment'>/// Duplicate request received</span>
     <span class='ident'>FilterCheckFailed</span>,
-    <span class='doccomment'>/// failure to bootstrap off the provided endpoints</span>
+    <span class='doccomment'>/// Failure to bootstrap off the provided endpoints</span>
     <span class='ident'>FailedToBootstrap</span>,
-    <span class='doccomment'>/// unexpected empty routing table</span>
+    <span class='doccomment'>/// Unexpected empty routing table</span>
     <span class='ident'>RoutingTableEmpty</span>,
-    <span class='doccomment'>/// public id rejected because of disallowed relocated status</span>
+    <span class='doccomment'>/// Public id rejected because of disallowed relocated status</span>
     <span class='ident'>RejectedPublicId</span>,
-    <span class='doccomment'>/// routing table did not add the node information,</span>
+    <span class='doccomment'>/// Routing table did not add the node information,</span>
     <span class='doccomment'>/// either because it was already added, or because it did not improve the routing table</span>
     <span class='ident'>RefusedFromRoutingTable</span>,
     <span class='doccomment'>/// String errors</span>
     <span class='ident'>Utf8</span>(::<span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>Utf8Error</span>),
-    <span class='doccomment'>/// interface error</span>
+    <span class='doccomment'>/// Interface error</span>
     <span class='ident'>Interface</span>(<span class='ident'>InterfaceError</span>),
     <span class='doccomment'>/// i/o error</span>
     <span class='ident'>Io</span>(::<span class='ident'>std</span>::<span class='ident'>io</span>::<span class='ident'>Error</span>),
-    <span class='doccomment'>/// serialisation error</span>
+    <span class='doccomment'>/// Serialisation error</span>
     <span class='ident'>Cbor</span>(::<span class='ident'>cbor</span>::<span class='ident'>CborError</span>),
     <span class='doccomment'>/// Channel sending error</span>
     <span class='ident'>SendEventError</span>(<span class='ident'>SendError</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>),
@@ -385,6 +386,6 @@
     <script src="../../jquery.js"></script>
     <script src="../../main.js"></script>
     
-    <script async src="../../search-index.js"></script>
+    <script defer src="../../search-index.js"></script>
 </body>
 </html>
