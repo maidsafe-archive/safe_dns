@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-4759' class='srclink' href='../src/routing/node.rs.html#42-47' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-5091' class='srclink' href='../src/routing/node.rs.html#42-47' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Node {
     // some fields omitted
 }</pre><div class='docblock'><p>Interface for sending and receiving messages to and from other nodes, in the role of a full
@@ -94,8 +94,8 @@ request a new name and integrate itself into the network using the new name.</p>
 <p>This is intended to be sent from a group authority (<code>src</code>) to itself whenever a node joins
 or leaves the group. If the quorum is reached, i. e. enough members agree that a change has
 happened, the churn mechanism is triggered to adapt to the change.</p>
-</div><h4 id='method.close_group' class='method'><code>fn <a href='#method.close_group' class='fnname'>close_group</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>&gt;, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
-<div class='docblock'><p>Returns the names of the nodes in the routing table which are closest to this one.</p>
+</div><h4 id='method.close_group' class='method'><code>fn <a href='#method.close_group' class='fnname'>close_group</a>(&amp;self, name: <a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>&gt;&gt;, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
+<div class='docblock'><p>Returns the names of the nodes in the routing table which are closest to the given one.</p>
 </div><h4 id='method.name' class='method'><code>fn <a href='#method.name' class='fnname'>name</a>(&amp;self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>, <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt;</code></h4>
 <div class='docblock'><p>Returns the name of this node.</p>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../routing/struct.Node.html' title='routing::Node'>Node</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>

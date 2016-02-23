@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.5.0/src/metadata/directory_metadata.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/metadata/directory_metadata.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>directory_metadata.rs.html -- source</title>
@@ -256,6 +256,32 @@
 <span id="213">213</span>
 <span id="214">214</span>
 <span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -274,35 +300,39 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Decodable</span>, <span class='ident'>Decoder</span>};
+
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 <span class='kw'>use</span> <span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span>;
+<span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>utility</span>;
 
 <span class='doccomment'>/// Metadata about a File or a Directory</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>DirectoryMetadata</span> {
-    <span class='ident'>key</span>           : <span class='ident'>DirectoryKey</span>,
-    <span class='ident'>name</span>          : <span class='ident'>String</span>,
-    <span class='ident'>created_time</span>  : ::<span class='ident'>time</span>::<span class='ident'>Tm</span>,
-    <span class='ident'>modified_time</span> : ::<span class='ident'>time</span>::<span class='ident'>Tm</span>,
-    <span class='ident'>user_metadata</span> : <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
+    <span class='ident'>key</span>: <span class='ident'>DirectoryKey</span>,
+    <span class='ident'>name</span>: <span class='ident'>String</span>,
+    <span class='ident'>created_time</span>: ::<span class='ident'>time</span>::<span class='ident'>Tm</span>,
+    <span class='ident'>modified_time</span>: ::<span class='ident'>time</span>::<span class='ident'>Tm</span>,
+    <span class='ident'>user_metadata</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
     <span class='ident'>parent_dir_key</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryKey</span><span class='op'>&gt;</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>DirectoryMetadata</span> {
     <span class='doccomment'>/// Create a new instance of Metadata</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>name</span>          : <span class='ident'>String</span>,
-               <span class='ident'>type_tag</span>      : <span class='ident'>u64</span>,
-               <span class='ident'>versioned</span>     : <span class='ident'>bool</span>,
-               <span class='ident'>access_level</span>  : ::<span class='ident'>AccessLevel</span>,
-               <span class='ident'>user_metadata</span> : <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-               <span class='ident'>parent_dir_key</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryKey</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryMetadata</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>::<span class='ident'>new</span>(<span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>()));
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>name</span>: <span class='ident'>String</span>,
+               <span class='ident'>type_tag</span>: <span class='ident'>u64</span>,
+               <span class='ident'>versioned</span>: <span class='ident'>bool</span>,
+               <span class='ident'>access_level</span>: ::<span class='ident'>AccessLevel</span>,
+               <span class='ident'>user_metadata</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
+               <span class='ident'>parent_dir_key</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryKey</span><span class='op'>&gt;</span>)
+               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryMetadata</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>::<span class='ident'>new</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>()));
         <span class='prelude-val'>Ok</span>(<span class='ident'>DirectoryMetadata</span> {
-            <span class='ident'>key</span>           : <span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, <span class='ident'>type_tag</span>, <span class='ident'>versioned</span>, <span class='ident'>access_level</span>),
-            <span class='ident'>name</span>          : <span class='ident'>name</span>,
-            <span class='ident'>created_time</span>  : ::<span class='ident'>time</span>::<span class='ident'>now_utc</span>(),
-            <span class='ident'>modified_time</span> : ::<span class='ident'>time</span>::<span class='ident'>now_utc</span>(),
-            <span class='ident'>user_metadata</span> : <span class='ident'>user_metadata</span>,
+            <span class='ident'>key</span>: <span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, <span class='ident'>type_tag</span>, <span class='ident'>versioned</span>, <span class='ident'>access_level</span>),
+            <span class='ident'>name</span>: <span class='ident'>name</span>,
+            <span class='ident'>created_time</span>: ::<span class='ident'>time</span>::<span class='ident'>now_utc</span>(),
+            <span class='ident'>modified_time</span>: ::<span class='ident'>time</span>::<span class='ident'>now_utc</span>(),
+            <span class='ident'>user_metadata</span>: <span class='ident'>user_metadata</span>,
             <span class='ident'>parent_dir_key</span>: <span class='ident'>parent_dir_key</span>,
         })
     }
@@ -364,14 +394,24 @@
         <span class='self'>self</span>.<span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>name</span>;
     }
 
+    <span class='doccomment'>/// Set time of creation</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_created_time</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>created_time</span>: ::<span class='ident'>time</span>::<span class='ident'>Tm</span>) {
+        <span class='self'>self</span>.<span class='ident'>created_time</span> <span class='op'>=</span> <span class='ident'>created_time</span>;
+    }
+
     <span class='doccomment'>/// Set time of modification</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_modified_time</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>modified_time</span>: ::<span class='ident'>time</span>::<span class='ident'>Tm</span>) {
         <span class='self'>self</span>.<span class='ident'>modified_time</span> <span class='op'>=</span> <span class='ident'>modified_time</span>
     }
 
-    <span class='doccomment'>/// User setteble metadata for custom metadata</span>
+    <span class='doccomment'>/// Setter for user_metadata</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_user_metadata</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>user_metadata</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>) {
         <span class='self'>self</span>.<span class='ident'>user_metadata</span> <span class='op'>=</span> <span class='ident'>user_metadata</span>;
+    }
+
+    <span class='doccomment'>/// Setter for parent_dir_key</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>set_parent_dir_key</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>parent_dir_key</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryKey</span><span class='op'>&gt;</span>) {
+        <span class='self'>self</span>.<span class='ident'>parent_dir_key</span> <span class='op'>=</span> <span class='ident'>parent_dir_key</span>;
     }
 }
 
@@ -381,36 +421,46 @@
         <span class='kw'>let</span> <span class='ident'>modified_time</span> <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>modified_time</span>.<span class='ident'>to_timespec</span>();
 
         <span class='ident'>e</span>.<span class='ident'>emit_struct</span>(<span class='string'>&quot;DirectoryMetadata&quot;</span>, <span class='number'>8</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> {
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;key&quot;</span>,                <span class='number'>0</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>key</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;name&quot;</span>,               <span class='number'>1</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>name</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>,   <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>,  <span class='number'>3</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>nsec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>,  <span class='number'>4</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>modified_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;key&quot;</span>, <span class='number'>0</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>key</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;name&quot;</span>, <span class='number'>1</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>name</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>, <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>, <span class='number'>3</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>created_time</span>.<span class='ident'>nsec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>, <span class='number'>4</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>modified_time</span>.<span class='ident'>sec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
             <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>, <span class='number'>5</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='ident'>modified_time</span>.<span class='ident'>nsec</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>,      <span class='number'>6</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>user_metadata</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
-            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;parent_dir_key&quot;</span>,     <span class='number'>7</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>parent_dir_key</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>, <span class='number'>6</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>user_metadata</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>e</span>.<span class='ident'>emit_struct_field</span>(<span class='string'>&quot;parent_dir_key&quot;</span>, <span class='number'>7</span>, <span class='op'>|</span><span class='ident'>e</span><span class='op'>|</span> <span class='self'>self</span>.<span class='ident'>parent_dir_key</span>.<span class='ident'>encode</span>(<span class='ident'>e</span>)));
 
             <span class='prelude-val'>Ok</span>(())
         })
     }
 }
 
-<span class='kw'>impl</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span> <span class='kw'>for</span> <span class='ident'>DirectoryMetadata</span> {
-    <span class='kw'>fn</span> <span class='ident'>decode</span><span class='op'>&lt;</span><span class='ident'>D</span>: ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decoder</span><span class='op'>&gt;</span>(<span class='ident'>d</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>D</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryMetadata</span>, <span class='ident'>D</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+<span class='kw'>impl</span> <span class='ident'>Decodable</span> <span class='kw'>for</span> <span class='ident'>DirectoryMetadata</span> {
+    <span class='kw'>fn</span> <span class='ident'>decode</span><span class='op'>&lt;</span><span class='ident'>D</span>: <span class='ident'>Decoder</span><span class='op'>&gt;</span>(<span class='ident'>d</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>D</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryMetadata</span>, <span class='ident'>D</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
         <span class='ident'>d</span>.<span class='ident'>read_struct</span>(<span class='string'>&quot;DirectoryMetadata&quot;</span>, <span class='number'>8</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> {
             <span class='prelude-val'>Ok</span>(<span class='ident'>DirectoryMetadata</span> {
-                <span class='ident'>key</span>           : <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;key&quot;</span>,  <span class='number'>0</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                <span class='ident'>name</span>          : <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;name&quot;</span>, <span class='number'>1</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                <span class='ident'>created_time</span>  : ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(::<span class='ident'>time</span>::<span class='ident'>Timespec</span> {
-                                                   <span class='ident'>sec</span> : <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>,  <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                                                   <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>, <span class='number'>3</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                                               }),
-                <span class='ident'>modified_time</span> : ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(::<span class='ident'>time</span>::<span class='ident'>Timespec</span> {
-                                                   <span class='ident'>sec</span> : <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>,  <span class='number'>4</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                                                   <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>, <span class='number'>5</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                                               }),
-                <span class='ident'>user_metadata</span> : <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>,  <span class='number'>6</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
-                <span class='ident'>parent_dir_key</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;parent_dir_key&quot;</span>, <span class='number'>7</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> ::<span class='ident'>rustc_serialize</span>::<span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                <span class='ident'>key</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;key&quot;</span>, <span class='number'>0</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                <span class='ident'>name</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;name&quot;</span>, <span class='number'>1</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                <span class='ident'>created_time</span>: ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(::<span class='ident'>time</span>::<span class='ident'>Timespec</span> {
+                    <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_sec&quot;</span>, <span class='number'>2</span>, <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                    <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;created_time_nsec&quot;</span>,
+                                                   <span class='number'>3</span>,
+                                                   <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                }),
+                <span class='ident'>modified_time</span>: ::<span class='ident'>time</span>::<span class='ident'>at_utc</span>(::<span class='ident'>time</span>::<span class='ident'>Timespec</span> {
+                    <span class='ident'>sec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_sec&quot;</span>,
+                                                  <span class='number'>4</span>,
+                                                  <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                    <span class='ident'>nsec</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;modified_time_nsec&quot;</span>,
+                                                   <span class='number'>5</span>,
+                                                   <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                }),
+                <span class='ident'>user_metadata</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;user_metadata&quot;</span>,
+                                                        <span class='number'>6</span>,
+                                                        <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
+                <span class='ident'>parent_dir_key</span>: <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>d</span>.<span class='ident'>read_struct_field</span>(<span class='string'>&quot;parent_dir_key&quot;</span>,
+                                                         <span class='number'>7</span>,
+                                                         <span class='op'>|</span><span class='ident'>d</span><span class='op'>|</span> <span class='ident'>Decodable</span>::<span class='ident'>decode</span>(<span class='ident'>d</span>))),
             })
         })
     }
@@ -422,15 +472,16 @@
     <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
     <span class='kw'>use</span> <span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span>;
     <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
+    <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>utility</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>serialise_directorty_metadata_without_parent_directory</span>() {
         <span class='kw'>let</span> <span class='ident'>obj_before</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>DirectoryMetadata</span>::<span class='ident'>new</span>(<span class='string'>&quot;hello.txt&quot;</span>.<span class='ident'>to_string</span>(),
-                                                             <span class='number'>99u64</span>,
-                                                             <span class='boolval'>true</span>,
-                                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                             <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                             <span class='prelude-val'>None</span>));
+                                                               <span class='number'>99u64</span>,
+                                                               <span class='boolval'>true</span>,
+                                                               ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                               <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                                               <span class='prelude-val'>None</span>));
         <span class='kw'>let</span> <span class='ident'>serialised_data</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>obj_before</span>));
         <span class='kw'>let</span> <span class='ident'>obj_after</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>serialised_data</span>));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>obj_before</span>, <span class='ident'>obj_after</span>);
@@ -438,29 +489,30 @@
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>serialise_directorty_metadata_with_parent_directory</span>() {
-        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>::<span class='ident'>new</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>((::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>())));
+        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>::<span class='ident'>new</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>((<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>())));
         <span class='kw'>let</span> <span class='ident'>parent_directory</span> <span class='op'>=</span> <span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, <span class='number'>100u64</span>, <span class='boolval'>false</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>);
         <span class='kw'>let</span> <span class='ident'>obj_before</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>DirectoryMetadata</span>::<span class='ident'>new</span>(<span class='string'>&quot;hello.txt&quot;</span>.<span class='ident'>to_string</span>(),
-                                                             <span class='number'>99u64</span>,
-                                                             <span class='boolval'>true</span>,
-                                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                             <span class='string'>&quot;Some user metadata&quot;</span>.<span class='ident'>to_string</span>().<span class='ident'>into_bytes</span>(),
-                                                             <span class='prelude-val'>Some</span>(<span class='ident'>parent_directory</span>.<span class='ident'>clone</span>())));
+                                                               <span class='number'>99u64</span>,
+                                                               <span class='boolval'>true</span>,
+                                                               ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                               <span class='string'>&quot;Some user metadata&quot;</span>
+                                                                   .<span class='ident'>to_string</span>()
+                                                                   .<span class='ident'>into_bytes</span>(),
+                                                               <span class='prelude-val'>Some</span>(<span class='ident'>parent_directory</span>.<span class='ident'>clone</span>())));
         <span class='kw'>let</span> <span class='ident'>serialised_data</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>obj_before</span>));
         <span class='kw'>let</span> <span class='ident'>obj_after</span>: <span class='ident'>DirectoryMetadata</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>serialised_data</span>));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>obj_after</span>.<span class='ident'>get_parent_dir_key</span>(), <span class='string'>&quot;Directory should not be None&quot;</span>), <span class='ident'>parent_directory</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>obj_after</span>.<span class='ident'>get_parent_dir_key</span>(),
+                                   <span class='string'>&quot;Directory should not be None&quot;</span>),
+                   <span class='ident'>parent_directory</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>update_using_setters</span>() {
-        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>::<span class='ident'>new</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>((::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>())));
+        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>::<span class='ident'>new</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>((<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>())));
         <span class='kw'>let</span> <span class='ident'>modified_time</span> <span class='op'>=</span> ::<span class='ident'>time</span>::<span class='ident'>now_utc</span>();
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>obj_before</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>DirectoryMetadata</span>::<span class='ident'>new</span>(<span class='string'>&quot;hello.txt&quot;</span>.<span class='ident'>to_string</span>(),
-                                                                 <span class='number'>99u64</span>,
-                                                                 <span class='boolval'>true</span>,
-                                                                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                                 <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                 <span class='prelude-val'>Some</span>(<span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, <span class='number'>100u64</span>, <span class='boolval'>false</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>))));
+                <span class='number'>99u64</span>, <span class='boolval'>true</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>, <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                <span class='prelude-val'>Some</span>(<span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, <span class='number'>100u64</span>, <span class='boolval'>false</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>))));
         <span class='kw'>let</span> <span class='ident'>user_metadata</span> <span class='op'>=</span> <span class='string'>&quot;{mime: \&quot;application/json\&quot;}&quot;</span>.<span class='ident'>to_string</span>().<span class='ident'>into_bytes</span>();
         <span class='ident'>obj_before</span>.<span class='ident'>set_user_metadata</span>(<span class='ident'>user_metadata</span>.<span class='ident'>clone</span>());
         <span class='ident'>obj_before</span>.<span class='ident'>set_modified_time</span>(<span class='ident'>modified_time</span>.<span class='ident'>clone</span>());

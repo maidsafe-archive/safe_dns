@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-508' class='srclink' href='../../../src/safe_nfs/helper/writer.rs.html#28-33' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-534' class='srclink' href='../../../src/safe_nfs/helper/writer.rs.html#38-43' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Writer {
     // some fields omitted
 }</pre><div class='docblock'><p>Writer is used to write contents to a File and especially in chunks if the file happens to be
@@ -58,7 +58,8 @@ too large</p>
 </div><h4 id='method.close' class='method'><code>fn <a href='#method.close' class='fnname'>close</a>(self) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a class='struct' href='../../../safe_nfs/directory_listing/struct.DirectoryListing.html' title='safe_nfs::directory_listing::DirectoryListing'>DirectoryListing</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../../safe_nfs/directory_listing/struct.DirectoryListing.html' title='safe_nfs::directory_listing::DirectoryListing'>DirectoryListing</a>&gt;)</a>, <a class='enum' href='../../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
 <div class='docblock'><p>close is invoked only after all the data is completely written
 The file/blob is saved only when the close is invoked.
-Returns the update DirectoryListing which owns the file and also the updated DirectoryListing of the file&#39;s parent
+Returns the update DirectoryListing which owns the file and also the updated
+DirectoryListing of the file&#39;s parent
 Returns (files&#39;s parent_directory, Option<file's parent_directory's parent>)</p>
 </div></div></section>
     <section id='search' class="content hidden"></section>

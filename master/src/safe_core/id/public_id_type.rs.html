@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.5.0/src/id/public_id_type.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.6.0/src/id/public_id_type.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>public_id_type.rs.html -- source</title>
@@ -437,7 +437,7 @@
         }
 
         <span class='kw'>let</span> <span class='ident'>signature</span> <span class='op'>=</span> <span class='ident'>sign</span>::<span class='ident'>Signature</span>(<span class='ident'>signature_arr</span>);
-        <span class='macro'>assert</span><span class='macro'>!</span>(::<span class='ident'>utility</span>::<span class='ident'>slice_equal</span>(<span class='kw-2'>&amp;</span><span class='ident'>signature</span>.<span class='number'>0</span>, <span class='kw-2'>&amp;</span><span class='ident'>public_maid</span>.<span class='ident'>signature</span>().<span class='number'>0</span>));
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>signature</span>.<span class='number'>0</span>[..] <span class='op'>==</span> <span class='kw-2'>&amp;</span><span class='ident'>public_maid</span>.<span class='ident'>signature</span>().<span class='number'>0</span>[..]);
     }
 }
 </pre>

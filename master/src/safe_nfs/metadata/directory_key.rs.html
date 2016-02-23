@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.5.0/src/metadata/directory_key.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/metadata/directory_key.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>directory_key.rs.html -- source</title>
@@ -123,6 +123,12 @@
 <span id="80">80</span>
 <span id="81">81</span>
 <span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -147,20 +153,24 @@
 <span class='doccomment'>/// A directory can be feteched with the DirectoryKey</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>DirectoryKey</span> {
-    <span class='ident'>id</span>          : <span class='ident'>XorName</span>,
-    <span class='ident'>type_tag</span>    : <span class='ident'>u64</span>,
-    <span class='ident'>versioned</span>   : <span class='ident'>bool</span>,
+    <span class='ident'>id</span>: <span class='ident'>XorName</span>,
+    <span class='ident'>type_tag</span>: <span class='ident'>u64</span>,
+    <span class='ident'>versioned</span>: <span class='ident'>bool</span>,
     <span class='ident'>access_level</span>: ::<span class='ident'>AccessLevel</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>DirectoryKey</span> {
     <span class='doccomment'>/// Creates a new instance of DirectoryKey</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>directory_id</span>: <span class='ident'>XorName</span>, <span class='ident'>type_tag</span>: <span class='ident'>u64</span>, <span class='ident'>versioned</span>: <span class='ident'>bool</span>, <span class='ident'>access_level</span>: ::<span class='ident'>AccessLevel</span>) <span class='op'>-&gt;</span> <span class='ident'>DirectoryKey</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>directory_id</span>: <span class='ident'>XorName</span>,
+               <span class='ident'>type_tag</span>: <span class='ident'>u64</span>,
+               <span class='ident'>versioned</span>: <span class='ident'>bool</span>,
+               <span class='ident'>access_level</span>: ::<span class='ident'>AccessLevel</span>)
+               <span class='op'>-&gt;</span> <span class='ident'>DirectoryKey</span> {
         <span class='ident'>DirectoryKey</span> {
-            <span class='ident'>id</span>          : <span class='ident'>directory_id</span>,
-            <span class='ident'>type_tag</span>    : <span class='ident'>type_tag</span>,
-            <span class='ident'>versioned</span>   : <span class='ident'>versioned</span>,
-            <span class='ident'>access_level</span>: <span class='ident'>access_level</span>
+            <span class='ident'>id</span>: <span class='ident'>directory_id</span>,
+            <span class='ident'>type_tag</span>: <span class='ident'>type_tag</span>,
+            <span class='ident'>versioned</span>: <span class='ident'>versioned</span>,
+            <span class='ident'>access_level</span>: <span class='ident'>access_level</span>,
         }
     }
 
@@ -187,11 +197,12 @@
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
     <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
     <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
+    <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>utility</span>;
 
     <span class='doccomment'>/// Should be able to serialise &amp; deserialise the DirectoryKey</span>
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>serailise_and_deserialise_directory_key</span>() {
-        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>()));
+        <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>XorName</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>utility</span>::<span class='ident'>generate_random_array_u8_64</span>()));
         <span class='kw'>let</span> <span class='ident'>tag</span> <span class='op'>=</span> <span class='number'>10u64</span>;
         <span class='kw'>let</span> <span class='ident'>versioned</span> <span class='op'>=</span> <span class='boolval'>false</span>;
         <span class='kw'>let</span> <span class='ident'>access_level</span> <span class='op'>=</span> ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>;
@@ -199,7 +210,8 @@
         <span class='kw'>let</span> <span class='ident'>directory_key</span> <span class='op'>=</span> <span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>.<span class='ident'>clone</span>(), <span class='ident'>tag</span>, <span class='ident'>versioned</span>, <span class='ident'>access_level</span>.<span class='ident'>clone</span>());
 
         <span class='kw'>let</span> <span class='ident'>serialised</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory_key</span>));
-        <span class='kw'>let</span> <span class='ident'>deserilaised_key</span>: ::<span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>serialised</span>));
+        <span class='kw'>let</span> <span class='ident'>deserilaised_key</span>: ::<span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span> <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>serialised</span>));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>deserilaised_key</span>.<span class='ident'>get_id</span>(), <span class='ident'>id</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>deserilaised_key</span>.<span class='ident'>get_access_level</span>(), <span class='ident'>access_level</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>deserilaised_key</span>.<span class='ident'>is_versioned</span>(), <span class='ident'>versioned</span>);

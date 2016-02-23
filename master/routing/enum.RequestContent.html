@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-3195' class='srclink' href='../src/routing/messages.rs.html#228-277' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-3522' class='srclink' href='../src/routing/messages.rs.html#235-284' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum RequestContent {
     GetNetworkName {
         current_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
@@ -56,13 +56,13 @@
     },
     GetCloseGroup,
     Connect,
-    Endpoints {
-        encrypted_endpoints: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
+    ConnectionInfo {
+        encrypted_connection_info: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
         nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>; box_::NONCEBYTES]</a>,
     },
     GetPublicId,
-    GetPublicIdWithEndpoints {
-        encrypted_endpoints: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
+    GetPublicIdWithConnectionInfo {
+        encrypted_connection_info: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
         nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>; box_::NONCEBYTES]</a>,
     },
     Refresh(<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;),
@@ -88,17 +88,17 @@ a new name chosen by the <code>NaeManager</code>.</p>
 <p>This is sent from a joining node to its <code>NodeManager</code> to request the <code>PublicId</code>s of the
 <code>NodeManager</code>&#39;s members.</p>
 </div></td></tr><tr><td id='variant.Connect'><code>Connect</code></td><td><div class='docblock'><p>Request a direct connection to the recipient.</p>
-</div></td></tr><tr><td id='variant.Endpoints'><code>Endpoints</code></td><td><div class='docblock'><p>Send our endpoints encrypted to a node we wish to connect to and have the keys for.</p>
+</div></td></tr><tr><td id='variant.ConnectionInfo'><code>ConnectionInfo</code></td><td><div class='docblock'><p>Send our connection_info encrypted to a node we wish to connect to and have the keys for.</p>
 </div><h3 class='fields'>Fields</h3>
 
-                                              <table><tr><td id='variant.Endpoints.field.encrypted_endpoints'><code>encrypted_endpoints</code></td><td><div class='docblock'><p>Encrypted crust endpoints (socket address and protocol).</p>
-</div></td></tr><tr><td id='variant.Endpoints.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Nonce used to provide a salt in the encrytped message.</p>
+                                              <table><tr><td id='variant.ConnectionInfo.field.encrypted_connection_info'><code>encrypted_connection_info</code></td><td><div class='docblock'><p>Encrypted Crust connection info.</p>
+</div></td></tr><tr><td id='variant.ConnectionInfo.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Nonce used to provide a salt in the encrytped message.</p>
 </div></td></tr></table></td></tr><tr><td id='variant.GetPublicId'><code>GetPublicId</code></td><td><div class='docblock'><p>Ask each member of a group near a node address for the <code>PublicId</code>.</p>
-</div></td></tr><tr><td id='variant.GetPublicIdWithEndpoints'><code>GetPublicIdWithEndpoints</code></td><td><div class='docblock'><p>Ask for a <code>PublicId</code> but provide our endpoints encrytped.</p>
+</div></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo'><code>GetPublicIdWithConnectionInfo</code></td><td><div class='docblock'><p>Ask for a <code>PublicId</code> but provide our connection_info encrytped.</p>
 </div><h3 class='fields'>Fields</h3>
 
-                                              <table><tr><td id='variant.GetPublicIdWithEndpoints.field.encrypted_endpoints'><code>encrypted_endpoints</code></td><td><div class='docblock'><p>Encrypted crust endpoints (socket address and protocol).</p>
-</div></td></tr><tr><td id='variant.GetPublicIdWithEndpoints.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Nonce used to provide a salt in the encrytped message.</p>
+                                              <table><tr><td id='variant.GetPublicIdWithConnectionInfo.field.encrypted_connection_info'><code>encrypted_connection_info</code></td><td><div class='docblock'><p>Encrypted crust connection_info (socket address and protocol).</p>
+</div></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Nonce used to provide a salt in the encrytped message.</p>
 </div></td></tr></table></td></tr><tr><td id='variant.Refresh'><code>Refresh</code></td><td><div class='docblock'><p>Message from upper layers sending network state on any network churn event.</p>
 </div></td></tr><tr><td id='variant.Get'><code>Get</code></td><td><div class='docblock'><p>Ask for data from network, passed from API with data name as parameter</p>
 </div></td></tr><tr><td id='variant.Put'><code>Put</code></td><td><div class='docblock'><p>Put data to network. Provide actual data as parameter</p>

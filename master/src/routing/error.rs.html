@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/error.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/error.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>error.rs.html -- source</title>
@@ -183,6 +183,19 @@
 <span id="140">140</span>
 <span id="141">141</span>
 <span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -256,9 +269,14 @@
     <span class='ident'>RoutingTableEmpty</span>,
     <span class='doccomment'>/// Public id rejected because of disallowed relocated status</span>
     <span class='ident'>RejectedPublicId</span>,
-    <span class='doccomment'>/// Routing table did not add the node information,</span>
-    <span class='doccomment'>/// either because it was already added, or because it did not improve the routing table</span>
+    <span class='doccomment'>/// Routing table did not add the node information, either because it was already added, or</span>
+    <span class='doccomment'>/// because it did not improve the routing table</span>
     <span class='ident'>RefusedFromRoutingTable</span>,
+    <span class='doccomment'>/// Rejected providing the close group, because the destination address does not match any of</span>
+    <span class='doccomment'>/// the sender&#39;s buckets</span>
+    <span class='ident'>RejectedGetCloseGroup</span>,
+    <span class='doccomment'>/// A client with `client_restriction == true` tried to relocate.</span>
+    <span class='ident'>RejectedGetNetworkName</span>,
     <span class='doccomment'>/// String errors</span>
     <span class='ident'>Utf8</span>(::<span class='ident'>std</span>::<span class='ident'>str</span>::<span class='ident'>Utf8Error</span>),
     <span class='doccomment'>/// Interface error</span>
@@ -269,6 +287,8 @@
     <span class='ident'>Cbor</span>(::<span class='ident'>cbor</span>::<span class='ident'>CborError</span>),
     <span class='doccomment'>/// Channel sending error</span>
     <span class='ident'>SendEventError</span>(<span class='ident'>SendError</span><span class='op'>&lt;</span><span class='ident'>Event</span><span class='op'>&gt;</span>),
+    <span class='doccomment'>/// The bit index for a `XorName` was out of bounds.</span>
+    <span class='ident'>BitIndexOutOfBoundsError</span>,
     <span class='doccomment'>/// Current state is invalid for the operation</span>
     <span class='ident'>InvalidStateForOperation</span>,
     <span class='doccomment'>/// Serialisation Error</span>
@@ -324,6 +344,12 @@
 <span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span>::<span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>SerialisationError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>RoutingError</span> {
     <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>error</span>: ::<span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>SerialisationError</span>) <span class='op'>-&gt;</span> <span class='ident'>RoutingError</span> {
         <span class='ident'>RoutingError</span>::<span class='ident'>SerialisationError</span>(<span class='ident'>error</span>)
+    }
+}
+
+<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span>::<span class='ident'>xor_name</span>::<span class='ident'>BitIndexOutOfBoundsError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>RoutingError</span> {
+    <span class='kw'>fn</span> <span class='ident'>from</span>(_: ::<span class='ident'>xor_name</span>::<span class='ident'>BitIndexOutOfBoundsError</span>) <span class='op'>-&gt;</span> <span class='ident'>RoutingError</span> {
+        <span class='ident'>RoutingError</span>::<span class='ident'>BitIndexOutOfBoundsError</span>
     }
 }
 </pre>

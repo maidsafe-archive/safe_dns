@@ -46,16 +46,16 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1552' class='srclink' href='../src/routing/data.rs.html#57-64' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1846' class='srclink' href='../src/routing/data.rs.html#58-65' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum DataRequest {
-    StructuredData(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>, <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>),
-    ImmutableData(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>, <a class='enum' href='../routing/enum.ImmutableDataType.html' title='routing::ImmutableDataType'>ImmutableDataType</a>),
-    PlainData(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>),
+    Structured(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>, <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a>),
+    Immutable(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>, <a class='enum' href='../routing/enum.ImmutableDataType.html' title='routing::ImmutableDataType'>ImmutableDataType</a>),
+    Plain(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>),
 }</pre><div class='docblock'><p>DataRequest.</p>
 </div><h2 class='variants'>Variants</h2>
-<table><tr><td id='variant.StructuredData'><code>StructuredData</code></td><td><div class='docblock'><p>Data request, (Identifier, TypeTag) pair for name resolution, for StructuredData.</p>
-</div></td></tr><tr><td id='variant.ImmutableData'><code>ImmutableData</code></td><td><div class='docblock'><p>Data request, (Identifier, Type), for ImmutableData types.</p>
-</div></td></tr><tr><td id='variant.PlainData'><code>PlainData</code></td><td><div class='docblock'><p>Request for PlainData.</p>
+<table><tr><td id='variant.Structured'><code>Structured</code></td><td><div class='docblock'><p>Data request, (Identifier, TypeTag) pair for name resolution, for StructuredData.</p>
+</div></td></tr><tr><td id='variant.Immutable'><code>Immutable</code></td><td><div class='docblock'><p>Data request, (Identifier, Type), for ImmutableData types.</p>
+</div></td></tr><tr><td id='variant.Plain'><code>Plain</code></td><td><div class='docblock'><p>Request for PlainData.</p>
 </div></td></tr></table><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='enum' href='../routing/enum.DataRequest.html' title='routing::DataRequest'>DataRequest</a></code></h3><div class='impl-items'><h4 id='method.name' class='method'><code>fn <a href='#method.name' class='fnname'>name</a>(&amp;self) -&gt; <a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a></code></h4>
 <div class='docblock'><p>DataRequest name.</p>
 </div></div><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='../rustc_serialize/serialize/trait.Decodable.html' title='rustc_serialize::serialize::Decodable'>Decodable</a> for <a class='enum' href='../routing/enum.DataRequest.html' title='routing::DataRequest'>DataRequest</a></code></h3><div class='impl-items'><h4 id='method.decode' class='method'><code>fn <a href='../rustc_serialize/serialize/trait.Decodable.html#method.decode' class='fnname'>decode</a>&lt;__D: <a class='trait' href='../rustc_serialize/serialize/trait.Decoder.html' title='rustc_serialize::serialize::Decoder'>Decoder</a>&gt;(__arg_0: &amp;mut __D) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='enum' href='../routing/enum.DataRequest.html' title='routing::DataRequest'>DataRequest</a>, __D::Error&gt;</code></h4>

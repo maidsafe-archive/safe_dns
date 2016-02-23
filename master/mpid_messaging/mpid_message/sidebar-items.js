@@ -1,0 +1,1 @@
+initSidebarItems({"constant":[["MAX_BODY_SIZE","Maximum allowed length for a message's `body` (101,760 bytes)."]],"struct":[["MpidMessage","A full message including header and body which can be sent to or retrieved from the network."]]});

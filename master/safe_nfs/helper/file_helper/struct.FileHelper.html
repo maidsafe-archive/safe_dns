@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-567' class='srclink' href='../../../src/safe_nfs/helper/file_helper.rs.html#19-21' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-609' class='srclink' href='../../../src/safe_nfs/helper/file_helper.rs.html#31-33' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct FileHelper {
     // some fields omitted
 }</pre><div class='docblock'><p>File provides helper functions to perform Operations on Files</p>
@@ -54,8 +54,10 @@
 <div class='docblock'><p>Create a new FileHelper instance</p>
 </div><h4 id='method.create' class='method'><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;self, name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>, user_metatdata: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;, parent_directory: <a class='struct' href='../../../safe_nfs/directory_listing/struct.DirectoryListing.html' title='safe_nfs::directory_listing::DirectoryListing'>DirectoryListing</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../safe_nfs/helper/writer/struct.Writer.html' title='safe_nfs::helper::writer::Writer'>Writer</a>, <a class='enum' href='../../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
 <div class='docblock'><p>Helper function to create a file in a directory listing
-A writer object is returned, through which the data for the file can be written to the network
-The file is actually saved in the directory listing only after <code>writer.close()</code> is invoked</p>
+A writer object is returned, through which the data for the file
+can be written to the network
+The file is actually saved in the directory listing only after
+<code>writer.close()</code> is invoked</p>
 </div><h4 id='method.delete' class='method'><code>fn <a href='#method.delete' class='fnname'>delete</a>(&amp;self, file_name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>, parent_directory: &amp;mut <a class='struct' href='../../../safe_nfs/directory_listing/struct.DirectoryListing.html' title='safe_nfs::directory_listing::DirectoryListing'>DirectoryListing</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../../safe_nfs/directory_listing/struct.DirectoryListing.html' title='safe_nfs::directory_listing::DirectoryListing'>DirectoryListing</a>&gt;, <a class='enum' href='../../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
 <div class='docblock'><p>Delete a file from the DirectoryListing
 Returns Option<parent_directory's parent></p>
@@ -64,8 +66,10 @@ Returns Option<parent_directory's parent></p>
 Returns Option<parent_directory's parent></p>
 </div><h4 id='method.update_content' class='method'><code>fn <a href='#method.update_content' class='fnname'>update_content</a>(&amp;self, file: <a class='struct' href='../../../safe_nfs/file/struct.File.html' title='safe_nfs::file::File'>File</a>, mode: <a class='enum' href='../../../safe_nfs/helper/writer/enum.Mode.html' title='safe_nfs::helper::writer::Mode'>Mode</a>, parent_directory: <a class='struct' href='../../../safe_nfs/directory_listing/struct.DirectoryListing.html' title='safe_nfs::directory_listing::DirectoryListing'>DirectoryListing</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../../safe_nfs/helper/writer/struct.Writer.html' title='safe_nfs::helper::writer::Writer'>Writer</a>, <a class='enum' href='../../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
 <div class='docblock'><p>Helper function to Update content of a file in a directory listing
-A writer object is returned, through which the data for the file can be written to the network
-The file is actually saved in the directory listing only after <code>writer.close()</code> is invoked</p>
+A writer object is returned, through which the data for the file
+can be written to the network
+The file is actually saved in the directory listing only after
+<code>writer.close()</code> is invoked</p>
 </div><h4 id='method.get_versions' class='method'><code>fn <a href='#method.get_versions' class='fnname'>get_versions</a>(&amp;self, file: &amp;<a class='struct' href='../../../safe_nfs/file/struct.File.html' title='safe_nfs::file::File'>File</a>, parent_directory: &amp;<a class='struct' href='../../../safe_nfs/directory_listing/struct.DirectoryListing.html' title='safe_nfs::directory_listing::DirectoryListing'>DirectoryListing</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='struct' href='../../../safe_nfs/file/struct.File.html' title='safe_nfs::file::File'>File</a>&gt;, <a class='enum' href='../../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
 <div class='docblock'><p>Return the versions of a directory containing modified versions of a file</p>
 </div><h4 id='method.read' class='method'><code>fn <a href='#method.read' class='fnname'>read</a>&lt;'a&gt;(&amp;self, file: &amp;'a <a class='struct' href='../../../safe_nfs/file/struct.File.html' title='safe_nfs::file::File'>File</a>) -&gt; <a class='struct' href='../../../safe_nfs/helper/reader/struct.Reader.html' title='safe_nfs::helper::reader::Reader'>Reader</a>&lt;'a&gt;</code></h4>

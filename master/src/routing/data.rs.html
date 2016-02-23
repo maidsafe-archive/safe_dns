@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>data.rs.html -- source</title>
@@ -210,6 +210,12 @@
 <span id="167">167</span>
 <span id="168">168</span>
 <span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -228,6 +234,7 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
 <span class='kw'>use</span> <span class='ident'>rustc_serialize</span>::{<span class='ident'>Decoder</span>, <span class='ident'>Encodable</span>, <span class='ident'>Encoder</span>};
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>structured_data</span>::<span class='ident'>StructuredData</span>;
 <span class='kw'>pub</span> <span class='kw'>use</span> <span class='ident'>immutable_data</span>::{<span class='ident'>ImmutableData</span>, <span class='ident'>ImmutableDataType</span>};
@@ -235,32 +242,32 @@
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 
 <span class='doccomment'>/// This is the data types routing handles in the public interface</span>
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Hash</span>, <span class='ident'>Debug</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Hash</span>, <span class='ident'>PartialEq</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialOrd</span>, <span class='ident'>Ord</span>, <span class='ident'>Clone</span>, <span class='ident'>RustcEncodable</span>, <span class='ident'>RustcDecodable</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Data</span> {
     <span class='doccomment'>/// StructuredData Data type.</span>
-    <span class='ident'>StructuredData</span>(<span class='ident'>StructuredData</span>),
+    <span class='ident'>Structured</span>(<span class='ident'>StructuredData</span>),
     <span class='doccomment'>/// ImmutableData Data type.</span>
-    <span class='ident'>ImmutableData</span>(<span class='ident'>ImmutableData</span>),
+    <span class='ident'>Immutable</span>(<span class='ident'>ImmutableData</span>),
     <span class='doccomment'>/// PlainData Data type.</span>
-    <span class='ident'>PlainData</span>(<span class='ident'>PlainData</span>),
+    <span class='ident'>Plain</span>(<span class='ident'>PlainData</span>),
 }
 
 <span class='kw'>impl</span> <span class='ident'>Data</span> {
     <span class='doccomment'>/// Return data name.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>XorName</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Data</span>::<span class='ident'>StructuredData</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>ImmutableData</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>PlainData</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>name</span>(),
         }
     }
 
     <span class='doccomment'>/// Return data size.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>payload_size</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>usize</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Data</span>::<span class='ident'>StructuredData</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>ImmutableData</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
-            <span class='ident'>Data</span>::<span class='ident'>PlainData</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
+            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>payload_size</span>(),
         }
     }
 }
@@ -269,20 +276,29 @@
 <span class='doccomment'>/// DataRequest.</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>DataRequest</span> {
     <span class='doccomment'>/// Data request, (Identifier, TypeTag) pair for name resolution, for StructuredData.</span>
-    <span class='ident'>StructuredData</span>(<span class='ident'>XorName</span>, <span class='ident'>u64</span>),
+    <span class='ident'>Structured</span>(<span class='ident'>XorName</span>, <span class='ident'>u64</span>),
     <span class='doccomment'>/// Data request, (Identifier, Type), for ImmutableData types.</span>
-    <span class='ident'>ImmutableData</span>(<span class='ident'>XorName</span>, <span class='ident'>ImmutableDataType</span>),
+    <span class='ident'>Immutable</span>(<span class='ident'>XorName</span>, <span class='ident'>ImmutableDataType</span>),
     <span class='doccomment'>/// Request for PlainData.</span>
-    <span class='ident'>PlainData</span>(<span class='ident'>XorName</span>),
+    <span class='ident'>Plain</span>(<span class='ident'>XorName</span>),
+}
+
+<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>Data</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>formatter</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>fmt</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> {
+        <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
+            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
+            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
+            <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='kw-2'>ref</span> <span class='ident'>d</span>) <span class='op'>=&gt;</span> <span class='ident'>d</span>.<span class='ident'>fmt</span>(<span class='ident'>formatter</span>),
+        }
+    }
 }
 
 <span class='kw'>impl</span> <span class='ident'>DataRequest</span> {
     <span class='doccomment'>/// DataRequest name.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>XorName</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>DataRequest</span>::<span class='ident'>StructuredData</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>, <span class='ident'>tag</span>) <span class='op'>=&gt;</span> <span class='ident'>StructuredData</span>::<span class='ident'>compute_name</span>(<span class='ident'>tag</span>, <span class='ident'>name</span>),
-            <span class='ident'>DataRequest</span>::<span class='ident'>ImmutableData</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>, _) <span class='op'>=&gt;</span> <span class='ident'>name</span>.<span class='ident'>clone</span>(),
-            <span class='ident'>DataRequest</span>::<span class='ident'>PlainData</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>=&gt;</span> <span class='ident'>name</span>.<span class='ident'>clone</span>(),
+            <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>name</span>, <span class='ident'>tag</span>) <span class='op'>=&gt;</span> <span class='ident'>StructuredData</span>::<span class='ident'>compute_name</span>(<span class='ident'>tag</span>, <span class='kw-2'>&amp;</span><span class='ident'>name</span>),
+            <span class='ident'>DataRequest</span>::<span class='ident'>Immutable</span>(<span class='ident'>name</span>, _) <span class='op'>|</span> <span class='ident'>DataRequest</span>::<span class='ident'>Plain</span>(<span class='ident'>name</span>) <span class='op'>=&gt;</span> <span class='ident'>name</span>,
         }
     }
 }
@@ -291,40 +307,40 @@
 <span class='kw'>mod</span> <span class='ident'>test</span> {
     <span class='kw'>extern</span> <span class='kw'>crate</span> <span class='ident'>rand</span>;
 
+    <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
+    <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>;
+    <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>hash</span>::<span class='ident'>sha512</span>;
     <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>data_name</span>() {
         <span class='comment'>// name() resolves correctly for StructuredData</span>
-        <span class='kw'>let</span> <span class='ident'>keys</span> <span class='op'>=</span> ::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>::<span class='ident'>gen_keypair</span>();
+        <span class='kw'>let</span> <span class='ident'>keys</span> <span class='op'>=</span> <span class='ident'>sign</span>::<span class='ident'>gen_keypair</span>();
         <span class='kw'>let</span> <span class='ident'>owner_keys</span> <span class='op'>=</span> <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>keys</span>.<span class='number'>0</span>];
-        <span class='kw'>match</span> ::<span class='ident'>structured_data</span>::<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='number'>0</span>,
-                                                     <span class='ident'>rand</span>::<span class='ident'>random</span>(),
-                                                     <span class='number'>0</span>,
-                                                     <span class='macro'>vec</span><span class='macro'>!</span>[],
-                                                     <span class='ident'>owner_keys</span>.<span class='ident'>clone</span>(),
-                                                     <span class='macro'>vec</span><span class='macro'>!</span>[],
-                                                     <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>keys</span>.<span class='number'>1</span>)) {
+        <span class='kw'>match</span> <span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='number'>0</span>,
+                                  <span class='ident'>rand</span>::<span class='ident'>random</span>(),
+                                  <span class='number'>0</span>,
+                                  <span class='macro'>vec</span><span class='macro'>!</span>[],
+                                  <span class='ident'>owner_keys</span>.<span class='ident'>clone</span>(),
+                                  <span class='macro'>vec</span><span class='macro'>!</span>[],
+                                  <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>keys</span>.<span class='number'>1</span>)) {
             <span class='prelude-val'>Ok</span>(<span class='ident'>structured_data</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>structured_data</span>.<span class='ident'>name</span>(),
-                           ::<span class='ident'>data</span>::<span class='ident'>Data</span>::<span class='ident'>StructuredData</span>(<span class='ident'>structured_data</span>).<span class='ident'>name</span>());
+                           <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='ident'>structured_data</span>).<span class='ident'>name</span>());
             }
             <span class='prelude-val'>Err</span>(<span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Error: {:?}&quot;</span>, <span class='ident'>error</span>),
         }
 
         <span class='comment'>// name() resolves correctly for ImmutableData</span>
-        <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='string'>&quot;immutable data value&quot;</span>.<span class='ident'>to_string</span>().<span class='ident'>into_bytes</span>();
-        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span>
-            ::<span class='ident'>immutable_data</span>::<span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(::<span class='ident'>immutable_data</span>::<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>,
-                                                 <span class='ident'>value</span>);
+        <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='string'>&quot;immutable data value&quot;</span>.<span class='ident'>to_owned</span>().<span class='ident'>into_bytes</span>();
+        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>, <span class='ident'>value</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>immutable_data</span>.<span class='ident'>name</span>(),
-                   ::<span class='ident'>data</span>::<span class='ident'>Data</span>::<span class='ident'>ImmutableData</span>(<span class='ident'>immutable_data</span>).<span class='ident'>name</span>());
+                   <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='ident'>immutable_data</span>).<span class='ident'>name</span>());
 
         <span class='comment'>// name() resolves correctly for PlainData</span>
-        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>XorName</span>(::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>hash</span>::<span class='ident'>sha512</span>::<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='macro'>vec</span><span class='macro'>!</span>[]).<span class='number'>0</span>);
-        <span class='kw'>let</span> <span class='ident'>plain_data</span> <span class='op'>=</span> ::<span class='ident'>plain_data</span>::<span class='ident'>PlainData</span>::<span class='ident'>new</span>(<span class='ident'>name</span>, <span class='macro'>vec</span><span class='macro'>!</span>[]);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>plain_data</span>.<span class='ident'>name</span>(),
-                   ::<span class='ident'>data</span>::<span class='ident'>Data</span>::<span class='ident'>PlainData</span>(<span class='ident'>plain_data</span>).<span class='ident'>name</span>());
+        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>XorName</span>(<span class='ident'>sha512</span>::<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span>[]).<span class='number'>0</span>);
+        <span class='kw'>let</span> <span class='ident'>plain_data</span> <span class='op'>=</span> <span class='ident'>PlainData</span>::<span class='ident'>new</span>(<span class='ident'>name</span>, <span class='macro'>vec</span><span class='macro'>!</span>[]);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>plain_data</span>.<span class='ident'>name</span>(), <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='ident'>plain_data</span>).<span class='ident'>name</span>());
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -332,52 +348,48 @@
         <span class='comment'>// payload_size() resolves correctly for StructuredData</span>
         <span class='kw'>let</span> <span class='ident'>keys</span> <span class='op'>=</span> ::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>sign</span>::<span class='ident'>gen_keypair</span>();
         <span class='kw'>let</span> <span class='ident'>owner_keys</span> <span class='op'>=</span> <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>keys</span>.<span class='number'>0</span>];
-        <span class='kw'>match</span> ::<span class='ident'>structured_data</span>::<span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='number'>0</span>,
-                                                     <span class='ident'>rand</span>::<span class='ident'>random</span>(),
-                                                     <span class='number'>0</span>,
-                                                     <span class='macro'>vec</span><span class='macro'>!</span>[],
-                                                     <span class='ident'>owner_keys</span>.<span class='ident'>clone</span>(),
-                                                     <span class='macro'>vec</span><span class='macro'>!</span>[],
-                                                     <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>keys</span>.<span class='number'>1</span>)) {
+        <span class='kw'>match</span> <span class='ident'>StructuredData</span>::<span class='ident'>new</span>(<span class='number'>0</span>,
+                                  <span class='ident'>rand</span>::<span class='ident'>random</span>(),
+                                  <span class='number'>0</span>,
+                                  <span class='macro'>vec</span><span class='macro'>!</span>[],
+                                  <span class='ident'>owner_keys</span>.<span class='ident'>clone</span>(),
+                                  <span class='macro'>vec</span><span class='macro'>!</span>[],
+                                  <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='ident'>keys</span>.<span class='number'>1</span>)) {
             <span class='prelude-val'>Ok</span>(<span class='ident'>structured_data</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>structured_data</span>.<span class='ident'>payload_size</span>(),
-                           ::<span class='ident'>data</span>::<span class='ident'>Data</span>::<span class='ident'>StructuredData</span>(<span class='ident'>structured_data</span>).<span class='ident'>payload_size</span>());
+                           <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='ident'>structured_data</span>).<span class='ident'>payload_size</span>());
             }
             <span class='prelude-val'>Err</span>(<span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>panic</span><span class='macro'>!</span>(<span class='string'>&quot;Error: {:?}&quot;</span>, <span class='ident'>error</span>),
         }
 
         <span class='comment'>// payload_size() resolves correctly for ImmutableData</span>
-        <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='string'>&quot;immutable data value&quot;</span>.<span class='ident'>to_string</span>().<span class='ident'>into_bytes</span>();
-        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span>
-            ::<span class='ident'>immutable_data</span>::<span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(::<span class='ident'>immutable_data</span>::<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>,
-                                                 <span class='ident'>value</span>);
+        <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='string'>&quot;immutable data value&quot;</span>.<span class='ident'>to_owned</span>().<span class='ident'>into_bytes</span>();
+        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>, <span class='ident'>value</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>immutable_data</span>.<span class='ident'>payload_size</span>(),
-                   ::<span class='ident'>data</span>::<span class='ident'>Data</span>::<span class='ident'>ImmutableData</span>(<span class='ident'>immutable_data</span>).<span class='ident'>payload_size</span>());
+                   <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='ident'>immutable_data</span>).<span class='ident'>payload_size</span>());
 
         <span class='comment'>// payload_size() resolves correctly for PlainData</span>
-        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>XorName</span>(::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>hash</span>::<span class='ident'>sha512</span>::<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='macro'>vec</span><span class='macro'>!</span>[]).<span class='number'>0</span>);
-        <span class='kw'>let</span> <span class='ident'>plain_data</span> <span class='op'>=</span> ::<span class='ident'>plain_data</span>::<span class='ident'>PlainData</span>::<span class='ident'>new</span>(<span class='ident'>name</span>, <span class='macro'>vec</span><span class='macro'>!</span>[]);
+        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>XorName</span>(<span class='ident'>sha512</span>::<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span>[]).<span class='number'>0</span>);
+        <span class='kw'>let</span> <span class='ident'>plain_data</span> <span class='op'>=</span> <span class='ident'>PlainData</span>::<span class='ident'>new</span>(<span class='ident'>name</span>, <span class='macro'>vec</span><span class='macro'>!</span>[]);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>plain_data</span>.<span class='ident'>payload_size</span>(),
-                   ::<span class='ident'>data</span>::<span class='ident'>Data</span>::<span class='ident'>PlainData</span>(<span class='ident'>plain_data</span>).<span class='ident'>payload_size</span>());
+                   <span class='ident'>Data</span>::<span class='ident'>Plain</span>(<span class='ident'>plain_data</span>).<span class='ident'>payload_size</span>());
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>data_request_name</span>() {
-        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>XorName</span>(::<span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::<span class='ident'>hash</span>::<span class='ident'>sha512</span>::<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span><span class='macro'>vec</span><span class='macro'>!</span>[]).<span class='number'>0</span>);
+        <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>XorName</span>(<span class='ident'>sha512</span>::<span class='ident'>hash</span>(<span class='kw-2'>&amp;</span>[]).<span class='number'>0</span>);
 
         <span class='comment'>// name() resolves correctly for StructuedData</span>
         <span class='kw'>let</span> <span class='ident'>tag</span> <span class='op'>=</span> <span class='number'>0</span>;
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(::<span class='ident'>structured_data</span>::<span class='ident'>StructuredData</span>::<span class='ident'>compute_name</span>(<span class='ident'>tag</span>, <span class='kw-2'>&amp;</span><span class='ident'>name</span>),
-                   ::<span class='ident'>data</span>::<span class='ident'>DataRequest</span>::<span class='ident'>StructuredData</span>(<span class='ident'>name</span>, <span class='ident'>tag</span>).<span class='ident'>name</span>());
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>StructuredData</span>::<span class='ident'>compute_name</span>(<span class='ident'>tag</span>, <span class='kw-2'>&amp;</span><span class='ident'>name</span>),
+                   <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>name</span>, <span class='ident'>tag</span>).<span class='ident'>name</span>());
 
         <span class='comment'>// name() resolves correctly for ImmutableData</span>
-        <span class='kw'>let</span> <span class='ident'>actual_name</span> <span class='op'>=</span>
-            ::<span class='ident'>data</span>::<span class='ident'>DataRequest</span>::<span class='ident'>ImmutableData</span>(<span class='ident'>name</span>, ::<span class='ident'>immutable_data</span>::<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>)
-                .<span class='ident'>name</span>();
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>name</span>.<span class='ident'>clone</span>(), <span class='ident'>actual_name</span>);
+        <span class='kw'>let</span> <span class='ident'>actual_name</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Immutable</span>(<span class='ident'>name</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>).<span class='ident'>name</span>();
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>name</span>, <span class='ident'>actual_name</span>);
 
         <span class='comment'>// name() resolves correctly for PlainData</span>
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>name</span>.<span class='ident'>clone</span>(), ::<span class='ident'>data</span>::<span class='ident'>DataRequest</span>::<span class='ident'>PlainData</span>(<span class='ident'>name</span>).<span class='ident'>name</span>());
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>name</span>, <span class='ident'>DataRequest</span>::<span class='ident'>Plain</span>(<span class='ident'>name</span>).<span class='ident'>name</span>());
     }
 }
 </pre>

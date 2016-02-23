@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.5.0/src/rest/container.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/rest/container.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>container.rs.html -- source</title>
@@ -480,6 +480,87 @@
 <span id="437">437</span>
 <span id="438">438</span>
 <span id="439">439</span>
+<span id="440">440</span>
+<span id="441">441</span>
+<span id="442">442</span>
+<span id="443">443</span>
+<span id="444">444</span>
+<span id="445">445</span>
+<span id="446">446</span>
+<span id="447">447</span>
+<span id="448">448</span>
+<span id="449">449</span>
+<span id="450">450</span>
+<span id="451">451</span>
+<span id="452">452</span>
+<span id="453">453</span>
+<span id="454">454</span>
+<span id="455">455</span>
+<span id="456">456</span>
+<span id="457">457</span>
+<span id="458">458</span>
+<span id="459">459</span>
+<span id="460">460</span>
+<span id="461">461</span>
+<span id="462">462</span>
+<span id="463">463</span>
+<span id="464">464</span>
+<span id="465">465</span>
+<span id="466">466</span>
+<span id="467">467</span>
+<span id="468">468</span>
+<span id="469">469</span>
+<span id="470">470</span>
+<span id="471">471</span>
+<span id="472">472</span>
+<span id="473">473</span>
+<span id="474">474</span>
+<span id="475">475</span>
+<span id="476">476</span>
+<span id="477">477</span>
+<span id="478">478</span>
+<span id="479">479</span>
+<span id="480">480</span>
+<span id="481">481</span>
+<span id="482">482</span>
+<span id="483">483</span>
+<span id="484">484</span>
+<span id="485">485</span>
+<span id="486">486</span>
+<span id="487">487</span>
+<span id="488">488</span>
+<span id="489">489</span>
+<span id="490">490</span>
+<span id="491">491</span>
+<span id="492">492</span>
+<span id="493">493</span>
+<span id="494">494</span>
+<span id="495">495</span>
+<span id="496">496</span>
+<span id="497">497</span>
+<span id="498">498</span>
+<span id="499">499</span>
+<span id="500">500</span>
+<span id="501">501</span>
+<span id="502">502</span>
+<span id="503">503</span>
+<span id="504">504</span>
+<span id="505">505</span>
+<span id="506">506</span>
+<span id="507">507</span>
+<span id="508">508</span>
+<span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
+<span id="518">518</span>
+<span id="519">519</span>
+<span id="520">520</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -498,24 +579,35 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::{<span class='ident'>Arc</span>, <span class='ident'>Mutex</span>};
+
+<span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
+
+<span class='kw'>use</span> <span class='ident'>errors</span>::<span class='ident'>NfsError</span>;
+<span class='kw'>use</span> <span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>;
+<span class='kw'>use</span> <span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>;
+<span class='kw'>use</span> <span class='ident'>helper</span>::<span class='ident'>file_helper</span>::<span class='ident'>FileHelper</span>;
+<span class='kw'>use</span> <span class='ident'>helper</span>::<span class='ident'>reader</span>::<span class='ident'>Reader</span>;
+<span class='kw'>use</span> <span class='ident'>helper</span>::<span class='ident'>writer</span>::{<span class='ident'>Mode</span>, <span class='ident'>Writer</span>};
 
 <span class='doccomment'>/// Container Repersents a Directory.</span>
 <span class='doccomment'>/// Container can have its own metadata, sub-containers and files</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>Container</span> {
-    <span class='ident'>client</span>              : ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span><span class='op'>&lt;</span>::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span><span class='op'>&lt;</span>::<span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span><span class='op'>&gt;&gt;</span>,
-    <span class='ident'>directory_listing</span>   : ::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>,
+    <span class='ident'>client</span>: <span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>Client</span><span class='op'>&gt;&gt;</span>,
+    <span class='ident'>directory_listing</span>: <span class='ident'>DirectoryListing</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>Container</span> {
-
     <span class='doccomment'>/// Authorises the directory access.</span>
-    <span class='doccomment'>/// This sevrves as the initial access point of the Rest API. Operations can only be performed on a Container object.</span>
+    <span class='doccomment'>/// This sevrves as the initial access point of the Rest API.</span>
+    <span class='doccomment'>/// Operations can only be performed on a Container object.</span>
     <span class='doccomment'>/// If the ContainerInfo parameter is None, then the user&#39;s root directory is returned.</span>
     <span class='doccomment'>/// Returns the Container, if authorisation is successful.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>authorise</span>(<span class='ident'>client</span>        : ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span><span class='op'>&lt;</span>::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span><span class='op'>&lt;</span>::<span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span><span class='op'>&gt;&gt;</span>,
-                     <span class='ident'>container_info</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>ContainerInfo</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Container</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>authorise</span>(<span class='ident'>client</span>: <span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>Client</span><span class='op'>&gt;&gt;</span>,
+                     <span class='ident'>container_info</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>ContainerInfo</span><span class='op'>&gt;</span>)
+                     <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Container</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='ident'>directory</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>container_info</span>) <span class='op'>=</span> <span class='ident'>container_info</span> {
             <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Authorising specific container ...&quot;</span>);
             <span class='kw'>let</span> <span class='ident'>metadata</span> <span class='op'>=</span> <span class='ident'>container_info</span>.<span class='ident'>into_directory_metadata</span>();
@@ -534,23 +626,29 @@
     <span class='doccomment'>/// Say there are nested containers,</span>
     <span class='doccomment'>///     Home</span>
     <span class='doccomment'>///       -  Pictures</span>
-    <span class='doccomment'>/// In the above example, `Home` is top level container and `Pictures` container is a child of `Home`</span>
-    <span class='doccomment'>/// When a new Conatiner `Tour` is created within `Pictures`, the following updates are carried out.</span>
+    <span class='doccomment'>/// In the above example, `Home` is top level container and</span>
+    <span class='doccomment'>/// `Pictures` container is a child of `Home`</span>
+    <span class='doccomment'>/// When a new Conatiner `Tour` is created within `Pictures`,</span>
+    <span class='doccomment'>/// the following updates are carried out.</span>
     <span class='doccomment'>///     1. A new container is created</span>
-    <span class='doccomment'>///     2. The metadata of the new Container (`Tour`) is added to the list of containers of `Pictures`.</span>
+    <span class='doccomment'>///     2. The metadata of the new Container (`Tour`) is added to</span>
+    <span class='doccomment'>///        the list of containers of `Pictures`.</span>
     <span class='doccomment'>///        Modified time of `Tour` Container is also updated.</span>
     <span class='doccomment'>///     3. Metadata of `Tour` is updated in `Home`.</span>
-    <span class='doccomment'>/// Thus when a Container is created, the function returns the created Container and also the parent of the Container in which the new Container is being returned.</span>
-    <span class='doccomment'>/// Based on the above example, when the Container `Tour` is created in `Pictures`, this function would return a tpule of (Tour, Home)</span>
+    <span class='doccomment'>/// Thus when a Container is created, the function returns the created Container and also the</span>
+    <span class='doccomment'>/// parent of the Container in which the new Container is being returned.</span>
+    <span class='doccomment'>/// Based on the above example, when the Container `Tour` is created in `Pictures`, this</span>
+    <span class='doccomment'>/// function would return a tpule of (Tour, Home)</span>
     <span class='doccomment'>/// In case if there is no parent for the Container then `None` is returned.</span>
     <span class='doccomment'>/// Returns tuple of created_container &amp; parent_container of the the current</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
                   <span class='ident'>name</span>: <span class='ident'>String</span>,
                   <span class='ident'>versioned</span>: <span class='ident'>bool</span>,
                   <span class='ident'>access_level</span>: ::<span class='ident'>AccessLevel</span>,
-                  <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(::<span class='ident'>rest</span>::<span class='ident'>Container</span>, <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>Container</span><span class='op'>&gt;</span>), ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+                  <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>)
+                  <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(::<span class='ident'>rest</span>::<span class='ident'>Container</span>, <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>Container</span><span class='op'>&gt;</span>), <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>if</span> <span class='ident'>name</span>.<span class='ident'>is_empty</span>() {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>);
+            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>);
         }
         <span class='kw'>let</span> <span class='ident'>user_metadata</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>validate_metadata</span>(<span class='ident'>metadata</span>));
         <span class='kw'>let</span> <span class='ident'>tag_type</span> <span class='op'>=</span> <span class='kw'>if</span> <span class='ident'>versioned</span> {
@@ -559,13 +657,14 @@
             ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>
         };
 
-        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
-        <span class='kw'>let</span> (<span class='ident'>created_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>create</span>(<span class='ident'>name</span>,
-                                                                             <span class='ident'>tag_type</span>,
-                                                                             <span class='ident'>user_metadata</span>,
-                                                                             <span class='ident'>versioned</span>,
-                                                                             <span class='ident'>access_level</span>,
-                                                                             <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>)));
+        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+        <span class='kw'>let</span> (<span class='ident'>created_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span>
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>create</span>(<span class='ident'>name</span>,
+                                         <span class='ident'>tag_type</span>,
+                                         <span class='ident'>user_metadata</span>,
+                                         <span class='ident'>versioned</span>,
+                                         <span class='ident'>access_level</span>,
+                                         <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>)));
         <span class='kw'>let</span> <span class='ident'>created_container</span> <span class='op'>=</span> <span class='ident'>Container</span> {
             <span class='ident'>client</span>: <span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
             <span class='ident'>directory_listing</span>: <span class='ident'>created_directory</span>,
@@ -613,25 +712,29 @@
     }
 
     <span class='doccomment'>/// Returns a Blob from the container</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>name</span>: <span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>name</span>: <span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>find_file</span>(<span class='kw-2'>&amp;</span><span class='ident'>name</span>) {
             <span class='prelude-val'>Some</span>(<span class='ident'>file</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>::<span class='ident'>from</span>(<span class='ident'>file</span>.<span class='ident'>clone</span>())),
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>),
+            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>),
         }
     }
 
     <span class='doccomment'>/// Returns the list of child containers</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_containers</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Vec</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>ContainerInfo</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>get_sub_directories</span>().<span class='ident'>iter</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>info</span><span class='op'>|</span> {
-                ::<span class='ident'>rest</span>::<span class='ident'>ContainerInfo</span>::<span class='ident'>from</span>(<span class='ident'>info</span>.<span class='ident'>clone</span>())
-            }).<span class='ident'>collect</span>()
+        <span class='self'>self</span>.<span class='ident'>directory_listing</span>
+            .<span class='ident'>get_sub_directories</span>()
+            .<span class='ident'>iter</span>()
+            .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>info</span><span class='op'>|</span> ::<span class='ident'>rest</span>::<span class='ident'>ContainerInfo</span>::<span class='ident'>from</span>(<span class='ident'>info</span>.<span class='ident'>clone</span>()))
+            .<span class='ident'>collect</span>()
     }
 
     <span class='doccomment'>/// Updates the metadata of the container</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_metadata</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>container</span>::<span class='ident'>Container</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span>{
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_metadata</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
+                           <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>)
+                           <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>container</span>::<span class='ident'>Container</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>user_metadata</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>validate_metadata</span>(<span class='ident'>metadata</span>));
         <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>get_mut_metadata</span>().<span class='ident'>set_user_metadata</span>(<span class='ident'>user_metadata</span>);
-        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='ident'>parent_directory</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>update</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>directory_listing</span>));
         <span class='prelude-val'>Ok</span>(<span class='ident'>parent_directory</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>parent_directory</span><span class='op'>|</span> {
             <span class='ident'>Container</span> {
@@ -642,32 +745,39 @@
     }
 
     <span class='doccomment'>/// Retrieves Versions for the container</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>list_container_versions</span>(<span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(), <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>())
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>list_container_versions</span>(<span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
+                                     <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>())
     }
 
     <span class='doccomment'>/// Retrieves Versions for the container being referred by the container_id</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_container_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>container_info</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>container_info</span>::<span class='ident'>ContainerInfo</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_container_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                                  <span class='ident'>container_info</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>container_info</span>::<span class='ident'>ContainerInfo</span>)
+                                  <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>directory_metadata</span> <span class='op'>=</span> <span class='ident'>container_info</span>.<span class='ident'>into_directory_metadata</span>();
-        <span class='self'>self</span>.<span class='ident'>list_container_versions</span>(<span class='ident'>directory_metadata</span>.<span class='ident'>get_id</span>(), <span class='ident'>directory_metadata</span>.<span class='ident'>get_type_tag</span>())
+        <span class='self'>self</span>.<span class='ident'>list_container_versions</span>(<span class='ident'>directory_metadata</span>.<span class='ident'>get_id</span>(),
+                                     <span class='ident'>directory_metadata</span>.<span class='ident'>get_type_tag</span>())
     }
 
     <span class='doccomment'>/// Fetches the latest version of the child container.</span>
     <span class='doccomment'>/// Can fetch a specific version of the Container by passing the corresponding VersionId.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_container</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>container_info</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>container_info</span>::<span class='ident'>ContainerInfo</span>, <span class='ident'>version</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Container</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_container</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
+                         <span class='ident'>container_info</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>container_info</span>::<span class='ident'>ContainerInfo</span>,
+                         <span class='ident'>version</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>)
+                         <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Container</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>directory_metadata</span> <span class='op'>=</span> <span class='ident'>container_info</span>.<span class='ident'>into_directory_metadata</span>();
-        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='ident'>dir_listing</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='ident'>version</span> {
             <span class='prelude-val'>Some</span>(<span class='ident'>version_id</span>) <span class='op'>=&gt;</span> {
-                    <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving using version id ...&quot;</span>);
-                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>get_by_version</span>(<span class='ident'>directory_metadata</span>.<span class='ident'>get_id</span>(),
-                                                         <span class='ident'>directory_metadata</span>.<span class='ident'>get_access_level</span>(),
-                                                         <span class='ident'>XorName</span>(<span class='ident'>version_id</span>)))
-            },
-            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span>  {
-                    <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving the latest version ...&quot;</span>);
-                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory_metadata</span>.<span class='ident'>get_key</span>()))
-            },
+                <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving using version id ...&quot;</span>);
+                <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>get_by_version</span>(<span class='ident'>directory_metadata</span>.<span class='ident'>get_id</span>(),
+                                                     <span class='ident'>directory_metadata</span>.<span class='ident'>get_access_level</span>(),
+                                                     <span class='ident'>XorName</span>(<span class='ident'>version_id</span>)))
+            }
+            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
+                <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving the latest version ...&quot;</span>);
+                <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory_metadata</span>.<span class='ident'>get_key</span>()))
+            }
         };
         <span class='prelude-val'>Ok</span>(<span class='ident'>Container</span> {
             <span class='ident'>client</span>: <span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
@@ -675,9 +785,11 @@
         })
     }
 
-   <span class='doccomment'>/// Deletes the child container</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete_container</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>name</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>container</span>::<span class='ident'>Container</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+    <span class='doccomment'>/// Deletes the child container</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete_container</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
+                            <span class='ident'>name</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>)
+                            <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>container</span>::<span class='ident'>Container</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='ident'>parent_directory</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>, <span class='ident'>name</span>));
         <span class='prelude-val'>Ok</span>(<span class='ident'>parent_directory</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>parent_directory</span><span class='op'>|</span> {
             <span class='ident'>Container</span> {
@@ -691,18 +803,24 @@
     <span class='doccomment'>/// Returns a Writter object</span>
     <span class='doccomment'>/// The content of the blob is written using the writter.</span>
     <span class='doccomment'>/// The blob is created only after the writter.close() is invoked</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create_blob</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>name</span>: <span class='ident'>String</span>, <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>helper</span>::<span class='ident'>writer</span>::<span class='ident'>Writer</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create_blob</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
+                       <span class='ident'>name</span>: <span class='ident'>String</span>,
+                       <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>)
+                       <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Writer</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>if</span> <span class='ident'>name</span>.<span class='ident'>is_empty</span>() {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>);
+            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>);
         }
         <span class='kw'>let</span> <span class='ident'>user_metadata</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>validate_metadata</span>(<span class='ident'>metadata</span>));
-        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>file_helper</span>::<span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> <span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='ident'>file_helper</span>.<span class='ident'>create</span>(<span class='ident'>name</span>, <span class='ident'>user_metadata</span>, <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>clone</span>())
     }
 
     <span class='doccomment'>/// Updates the blob content. Writes the complete data and updates the Blob</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_blob_content</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>Blob</span>, <span class='ident'>data</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>u8</span>]) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Container</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>writer</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_writer_for_blob</span>(<span class='ident'>blob</span>, ::<span class='ident'>helper</span>::<span class='ident'>writer</span>::<span class='ident'>Mode</span>::<span class='ident'>Overwrite</span>));
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_blob_content</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
+                               <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>Blob</span>,
+                               <span class='ident'>data</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>u8</span>])
+                               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Container</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>writer</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_writer_for_blob</span>(<span class='ident'>blob</span>, <span class='ident'>Mode</span>::<span class='ident'>Overwrite</span>));
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Writing data to blob ...&quot;</span>);
         <span class='ident'>writer</span>.<span class='ident'>write</span>(<span class='ident'>data</span>, <span class='number'>0</span>);
         <span class='kw'>let</span> (<span class='ident'>parent_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>writer</span>.<span class='ident'>close</span>());
@@ -717,12 +835,12 @@
 
     <span class='doccomment'>/// Return a writter object for the Blob, through which the content of the blob can be updated</span>
     <span class='doccomment'>/// This is useful while handling larger files, to enable writting content in parts</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_writer</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>Blob</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>helper</span>::<span class='ident'>writer</span>::<span class='ident'>Writer</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='self'>self</span>.<span class='ident'>get_writer_for_blob</span>(<span class='ident'>blob</span>, ::<span class='ident'>helper</span>::<span class='ident'>writer</span>::<span class='ident'>Mode</span>::<span class='ident'>Modify</span>)
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_writer</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>Blob</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Writer</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='self'>self</span>.<span class='ident'>get_writer_for_blob</span>(<span class='ident'>blob</span>, <span class='ident'>Mode</span>::<span class='ident'>Modify</span>)
     }
 
     <span class='doccomment'>/// Reads the content of the blob and returns the complete content</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>Blob</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>Blob</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>reader</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_reader_for_blob</span>(<span class='ident'>blob</span>));
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Reading contents of a blob ...&quot;</span>);
         <span class='kw'>let</span> <span class='ident'>size</span> <span class='op'>=</span> <span class='ident'>reader</span>.<span class='ident'>size</span>();
@@ -731,28 +849,34 @@
 
     <span class='doccomment'>/// Returns a reader for the blob</span>
     <span class='doccomment'>/// Using a Reader helps in handling large file contents and also fetch data in a specific range</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_reader</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>helper</span>::<span class='ident'>reader</span>::<span class='ident'>Reader</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_reader</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                               <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>)
+                               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Reader</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='self'>self</span>.<span class='ident'>get_reader_for_blob</span>(<span class='ident'>blob</span>)
     }
 
     <span class='doccomment'>/// Returns the list of versions_id for the blob</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>name</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span>{
-        <span class='kw'>let</span> <span class='ident'>file</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>find_file</span>(<span class='ident'>name</span>).<span class='ident'>ok_or</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>));
-        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>file_helper</span>::<span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_blob_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>name</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>file</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>find_file</span>(<span class='ident'>name</span>).<span class='ident'>ok_or</span>(<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>));
+        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> <span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>file_helper</span>.<span class='ident'>get_versions</span>(<span class='kw-2'>&amp;</span><span class='ident'>file</span>, <span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>directory_listing</span>));
-        <span class='prelude-val'>Ok</span>(<span class='ident'>versions</span>.<span class='ident'>iter</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>file</span><span class='op'>|</span> { ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>::<span class='ident'>from</span>(<span class='ident'>file</span>.<span class='ident'>clone</span>()) }).<span class='ident'>collect</span>())
+        <span class='prelude-val'>Ok</span>(<span class='ident'>versions</span>.<span class='ident'>iter</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>file</span><span class='op'>|</span> ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>::<span class='ident'>from</span>(<span class='ident'>file</span>.<span class='ident'>clone</span>())).<span class='ident'>collect</span>())
     }
 
     <span class='doccomment'>/// Update the metadata of the Blob in the container</span>
     <span class='doccomment'>/// Returns Updated parent container, if the parent container exists.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_blob_metadata</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='kw-2'>mut</span> <span class='ident'>blob</span>: ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>, <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span><span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Container</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update_blob_metadata</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
+                                <span class='kw-2'>mut</span> <span class='ident'>blob</span>: ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>,
+                                <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>)
+                                <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>Container</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>user_metadata</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>validate_metadata</span>(<span class='ident'>metadata</span>));
-        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>file_helper</span>::<span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> <span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>file</span> <span class='op'>=</span> <span class='ident'>blob</span>.<span class='ident'>into_mut_file</span>();
         <span class='ident'>file</span>.<span class='ident'>get_mut_metadata</span>().<span class='ident'>set_user_metadata</span>(<span class='ident'>user_metadata</span>);
-        <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>parent_directory_listing</span>) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>file_helper</span>.<span class='ident'>update_metadata</span>(<span class='ident'>file</span>.<span class='ident'>clone</span>(), <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>)) {
+        <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>parent_directory_listing</span>) <span class='op'>=</span>
+               <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>file_helper</span>.<span class='ident'>update_metadata</span>(<span class='ident'>file</span>.<span class='ident'>clone</span>(), <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>)) {
             <span class='prelude-val'>Ok</span>(<span class='prelude-val'>Some</span>(<span class='ident'>Container</span> {
-                <span class='ident'>client</span>           : <span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
+                <span class='ident'>client</span>: <span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
                 <span class='ident'>directory_listing</span>: <span class='ident'>parent_directory_listing</span>,
             }))
         } <span class='kw'>else</span> {
@@ -761,23 +885,26 @@
     }
 
     <span class='doccomment'>/// Delete blob from the container</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete_blob</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>name</span>: <span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>file_helper</span>::<span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete_blob</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>name</span>: <span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>file_helper</span> <span class='op'>=</span> <span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>file_helper</span>.<span class='ident'>delete</span>(<span class='ident'>name</span>, <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>));
         <span class='prelude-val'>Ok</span>(())
     }
 
     <span class='doccomment'>/// Copies the latest blob version from the container to the specified destination container</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>copy_blob</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>, <span class='ident'>blob_name</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>, <span class='ident'>to_container</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>container_info</span>::<span class='ident'>ContainerInfo</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>copy_blob</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='self'>self</span>,
+                     <span class='ident'>blob_name</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>,
+                     <span class='ident'>to_container</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>container_info</span>::<span class='ident'>ContainerInfo</span>)
+                     <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>to_dir</span> <span class='op'>=</span> <span class='ident'>to_container</span>.<span class='ident'>into_directory_metadata</span>();
         <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>get_key</span>() <span class='op'>==</span> <span class='ident'>to_dir</span>.<span class='ident'>get_key</span>() {
-            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span>);
+            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span>);
         }
-        <span class='kw'>let</span> <span class='ident'>file</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>find_file</span>(<span class='ident'>blob_name</span>).<span class='ident'>ok_or</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>));
-        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+        <span class='kw'>let</span> <span class='ident'>file</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>find_file</span>(<span class='ident'>blob_name</span>).<span class='ident'>ok_or</span>(<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>));
+        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>destination</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>get</span>(<span class='ident'>to_dir</span>.<span class='ident'>get_key</span>()));
         <span class='kw'>if</span> <span class='ident'>destination</span>.<span class='ident'>find_file</span>(<span class='ident'>blob_name</span>).<span class='ident'>is_some</span>() {
-           <span class='kw'>return</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span>);
+            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span>);
         }
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Adding {:?} blob to destination files ...&quot;</span>, <span class='ident'>blob_name</span>);
         <span class='ident'>destination</span>.<span class='ident'>get_mut_files</span>().<span class='ident'>push</span>(<span class='ident'>file</span>.<span class='ident'>clone</span>());
@@ -785,33 +912,43 @@
         <span class='prelude-val'>Ok</span>(())
     }
 
-    <span class='kw'>fn</span> <span class='ident'>get_writer_for_blob</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>, <span class='ident'>mode</span>: ::<span class='ident'>helper</span>::<span class='ident'>writer</span>::<span class='ident'>Mode</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>helper</span>::<span class='ident'>writer</span>::<span class='ident'>Writer</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>file_helper</span>::<span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
-        <span class='ident'>helper</span>.<span class='ident'>update_content</span>(<span class='ident'>blob</span>.<span class='ident'>into_file</span>().<span class='ident'>clone</span>(), <span class='ident'>mode</span>, <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>clone</span>())
+    <span class='kw'>fn</span> <span class='ident'>get_writer_for_blob</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                           <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>,
+                           <span class='ident'>mode</span>: <span class='ident'>Mode</span>)
+                           <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Writer</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>helper</span> <span class='op'>=</span> <span class='ident'>FileHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+        <span class='ident'>helper</span>.<span class='ident'>update_content</span>(<span class='ident'>blob</span>.<span class='ident'>into_file</span>().<span class='ident'>clone</span>(),
+                              <span class='ident'>mode</span>,
+                              <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>clone</span>())
     }
 
-    <span class='kw'>fn</span> <span class='ident'>get_reader_for_blob</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>helper</span>::<span class='ident'>reader</span>::<span class='ident'>Reader</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>get_reader_for_blob</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                               <span class='ident'>blob</span>: <span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> ::<span class='ident'>rest</span>::<span class='ident'>blob</span>::<span class='ident'>Blob</span>)
+                               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Reader</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='self'>self</span>.<span class='ident'>directory_listing</span>.<span class='ident'>find_file</span>(<span class='ident'>blob</span>.<span class='ident'>get_name</span>()) {
-            <span class='prelude-val'>Some</span>(_) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(::<span class='ident'>helper</span>::<span class='ident'>reader</span>::<span class='ident'>Reader</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(), <span class='ident'>blob</span>.<span class='ident'>into_file</span>())),
-            <span class='prelude-val'>None</span>    <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>),
+            <span class='prelude-val'>Some</span>(_) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>Reader</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(), <span class='ident'>blob</span>.<span class='ident'>into_file</span>())),
+            <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>),
         }
     }
 
-    <span class='kw'>fn</span> <span class='ident'>list_container_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>dir_id</span>: <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>, <span class='ident'>type_tag</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> ::<span class='ident'>helper</span>::<span class='ident'>directory_helper</span>::<span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
+    <span class='kw'>fn</span> <span class='ident'>list_container_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                               <span class='ident'>dir_id</span>: <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>,
+                               <span class='ident'>type_tag</span>: <span class='ident'>u64</span>)
+                               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span>[<span class='ident'>u8</span>; <span class='number'>64</span>]<span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>directory_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory_helper</span>.<span class='ident'>get_versions</span>(<span class='ident'>dir_id</span>, <span class='ident'>type_tag</span>));
         <span class='prelude-val'>Ok</span>(<span class='ident'>versions</span>.<span class='ident'>iter</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>v</span><span class='op'>|</span> <span class='ident'>v</span>.<span class='number'>0</span>).<span class='ident'>collect</span>())
     }
 
-    <span class='kw'>fn</span> <span class='ident'>validate_metadata</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>validate_metadata</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>metadata</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>String</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>match</span> <span class='ident'>metadata</span> {
             <span class='prelude-val'>Some</span>(<span class='ident'>data</span>) <span class='op'>=&gt;</span> {
                 <span class='kw'>if</span> <span class='ident'>data</span>.<span class='ident'>len</span>() <span class='op'>==</span> <span class='number'>0</span> {
-                    <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>)
+                    <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>)
                 } <span class='kw'>else</span> {
                     <span class='prelude-val'>Ok</span>(<span class='ident'>data</span>.<span class='ident'>into_bytes</span>())
                 }
-            },
+            }
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>Vec</span>::<span class='ident'>new</span>()),
         }
     }
@@ -820,9 +957,12 @@
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>test</span> {
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
+    <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::{<span class='ident'>Arc</span>, <span class='ident'>Mutex</span>};
+    <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
+    <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>;
 
-    <span class='kw'>fn</span> <span class='ident'>get_client</span>() <span class='op'>-&gt;</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span><span class='op'>&lt;</span>::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span><span class='op'>&lt;</span>::<span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span><span class='op'>&gt;&gt;</span> {
-        ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>())))
+    <span class='kw'>fn</span> <span class='ident'>get_client</span>() <span class='op'>-&gt;</span> <span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>Client</span><span class='op'>&gt;&gt;</span> {
+        <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>())))
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
@@ -833,7 +973,8 @@
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>root_dir</span>.<span class='ident'>get_info</span>().<span class='ident'>into_directory_metadata</span>().<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
                    <span class='op'>*</span><span class='ident'>root_dir_second</span>.<span class='ident'>get_info</span>().<span class='ident'>into_directory_metadata</span>().<span class='ident'>get_key</span>().<span class='ident'>get_id</span>());
 
-        <span class='kw'>let</span> <span class='ident'>root_dir_from_info</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Container</span>::<span class='ident'>authorise</span>(<span class='ident'>client</span>, <span class='prelude-val'>Some</span>(<span class='ident'>root_dir</span>.<span class='ident'>get_info</span>())));
+        <span class='kw'>let</span> <span class='ident'>root_dir_from_info</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Container</span>::<span class='ident'>authorise</span>(<span class='ident'>client</span>,
+                                                                     <span class='prelude-val'>Some</span>(<span class='ident'>root_dir</span>.<span class='ident'>get_info</span>())));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>root_dir</span>.<span class='ident'>get_info</span>().<span class='ident'>into_directory_metadata</span>().<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
                    <span class='op'>*</span><span class='ident'>root_dir_from_info</span>.<span class='ident'>get_info</span>().<span class='ident'>into_directory_metadata</span>().<span class='ident'>get_key</span>().<span class='ident'>get_id</span>());
     }
@@ -842,7 +983,10 @@
     <span class='kw'>fn</span> <span class='ident'>create_container</span>() {
         <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>get_client</span>();
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>container</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Container</span>::<span class='ident'>authorise</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>(), <span class='prelude-val'>None</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Home&quot;</span>.<span class='ident'>to_string</span>(), <span class='boolval'>true</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>, <span class='prelude-val'>None</span>));
+        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Home&quot;</span>.<span class='ident'>to_string</span>(),
+                                                <span class='boolval'>true</span>,
+                                                ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                <span class='prelude-val'>None</span>));
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_containers</span>().<span class='ident'>len</span>(), <span class='number'>1</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_containers</span>()[<span class='number'>0</span>].<span class='ident'>get_name</span>(), <span class='string'>&quot;Home&quot;</span>);
@@ -855,7 +999,10 @@
         <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>get_client</span>();
         <span class='kw'>let</span> <span class='ident'>dir_name</span> <span class='op'>=</span> <span class='string'>&quot;Home&quot;</span>.<span class='ident'>to_string</span>();
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>container</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Container</span>::<span class='ident'>authorise</span>(<span class='ident'>client</span>, <span class='prelude-val'>None</span>));
-        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='ident'>dir_name</span>.<span class='ident'>clone</span>(), <span class='boolval'>true</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>, <span class='prelude-val'>None</span>));
+        <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='ident'>dir_name</span>.<span class='ident'>clone</span>(),
+                                                <span class='boolval'>true</span>,
+                                                ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                <span class='prelude-val'>None</span>));
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_containers</span>().<span class='ident'>len</span>(), <span class='number'>1</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_containers</span>()[<span class='number'>0</span>].<span class='ident'>get_name</span>(), <span class='string'>&quot;Home&quot;</span>);
@@ -869,7 +1016,10 @@
     <span class='kw'>fn</span> <span class='ident'>create_update_delete_blob</span>() {
         <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>get_client</span>();
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>container</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>Container</span>::<span class='ident'>authorise</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>(), <span class='prelude-val'>None</span>));
-        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>home_container</span>, _) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Home&quot;</span>.<span class='ident'>to_string</span>(), <span class='boolval'>true</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>, <span class='prelude-val'>None</span>));
+        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>home_container</span>, _) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Home&quot;</span>.<span class='ident'>to_string</span>(),
+                                                                      <span class='boolval'>true</span>,
+                                                                      ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                                      <span class='prelude-val'>None</span>));
 
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_containers</span>().<span class='ident'>len</span>(), <span class='number'>1</span>);
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_containers</span>()[<span class='number'>0</span>].<span class='ident'>get_name</span>(), <span class='string'>&quot;Home&quot;</span>);
@@ -881,24 +1031,29 @@
         <span class='ident'>home_container</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_container</span>(<span class='kw-2'>&amp;</span><span class='ident'>home_container</span>.<span class='ident'>get_info</span>(), <span class='prelude-val'>None</span>));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>create_blob</span>(<span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>(), <span class='prelude-val'>None</span>).<span class='ident'>is_err</span>());
 
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_versions</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>())).<span class='ident'>len</span>(), <span class='number'>1</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_versions</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>()))
+                       .<span class='ident'>len</span>(),
+                   <span class='number'>1</span>);
         <span class='kw'>let</span> <span class='ident'>blob</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob</span>(<span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>()));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>blob</span>)), <span class='ident'>data</span>);
 
         <span class='kw'>let</span> <span class='ident'>data_updated</span> <span class='op'>=</span> <span class='string'>&quot;Hello World updated!&quot;</span>.<span class='ident'>to_string</span>().<span class='ident'>into_bytes</span>();
         <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>update_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>blob</span>, <span class='kw-2'>&amp;</span><span class='ident'>data_updated</span>[..]));
-        
+
         <span class='kw'>let</span> <span class='ident'>blob</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob</span>(<span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>()));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>blob</span>)), <span class='ident'>data_updated</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>blob</span>)),
+                   <span class='ident'>data_updated</span>);
 
         <span class='comment'>// Assert versions</span>
         <span class='kw'>let</span> <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_versions</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>()));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>versions</span>.<span class='ident'>len</span>(), <span class='number'>2</span>);
         <span class='kw'>for</span> <span class='ident'>i</span> <span class='kw'>in</span> <span class='number'>0</span>..<span class='number'>2</span> {
             <span class='kw'>if</span> <span class='ident'>i</span> <span class='op'>==</span> <span class='number'>0</span> {
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>versions</span>[<span class='ident'>i</span>])), <span class='ident'>data</span>);
+                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>versions</span>[<span class='ident'>i</span>])),
+                           <span class='ident'>data</span>);
             } <span class='kw'>else</span> {
-                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>versions</span>[<span class='ident'>i</span>])), <span class='ident'>data_updated</span>);
+                <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob_content</span>(<span class='kw-2'>&amp;</span><span class='ident'>versions</span>[<span class='ident'>i</span>])),
+                           <span class='ident'>data_updated</span>);
             }
         }
         <span class='kw'>let</span> <span class='ident'>metadata</span> <span class='op'>=</span> <span class='string'>&quot;{\&quot;purpose\&quot;: \&quot;test\&quot;}&quot;</span>.<span class='ident'>to_string</span>();
@@ -906,7 +1061,10 @@
         <span class='kw'>let</span> <span class='ident'>blob</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blob</span>(<span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>()));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>blob</span>.<span class='ident'>get_metadata</span>(), <span class='ident'>metadata</span>);
 
-        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>docs_container</span>, _) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Docs&quot;</span>.<span class='ident'>to_string</span>(), <span class='boolval'>true</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>, <span class='prelude-val'>None</span>));
+        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>docs_container</span>, _) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Docs&quot;</span>.<span class='ident'>to_string</span>(),
+                                                                      <span class='boolval'>true</span>,
+                                                                      ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                                      <span class='prelude-val'>None</span>));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>docs_container</span>.<span class='ident'>get_blobs</span>().<span class='ident'>len</span>(), <span class='number'>0</span>);
         <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>home_container</span>.<span class='ident'>copy_blob</span>(<span class='kw-2'>&amp;</span><span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>(), <span class='kw-2'>&amp;</span><span class='ident'>docs_container</span>.<span class='ident'>get_info</span>());
         <span class='ident'>docs_container</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>container</span>.<span class='ident'>get_container</span>(<span class='kw-2'>&amp;</span><span class='ident'>docs_container</span>.<span class='ident'>get_info</span>(), <span class='prelude-val'>None</span>));
@@ -915,9 +1073,13 @@
         <span class='kw'>let</span> _ <span class='op'>=</span> <span class='ident'>home_container</span>.<span class='ident'>delete_blob</span>(<span class='string'>&quot;sample.txt&quot;</span>.<span class='ident'>to_string</span>());
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>get_blobs</span>().<span class='ident'>len</span>(), <span class='number'>0</span>);
 
-        <span class='kw'>let</span> (_, <span class='ident'>parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Pictures&quot;</span>.<span class='ident'>to_string</span>(), <span class='boolval'>true</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>, <span class='prelude-val'>None</span>));
+        <span class='kw'>let</span> (_, <span class='ident'>parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>home_container</span>.<span class='ident'>create</span>(<span class='string'>&quot;Pictures&quot;</span>.<span class='ident'>to_string</span>(),
+                                                               <span class='boolval'>true</span>,
+                                                               ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                                               <span class='prelude-val'>None</span>));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>parent</span>.<span class='ident'>is_some</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>parent</span>, <span class='string'>&quot;parent container should be present&quot;</span>).<span class='ident'>get_name</span>(), <span class='op'>*</span><span class='ident'>container</span>.<span class='ident'>get_name</span>());
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>parent</span>, <span class='string'>&quot;parent container should be present&quot;</span>).<span class='ident'>get_name</span>(),
+                   <span class='op'>*</span><span class='ident'>container</span>.<span class='ident'>get_name</span>());
     }
 }
 </pre>

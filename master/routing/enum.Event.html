@@ -46,14 +46,12 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1920' class='srclink' href='../src/routing/event.rs.html#30-44' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2228' class='srclink' href='../src/routing/event.rs.html#29-40' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum Event {
     Request(<a class='struct' href='../routing/struct.RequestMessage.html' title='routing::RequestMessage'>RequestMessage</a>),
     Response(<a class='struct' href='../routing/struct.ResponseMessage.html' title='routing::ResponseMessage'>ResponseMessage</a>),
-    Churn {
-        id: <a class='struct' href='../routing/struct.MessageId.html' title='routing::MessageId'>MessageId</a>,
-        lost_close_node: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>&gt;,
-    },
+    NodeAdded(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>),
+    NodeLost(<a class='struct' href='../xor_name/struct.XorName.html' title='xor_name::XorName'>XorName</a>),
     Connected,
 }</pre><div class='docblock'><p>An Event raised by a <code>Node</code> or <code>Client</code> via its event sender.</p>
 
@@ -65,12 +63,9 @@ reached, i. e. enough members of the group have sent the same message.</p>
 </div><h2 class='variants'>Variants</h2>
 <table><tr><td id='variant.Request'><code>Request</code></td><td><div class='docblock'><p>Request.</p>
 </div></td></tr><tr><td id='variant.Response'><code>Response</code></td><td><div class='docblock'><p>Response.</p>
-</div></td></tr><tr><td id='variant.Churn'><code>Churn</code></td><td><div class='docblock'><p>A churn event: a node left or joined this node&#39;s close group.</p>
-</div><h3 class='fields'>Fields</h3>
-
-                                              <table><tr><td id='variant.Churn.field.id'><code>id</code></td><td><div class='docblock'><p>The unique ID of this <code>Churn</code> event.</p>
-</div></td></tr><tr><td id='variant.Churn.field.lost_close_node'><code>lost_close_node</code></td><td><div class='docblock'><p>The name of the node that left the close group, if any.</p>
-</div></td></tr></table></td></tr><tr><td id='variant.Connected'><code>Connected</code></td><td><div class='docblock'><p>The client has successfully connected to a proxy node on the network.</p>
+</div></td></tr><tr><td id='variant.NodeAdded'><code>NodeAdded</code></td><td><div class='docblock'><p>A new node joined the network and may be a member of group authorities we also belong to.</p>
+</div></td></tr><tr><td id='variant.NodeLost'><code>NodeLost</code></td><td><div class='docblock'><p>A node left the network and may have been a member of group authorities we also belong to.</p>
+</div></td></tr><tr><td id='variant.Connected'><code>Connected</code></td><td><div class='docblock'><p>The client has successfully connected to a proxy node on the network.</p>
 </div></td></tr></table><h2 id='implementations'>Trait Implementations</h2><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html' title='core::cmp::PartialEq'>PartialEq</a> for <a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a></code></h3><div class='impl-items'><h4 id='method.eq' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.eq' class='fnname'>eq</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 <h4 id='method.ne' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/cmp/trait.PartialEq.html#method.ne' class='fnname'>ne</a>(&amp;self, __arg_0: &amp;<a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a>) -&gt; <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/cmp/trait.Eq.html' title='core::cmp::Eq'>Eq</a> for <a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html' title='core::clone::Clone'>Clone</a> for <a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a></code></h3><div class='impl-items'><h4 id='method.clone' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/clone/trait.Clone.html#method.clone' class='fnname'>clone</a>(&amp;self) -&gt; <a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a></code></h4>

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/immutable_data.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/immutable_data.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>immutable_data.rs.html -- source</title>
@@ -310,7 +310,7 @@
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>deterministic_test</span>() {
 
-        <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='string'>&quot;immutable data value&quot;</span>.<span class='ident'>to_string</span>().<span class='ident'>into_bytes</span>();
+        <span class='kw'>let</span> <span class='ident'>value</span> <span class='op'>=</span> <span class='string'>&quot;immutable data value&quot;</span>.<span class='ident'>to_owned</span>().<span class='ident'>into_bytes</span>();
         <span class='comment'>// Normal</span>
         <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>, <span class='ident'>value</span>);
         <span class='kw'>let</span> <span class='ident'>immutable_data_name</span> <span class='op'>=</span> <span class='ident'>immutable_data</span>.<span class='ident'>name</span>().<span class='number'>0</span>.<span class='ident'>as_ref</span>().<span class='ident'>to_hex</span>();

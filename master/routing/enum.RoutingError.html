@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1824' class='srclink' href='../src/routing/error.rs.html#48-106' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-2125' class='srclink' href='../src/routing/error.rs.html#48-113' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum RoutingError {
     NotBootstrapped,
     Terminated,
@@ -61,11 +61,14 @@
     RoutingTableEmpty,
     RejectedPublicId,
     RefusedFromRoutingTable,
+    RejectedGetCloseGroup,
+    RejectedGetNetworkName,
     Utf8(<a class='struct' href='https://doc.rust-lang.org/nightly/core/str/struct.Utf8Error.html' title='core::str::Utf8Error'>Utf8Error</a>),
     Interface(<a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>),
     Io(<a class='struct' href='https://doc.rust-lang.org/nightly/std/io/error/struct.Error.html' title='std::io::error::Error'>Error</a>),
     Cbor(<a class='enum' href='../cbor/enum.CborError.html' title='cbor::CborError'>CborError</a>),
     SendEventError(<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.SendError.html' title='std::sync::mpsc::SendError'>SendError</a>&lt;<a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a>&gt;),
+    BitIndexOutOfBoundsError,
     InvalidStateForOperation,
     SerialisationError(<a class='enum' href='../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>),
     AsymmetricDecryptionFailure,
@@ -90,13 +93,17 @@
 </div></td></tr><tr><td id='variant.FailedToBootstrap'><code>FailedToBootstrap</code></td><td><div class='docblock'><p>Failure to bootstrap off the provided endpoints</p>
 </div></td></tr><tr><td id='variant.RoutingTableEmpty'><code>RoutingTableEmpty</code></td><td><div class='docblock'><p>Unexpected empty routing table</p>
 </div></td></tr><tr><td id='variant.RejectedPublicId'><code>RejectedPublicId</code></td><td><div class='docblock'><p>Public id rejected because of disallowed relocated status</p>
-</div></td></tr><tr><td id='variant.RefusedFromRoutingTable'><code>RefusedFromRoutingTable</code></td><td><div class='docblock'><p>Routing table did not add the node information,
-either because it was already added, or because it did not improve the routing table</p>
+</div></td></tr><tr><td id='variant.RefusedFromRoutingTable'><code>RefusedFromRoutingTable</code></td><td><div class='docblock'><p>Routing table did not add the node information, either because it was already added, or
+because it did not improve the routing table</p>
+</div></td></tr><tr><td id='variant.RejectedGetCloseGroup'><code>RejectedGetCloseGroup</code></td><td><div class='docblock'><p>Rejected providing the close group, because the destination address does not match any of
+the sender&#39;s buckets</p>
+</div></td></tr><tr><td id='variant.RejectedGetNetworkName'><code>RejectedGetNetworkName</code></td><td><div class='docblock'><p>A client with <code>client_restriction == true</code> tried to relocate.</p>
 </div></td></tr><tr><td id='variant.Utf8'><code>Utf8</code></td><td><div class='docblock'><p>String errors</p>
 </div></td></tr><tr><td id='variant.Interface'><code>Interface</code></td><td><div class='docblock'><p>Interface error</p>
 </div></td></tr><tr><td id='variant.Io'><code>Io</code></td><td><div class='docblock'><p>i/o error</p>
 </div></td></tr><tr><td id='variant.Cbor'><code>Cbor</code></td><td><div class='docblock'><p>Serialisation error</p>
 </div></td></tr><tr><td id='variant.SendEventError'><code>SendEventError</code></td><td><div class='docblock'><p>Channel sending error</p>
+</div></td></tr><tr><td id='variant.BitIndexOutOfBoundsError'><code>BitIndexOutOfBoundsError</code></td><td><div class='docblock'><p>The bit index for a <code>XorName</code> was out of bounds.</p>
 </div></td></tr><tr><td id='variant.InvalidStateForOperation'><code>InvalidStateForOperation</code></td><td><div class='docblock'><p>Current state is invalid for the operation</p>
 </div></td></tr><tr><td id='variant.SerialisationError'><code>SerialisationError</code></td><td><div class='docblock'><p>Serialisation Error</p>
 </div></td></tr><tr><td id='variant.AsymmetricDecryptionFailure'><code>AsymmetricDecryptionFailure</code></td><td><div class='docblock'><p>Asymmetric Decryption Failure</p>
@@ -113,6 +120,7 @@ either because it was already added, or because it did not improve the routing t
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>&gt; for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.from-3' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../routing/enum.InterfaceError.html' title='routing::InterfaceError'>InterfaceError</a>) -&gt; <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.SendError.html' title='std::sync::mpsc::SendError'>SendError</a>&lt;<a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a>&gt;&gt; for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.from-4' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mpsc/struct.SendError.html' title='std::sync::mpsc::SendError'>SendError</a>&lt;<a class='enum' href='../routing/enum.Event.html' title='routing::Event'>Event</a>&gt;) -&gt; <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h4>
 </div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='enum' href='../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>&gt; for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.from-5' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(error: <a class='enum' href='../maidsafe_utilities/serialisation/enum.SerialisationError.html' title='maidsafe_utilities::serialisation::SerialisationError'>SerialisationError</a>) -&gt; <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h4>
+</div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html' title='core::convert::From'>From</a>&lt;<a class='struct' href='../xor_name/struct.BitIndexOutOfBoundsError.html' title='xor_name::BitIndexOutOfBoundsError'>BitIndexOutOfBoundsError</a>&gt; for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.from-6' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/convert/trait.From.html#method.from' class='fnname'>from</a>(_: <a class='struct' href='../xor_name/struct.BitIndexOutOfBoundsError.html' title='xor_name::BitIndexOutOfBoundsError'>BitIndexOutOfBoundsError</a>) -&gt; <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h4>
 </div><h3 id='derived_implementations'>Derived Implementations </h3><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html' title='core::fmt::Debug'>Debug</a> for <a class='enum' href='../routing/enum.RoutingError.html' title='routing::RoutingError'>RoutingError</a></code></h3><div class='impl-items'><h4 id='method.fmt' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/fmt/trait.Debug.html#method.fmt' class='fnname'>fmt</a>(&amp;self, __arg_0: &amp;mut <a class='struct' href='https://doc.rust-lang.org/nightly/core/fmt/struct.Formatter.html' title='core::fmt::Formatter'>Formatter</a>) -&gt; <a class='type' href='https://doc.rust-lang.org/nightly/core/fmt/type.Result.html' title='core::fmt::Result'>Result</a></code></h4>
 </div></section>
     <section id='search' class="content hidden"></section>

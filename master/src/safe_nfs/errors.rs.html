@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.5.0/src/errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>errors.rs.html -- source</title>
@@ -144,6 +144,17 @@
 <span id="101">101</span>
 <span id="102">102</span>
 <span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -162,17 +173,20 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>;
+
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>SerialisationError</span>;
+<span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>errors</span>::{<span class='ident'>CoreError</span>, <span class='ident'>CLIENT_ERROR_START_RANGE</span>};
 
 <span class='doccomment'>/// Intended for converting NFS Errors into numeric codes for propagating some error information</span>
 <span class='doccomment'>/// across FFI boundaries and specially to C.</span>
-<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>NFS_ERROR_START_RANGE</span>: <span class='ident'>i32</span> <span class='op'>=</span> ::<span class='ident'>safe_core</span>::<span class='ident'>errors</span>::<span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>500</span>;
+<span class='kw'>pub</span> <span class='kw'>const</span> <span class='ident'>NFS_ERROR_START_RANGE</span>: <span class='ident'>i32</span> <span class='op'>=</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>500</span>;
 
 <span class='doccomment'>/// NFS Errors</span>
 <span class='attribute'>#[<span class='ident'>allow</span>(<span class='ident'>variant_size_differences</span>)]</span> <span class='comment'>// TODO</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>NfsError</span> {
     <span class='doccomment'>/// Client Error</span>
-    <span class='ident'>CoreError</span>(::<span class='ident'>safe_core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>),
+    <span class='ident'>CoreError</span>(<span class='ident'>CoreError</span>),
     <span class='doccomment'>/// If Directory already exists with the same name in the same level</span>
     <span class='ident'>DirectoryAlreadyExistsWithSameName</span>,
     <span class='doccomment'>/// Destination is Same as the Source</span>
@@ -195,8 +209,8 @@
     <span class='ident'>UnsuccessfulEncodeDecode</span>(<span class='ident'>SerialisationError</span>),
 }
 
-<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span>::<span class='ident'>safe_core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>NfsError</span> {
-    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>error</span>: ::<span class='ident'>safe_core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>) <span class='op'>-&gt;</span> <span class='ident'>NfsError</span> {
+<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>CoreError</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>NfsError</span> {
+    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>error</span>: <span class='ident'>CoreError</span>) <span class='op'>-&gt;</span> <span class='ident'>NfsError</span> {
         <span class='ident'>NfsError</span>::<span class='ident'>CoreError</span>(<span class='ident'>error</span>)
     }
 }
@@ -216,35 +230,43 @@
 <span class='kw'>impl</span> <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>i32</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>NfsError</span> {
     <span class='kw'>fn</span> <span class='ident'>into</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>i32</span> {
         <span class='kw'>match</span> <span class='self'>self</span> {
-            <span class='ident'>NfsError</span>::<span class='ident'>CoreError</span>(<span class='ident'>error</span>)                   <span class='op'>=&gt;</span> <span class='ident'>error</span>.<span class='ident'>into</span>(),
+            <span class='ident'>NfsError</span>::<span class='ident'>CoreError</span>(<span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='ident'>error</span>.<span class='ident'>into</span>(),
             <span class='ident'>NfsError</span>::<span class='ident'>DirectoryAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>1</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span>        <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>2</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryNotFound</span>                  <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>3</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span>      <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>4</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>FileDoesNotMatch</span>                   <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>5</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>                       <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>6</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>InvalidRangeSpecified</span>              <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>7</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>                <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>8</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>Unexpected</span>(_)                      <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>9</span>,
-            <span class='ident'>NfsError</span>::<span class='ident'>UnsuccessfulEncodeDecode</span>(_)        <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>10</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>2</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryNotFound</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>3</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>4</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>FileDoesNotMatch</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>5</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>6</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>InvalidRangeSpecified</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>7</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span> <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>8</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>Unexpected</span>(_) <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>9</span>,
+            <span class='ident'>NfsError</span>::<span class='ident'>UnsuccessfulEncodeDecode</span>(_) <span class='op'>=&gt;</span> <span class='ident'>NFS_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>10</span>,
         }
     }
 }
 
-<span class='kw'>impl</span> ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>NfsError</span> {
-    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> ::<span class='ident'>std</span>::<span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
+<span class='kw'>impl</span> <span class='ident'>fmt</span>::<span class='ident'>Debug</span> <span class='kw'>for</span> <span class='ident'>NfsError</span> {
+    <span class='kw'>fn</span> <span class='ident'>fmt</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>f</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>fmt</span>::<span class='ident'>Formatter</span>) <span class='op'>-&gt;</span> <span class='ident'>fmt</span>::<span class='prelude-ty'>Result</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>NfsError</span>::<span class='ident'>CoreError</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>)                <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::CoreError -&gt; {:?}&quot;</span>, <span class='ident'>error</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryAlreadyExistsWithSameName</span>  <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DirectoryAlreadyExistsWithSameName&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span>         <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DestinationAndSourceAreSame&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryNotFound</span>                   <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DirectoryNotFound&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span>       <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileAlreadyExistsWithSameName&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>FileDoesNotMatch</span>                    <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileDoesNotMatch&quot;</span>),            
-            <span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span>                        <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileNotFound&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>InvalidRangeSpecified</span>               <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::InvalidRangeSpecified&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span>                 <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::ParameterIsNotValid&quot;</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>Unexpected</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>)               <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::Unexpected -&gt; {:?}&quot;</span>, <span class='ident'>error</span>),
-            <span class='ident'>NfsError</span>::<span class='ident'>UnsuccessfulEncodeDecode</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::UnsuccessfulEncodeDecode -&gt; {:?}&quot;</span>, <span class='ident'>error</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>CoreError</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::CoreError -&gt; {:?}&quot;</span>, <span class='ident'>error</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DirectoryAlreadyExistsWithSameName&quot;</span>)
+            }
+            <span class='ident'>NfsError</span>::<span class='ident'>DestinationAndSourceAreSame</span> <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DestinationAndSourceAreSame&quot;</span>)
+            }
+            <span class='ident'>NfsError</span>::<span class='ident'>DirectoryNotFound</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::DirectoryNotFound&quot;</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>FileAlreadyExistsWithSameName</span> <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileAlreadyExistsWithSameName&quot;</span>)
+            }
+            <span class='ident'>NfsError</span>::<span class='ident'>FileDoesNotMatch</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileDoesNotMatch&quot;</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>FileNotFound</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::FileNotFound&quot;</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>InvalidRangeSpecified</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::InvalidRangeSpecified&quot;</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>ParameterIsNotValid</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::ParameterIsNotValid&quot;</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>Unexpected</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::Unexpected -&gt; {:?}&quot;</span>, <span class='ident'>error</span>),
+            <span class='ident'>NfsError</span>::<span class='ident'>UnsuccessfulEncodeDecode</span>(<span class='kw-2'>ref</span> <span class='ident'>error</span>) <span class='op'>=&gt;</span> {
+                <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;NfsError::UnsuccessfulEncodeDecode -&gt; {:?}&quot;</span>, <span class='ident'>error</span>)
+            }
         }
     }
 }

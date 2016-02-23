@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.5.0/src/helper/directory_helper.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_nfs-0.6.0/src/helper/directory_helper.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>directory_helper.rs.html -- source</title>
@@ -585,6 +585,92 @@
 <span id="542">542</span>
 <span id="543">543</span>
 <span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
+<span id="549">549</span>
+<span id="550">550</span>
+<span id="551">551</span>
+<span id="552">552</span>
+<span id="553">553</span>
+<span id="554">554</span>
+<span id="555">555</span>
+<span id="556">556</span>
+<span id="557">557</span>
+<span id="558">558</span>
+<span id="559">559</span>
+<span id="560">560</span>
+<span id="561">561</span>
+<span id="562">562</span>
+<span id="563">563</span>
+<span id="564">564</span>
+<span id="565">565</span>
+<span id="566">566</span>
+<span id="567">567</span>
+<span id="568">568</span>
+<span id="569">569</span>
+<span id="570">570</span>
+<span id="571">571</span>
+<span id="572">572</span>
+<span id="573">573</span>
+<span id="574">574</span>
+<span id="575">575</span>
+<span id="576">576</span>
+<span id="577">577</span>
+<span id="578">578</span>
+<span id="579">579</span>
+<span id="580">580</span>
+<span id="581">581</span>
+<span id="582">582</span>
+<span id="583">583</span>
+<span id="584">584</span>
+<span id="585">585</span>
+<span id="586">586</span>
+<span id="587">587</span>
+<span id="588">588</span>
+<span id="589">589</span>
+<span id="590">590</span>
+<span id="591">591</span>
+<span id="592">592</span>
+<span id="593">593</span>
+<span id="594">594</span>
+<span id="595">595</span>
+<span id="596">596</span>
+<span id="597">597</span>
+<span id="598">598</span>
+<span id="599">599</span>
+<span id="600">600</span>
+<span id="601">601</span>
+<span id="602">602</span>
+<span id="603">603</span>
+<span id="604">604</span>
+<span id="605">605</span>
+<span id="606">606</span>
+<span id="607">607</span>
+<span id="608">608</span>
+<span id="609">609</span>
+<span id="610">610</span>
+<span id="611">611</span>
+<span id="612">612</span>
+<span id="613">613</span>
+<span id="614">614</span>
+<span id="615">615</span>
+<span id="616">616</span>
+<span id="617">617</span>
+<span id="618">618</span>
+<span id="619">619</span>
+<span id="620">620</span>
+<span id="621">621</span>
+<span id="622">622</span>
+<span id="623">623</span>
+<span id="624">624</span>
+<span id="625">625</span>
+<span id="626">626</span>
+<span id="627">627</span>
+<span id="628">628</span>
+<span id="629">629</span>
+<span id="630">630</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -603,52 +689,65 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::{<span class='ident'>Arc</span>, <span class='ident'>Mutex</span>};
+
+<span class='kw'>use</span> <span class='ident'>errors</span>::<span class='ident'>NfsError</span>;
+<span class='kw'>use</span> <span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::{<span class='ident'>serialise</span>, <span class='ident'>deserialise</span>};
+<span class='kw'>use</span> <span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span>;
 <span class='kw'>use</span> <span class='ident'>routing</span>::{<span class='ident'>ImmutableData</span>, <span class='ident'>ImmutableDataType</span>, <span class='ident'>StructuredData</span>, <span class='ident'>Data</span>, <span class='ident'>DataRequest</span>};
+<span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span>;
+<span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>;
+<span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>structured_data_operations</span>::{<span class='ident'>unversioned</span>, <span class='ident'>versioned</span>};
 
 <span class='doccomment'>/// DirectoryHelper provides helper functions to perform Operations on Directory</span>
 <span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>DirectoryHelper</span> {
-    <span class='ident'>client</span>: ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span><span class='op'>&lt;</span>::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span><span class='op'>&lt;</span>::<span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span><span class='op'>&gt;&gt;</span>,
+    <span class='ident'>client</span>: <span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>Client</span><span class='op'>&gt;&gt;</span>,
 }
 
 <span class='kw'>impl</span> <span class='ident'>DirectoryHelper</span> {
     <span class='doccomment'>/// Create a new DirectoryHelper instance</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>client</span>: ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span><span class='op'>&lt;</span>::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span><span class='op'>&lt;</span>::<span class='ident'>safe_core</span>::<span class='ident'>client</span>::<span class='ident'>Client</span><span class='op'>&gt;&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>DirectoryHelper</span> {
-        <span class='ident'>DirectoryHelper</span> {
-            <span class='ident'>client</span>: <span class='ident'>client</span>,
-        }
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>new</span>(<span class='ident'>client</span>: <span class='ident'>Arc</span><span class='op'>&lt;</span><span class='ident'>Mutex</span><span class='op'>&lt;</span><span class='ident'>Client</span><span class='op'>&gt;&gt;</span>) <span class='op'>-&gt;</span> <span class='ident'>DirectoryHelper</span> {
+        <span class='ident'>DirectoryHelper</span> { <span class='ident'>client</span>: <span class='ident'>client</span> }
     }
 
     <span class='doccomment'>/// Creates a Directory in the network.</span>
-    <span class='doccomment'>/// When a directory is created and parent_directory is passed as a parameter. Then the parent directory is updated.</span>
-    <span class='doccomment'>/// If the parent_directory passed has a parent, then the parent_directory&#39;s parent is also updated and the same is returned</span>
+    <span class='doccomment'>/// When a directory is created and parent_directory is passed as a parameter.</span>
+    <span class='doccomment'>/// Then the parent directory is updated.</span>
+    <span class='doccomment'>/// If the parent_directory passed has a parent, then the parent_directory&#39;s parent</span>
+    <span class='doccomment'>/// is also updated and the same is returned</span>
     <span class='doccomment'>/// Returns (created_directory, Option&lt;parent_directory&#39;s parent&gt;)</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>create</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                  <span class='ident'>directory_name</span>  : <span class='ident'>String</span>,
-                  <span class='ident'>tag_type</span>        : <span class='ident'>u64</span>,
-                  <span class='ident'>user_metadata</span>   : <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-                  <span class='ident'>versioned</span>       : <span class='ident'>bool</span>,
-                  <span class='ident'>access_level</span>    : ::<span class='ident'>AccessLevel</span>,
-                  <span class='ident'>parent_directory</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> ::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>,
-                                                                                                   <span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>), ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+                  <span class='ident'>directory_name</span>: <span class='ident'>String</span>,
+                  <span class='ident'>tag_type</span>: <span class='ident'>u64</span>,
+                  <span class='ident'>user_metadata</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
+                  <span class='ident'>versioned</span>: <span class='ident'>bool</span>,
+                  <span class='ident'>access_level</span>: ::<span class='ident'>AccessLevel</span>,
+                  <span class='ident'>parent_directory</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>)
+                  <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='ident'>DirectoryListing</span>, <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>), <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
 
-        <span class='kw'>if</span> <span class='ident'>parent_directory</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>().<span class='ident'>and_then</span>(<span class='op'>|</span><span class='ident'>dir</span><span class='op'>|</span> <span class='ident'>dir</span>.<span class='ident'>find_sub_directory</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory_name</span>)).<span class='ident'>is_some</span>() {
-             <span class='kw'>return</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>DirectoryAlreadyExistsWithSameName</span>);
+        <span class='kw'>if</span> <span class='ident'>parent_directory</span>.<span class='ident'>iter</span>()
+                           .<span class='ident'>next</span>()
+                           .<span class='ident'>and_then</span>(<span class='op'>|</span><span class='ident'>dir</span><span class='op'>|</span> <span class='ident'>dir</span>.<span class='ident'>find_sub_directory</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory_name</span>))
+                           .<span class='ident'>is_some</span>() {
+            <span class='kw'>return</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>DirectoryAlreadyExistsWithSameName</span>);
         }
 
-        <span class='kw'>let</span> <span class='ident'>directory</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>::<span class='ident'>new</span>(<span class='ident'>directory_name</span>,
-                                                                        <span class='ident'>tag_type</span>,
-                                                                        <span class='ident'>user_metadata</span>,
-                                                                        <span class='ident'>versioned</span>,
-                                                                        <span class='ident'>access_level</span>,
-                                                                        <span class='ident'>parent_directory</span>.<span class='ident'>iter</span>().<span class='ident'>next</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>directory</span><span class='op'>|</span> {
-                                                                            <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>clone</span>()
-                                                                        })));
+        <span class='kw'>let</span> <span class='ident'>directory</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>DirectoryListing</span>::<span class='ident'>new</span>(<span class='ident'>directory_name</span>,
+                                                   <span class='ident'>tag_type</span>,
+                                                   <span class='ident'>user_metadata</span>,
+                                                   <span class='ident'>versioned</span>,
+                                                   <span class='ident'>access_level</span>,
+                                                   <span class='ident'>parent_directory</span>.<span class='ident'>iter</span>()
+                                                                   .<span class='ident'>next</span>()
+                                                                   .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>directory</span><span class='op'>|</span> {
+                                                                       <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>clone</span>()
+                                                                   })));
 
         <span class='kw'>let</span> <span class='ident'>structured_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory</span>));
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Posting PUT request to network to save structured data for directory ...&quot;</span>);
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>put</span>(<span class='ident'>Data</span>::<span class='ident'>StructuredData</span>(<span class='ident'>structured_data</span>), <span class='prelude-val'>None</span>));
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>put</span>(<span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='ident'>structured_data</span>), <span class='prelude-val'>None</span>));
         <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='kw-2'>mut</span> <span class='ident'>parent_directory</span>) <span class='op'>=</span> <span class='ident'>parent_directory</span> {
             <span class='ident'>parent_directory</span>.<span class='ident'>upsert_sub_directory</span>(<span class='ident'>directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>clone</span>());
             <span class='prelude-val'>Ok</span>((<span class='ident'>directory</span>, <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>update</span>(<span class='ident'>parent_directory</span>))))
@@ -661,8 +760,9 @@
     <span class='doccomment'>/// The parent_directory&#39;s parent is also updated if present</span>
     <span class='doccomment'>/// Returns Option&lt;parent_directory&#39;s parent&gt;</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                  <span class='ident'>parent_directory</span>   : <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> ::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>,
-                  <span class='ident'>directory_to_delete</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+                  <span class='ident'>parent_directory</span>: <span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>DirectoryListing</span>,
+                  <span class='ident'>directory_to_delete</span>: <span class='kw-2'>&amp;</span><span class='ident'>String</span>)
+                  <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>parent_directory</span>.<span class='ident'>remove_sub_directory</span>(<span class='ident'>directory_to_delete</span>));
         <span class='ident'>parent_directory</span>.<span class='ident'>get_mut_metadata</span>().<span class='ident'>set_modified_time</span>(::<span class='ident'>time</span>::<span class='ident'>now_utc</span>());
         <span class='self'>self</span>.<span class='ident'>update</span>(<span class='kw-2'>&amp;</span><span class='ident'>parent_directory</span>)
@@ -671,7 +771,9 @@
     <span class='doccomment'>/// Updates an existing DirectoryListing in the network.</span>
     <span class='doccomment'>/// The parent_directory&#39;s parent is also updated and the same is returned</span>
     <span class='doccomment'>/// Returns Option&lt;parent_directory&#39;s parent&gt;</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>update</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                  <span class='ident'>directory</span>: <span class='kw-2'>&amp;</span><span class='ident'>DirectoryListing</span>)
+                  <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>update_directory_listing</span>(<span class='ident'>directory</span>));
         <span class='kw'>if</span> <span class='kw'>let</span> <span class='prelude-val'>Some</span>(<span class='ident'>parent_dir_key</span>) <span class='op'>=</span> <span class='ident'>directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_parent_dir_key</span>() {
             <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>parent_directory</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>parent_dir_key</span>));
@@ -684,34 +786,45 @@
     }
 
     <span class='doccomment'>/// Return the versions of the directory</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory_id</span>: <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>, <span class='ident'>type_tag</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>XorName</span><span class='op'>&gt;</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_versions</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                        <span class='ident'>directory_id</span>: <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>,
+                        <span class='ident'>type_tag</span>: <span class='ident'>u64</span>)
+                        <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>XorName</span><span class='op'>&gt;</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>structured_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_structured_data</span>(<span class='ident'>directory_id</span>, <span class='ident'>type_tag</span>));
-        <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>structured_data_operations</span>::<span class='ident'>versioned</span>::<span class='ident'>get_all_versions</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()), <span class='kw-2'>&amp;</span><span class='ident'>structured_data</span>)))
+        <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>versioned</span>::<span class='ident'>get_all_versions</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()),
+                                            <span class='kw-2'>&amp;</span><span class='ident'>structured_data</span>)))
     }
 
     <span class='doccomment'>/// Return the DirectoryListing for the specified version</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_by_version</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
                           <span class='ident'>directory_id</span>: <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>,
                           <span class='ident'>access_level</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>AccessLevel</span>,
-                          <span class='ident'>version</span>     : <span class='ident'>XorName</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-          <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_immutable_data</span>(<span class='ident'>version</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
-          <span class='kw'>match</span> <span class='op'>*</span><span class='ident'>access_level</span> {
-              ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> ::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>::<span class='ident'>decrypt</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(), <span class='ident'>directory_id</span>, <span class='ident'>immutable_data</span>.<span class='ident'>value</span>().<span class='ident'>clone</span>()),
-              ::<span class='ident'>AccessLevel</span>::<span class='ident'>Public</span>  <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='ident'>immutable_data</span>.<span class='ident'>value</span>()))),
-          }
+                          <span class='ident'>version</span>: <span class='ident'>XorName</span>)
+                          <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_immutable_data</span>(<span class='ident'>version</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
+        <span class='kw'>match</span> <span class='op'>*</span><span class='ident'>access_level</span> {
+            ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> {
+                <span class='ident'>DirectoryListing</span>::<span class='ident'>decrypt</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
+                                          <span class='ident'>directory_id</span>,
+                                          <span class='ident'>immutable_data</span>.<span class='ident'>value</span>().<span class='ident'>clone</span>())
+            }
+            ::<span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='ident'>immutable_data</span>.<span class='ident'>value</span>()))),
+        }
     }
 
     <span class='doccomment'>/// Return the DirectoryListing for the latest version</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory_key</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory_key</span>: <span class='kw-2'>&amp;</span><span class='ident'>DirectoryKey</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>directory_id</span> <span class='op'>=</span> <span class='ident'>directory_key</span>.<span class='ident'>get_id</span>();
-        <span class='kw'>let</span> <span class='ident'>type_tag</span>  <span class='op'>=</span> <span class='ident'>directory_key</span>.<span class='ident'>get_type_tag</span>();
+        <span class='kw'>let</span> <span class='ident'>type_tag</span> <span class='op'>=</span> <span class='ident'>directory_key</span>.<span class='ident'>get_type_tag</span>();
         <span class='kw'>let</span> <span class='ident'>versioned</span> <span class='op'>=</span> <span class='ident'>directory_key</span>.<span class='ident'>is_versioned</span>();
         <span class='kw'>let</span> <span class='ident'>access_level</span> <span class='op'>=</span> <span class='ident'>directory_key</span>.<span class='ident'>get_access_level</span>();
 
         <span class='kw'>if</span> <span class='ident'>versioned</span> {
-           <span class='kw'>let</span> <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_versions</span>(<span class='ident'>directory_id</span>, <span class='ident'>type_tag</span>));
-           <span class='kw'>let</span> <span class='ident'>latest_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>versions</span>.<span class='ident'>last</span>().<span class='ident'>ok_or</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>from</span>(<span class='string'>&quot;Programming Error - Please report this as a Bug.&quot;</span>)));
-           <span class='self'>self</span>.<span class='ident'>get_by_version</span>(<span class='ident'>directory_id</span>, <span class='ident'>access_level</span>, <span class='op'>*</span><span class='ident'>latest_version</span>)
+            <span class='kw'>let</span> <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_versions</span>(<span class='ident'>directory_id</span>, <span class='ident'>type_tag</span>));
+            <span class='kw'>let</span> <span class='ident'>latest_version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>versions</span>.<span class='ident'>last</span>().<span class='ident'>ok_or</span>(<span class='ident'>NfsError</span>::<span class='ident'>from</span>(<span class='string'>&quot;Programming Error \
+                                                                            - Please report \
+                                                                            this as a Bug.&quot;</span>)));
+            <span class='self'>self</span>.<span class='ident'>get_by_version</span>(<span class='ident'>directory_id</span>, <span class='ident'>access_level</span>, <span class='op'>*</span><span class='ident'>latest_version</span>)
         } <span class='kw'>else</span> {
             <span class='kw'>let</span> <span class='ident'>private_key</span>;
             <span class='kw'>let</span> <span class='ident'>secret_key</span>;
@@ -719,33 +832,40 @@
 
             <span class='kw'>let</span> <span class='ident'>encryption_keys</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='op'>*</span><span class='ident'>access_level</span> {
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> {
-                    <span class='ident'>private_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_public_encryption_key</span>()).<span class='ident'>clone</span>();
-                    <span class='ident'>secret_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_secret_encryption_key</span>()).<span class='ident'>clone</span>();
-                    <span class='ident'>nonce</span> <span class='op'>=</span> ::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>::<span class='ident'>generate_nonce</span>(<span class='ident'>directory_id</span>);
+                    <span class='ident'>private_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>())
+                                           .<span class='ident'>get_public_encryption_key</span>())
+                                      .<span class='ident'>clone</span>();
+                    <span class='ident'>secret_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>())
+                                          .<span class='ident'>get_secret_encryption_key</span>())
+                                     .<span class='ident'>clone</span>();
+                    <span class='ident'>nonce</span> <span class='op'>=</span> <span class='ident'>DirectoryListing</span>::<span class='ident'>generate_nonce</span>(<span class='ident'>directory_id</span>);
 
-                    <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='ident'>private_key</span>,
-                         <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>,
-                         <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>))
-                },
+                    <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='ident'>private_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>))
+                }
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             };
 
             <span class='kw'>let</span> <span class='ident'>structured_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_structured_data</span>(<span class='ident'>directory_id</span>, <span class='ident'>type_tag</span>));
-            <span class='kw'>let</span> <span class='ident'>serialised_directory_listing</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>structured_data_operations</span>::<span class='ident'>unversioned</span>::<span class='ident'>get_data</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
-                                                                                                                 <span class='kw-2'>&amp;</span><span class='ident'>structured_data</span>,
-                                                                                                                 <span class='ident'>encryption_keys</span>));
+            <span class='kw'>let</span> <span class='ident'>serialised_directory_listing</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>unversioned</span>::<span class='ident'>get_data</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
+                                                                          <span class='kw-2'>&amp;</span><span class='ident'>structured_data</span>,
+                                                                          <span class='ident'>encryption_keys</span>));
             <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>deserialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>serialised_directory_listing</span>)))
         }
     }
 
     <span class='doccomment'>/// Returns the Root Directory</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_user_root_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>root_directory_id</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_user_root_directory_id</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>id</span><span class='op'>|</span> { <span class='ident'>id</span>.<span class='ident'>clone</span>() });
-        <span class='kw'>match</span>  <span class='ident'>root_directory_id</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_user_root_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>root_directory_id</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>())
+                                    .<span class='ident'>get_user_root_directory_id</span>()
+                                    .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>id</span><span class='op'>|</span> <span class='ident'>id</span>.<span class='ident'>clone</span>());
+        <span class='kw'>match</span> <span class='ident'>root_directory_id</span> {
             <span class='prelude-val'>Some</span>(<span class='ident'>id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving directory at id {:?} ...&quot;</span>, <span class='ident'>id</span>);
-                <span class='self'>self</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span>::<span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>, <span class='boolval'>false</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>))
-            },
+                <span class='self'>self</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>,
+                                            ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                            <span class='boolval'>false</span>,
+                                            ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>))
+            }
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
                 <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving root directory ...&quot;</span>);
                 <span class='kw'>let</span> (<span class='ident'>created_directory</span>, _) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>create</span>(::<span class='ident'>ROOT_DIRECTORY_NAME</span>.<span class='ident'>to_string</span>(),
@@ -754,7 +874,8 @@
                                                               <span class='boolval'>false</span>,
                                                               ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
                                                               <span class='prelude-val'>None</span>));
-                <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>set_user_root_directory_id</span>(<span class='ident'>created_directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>()));
+                <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>())
+                         .<span class='ident'>set_user_root_directory_id</span>(<span class='ident'>created_directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>()));
                 <span class='prelude-val'>Ok</span>(<span class='ident'>created_directory</span>)
             }
         }
@@ -762,33 +883,48 @@
 
     <span class='doccomment'>/// Returns the Configuration DirectoryListing from the configuration root folder</span>
     <span class='doccomment'>/// Creates the directory or the root or both if it doesn&#39;t find one.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_configuration_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory_name</span>: <span class='ident'>String</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>config_dir_id</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_configuration_root_directory_id</span>().<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>id</span><span class='op'>|</span> { <span class='ident'>id</span>.<span class='ident'>clone</span>() });
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_configuration_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                                               <span class='ident'>directory_name</span>: <span class='ident'>String</span>)
+                                               <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>DirectoryListing</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>config_dir_id</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>())
+                                .<span class='ident'>get_configuration_root_directory_id</span>()
+                                .<span class='ident'>map</span>(<span class='op'>|</span><span class='ident'>id</span><span class='op'>|</span> <span class='ident'>id</span>.<span class='ident'>clone</span>());
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>config_directory_listing</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='ident'>config_dir_id</span> {
             <span class='prelude-val'>Some</span>(<span class='ident'>id</span>) <span class='op'>=&gt;</span> {
                 <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving root configuration directory at id {:?} ...&quot;</span>, <span class='ident'>id</span>);
-                <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span>::<span class='ident'>metadata</span>::<span class='ident'>directory_key</span>::<span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>, ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>, <span class='boolval'>false</span>, ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>)))
-            },
+                <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>DirectoryKey</span>::<span class='ident'>new</span>(<span class='ident'>id</span>,
+                                                 ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                                 <span class='boolval'>false</span>,
+                                                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>)))
+            }
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
                 <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Creating root configuration directory ...&quot;</span>);
-                <span class='kw'>let</span> (<span class='ident'>created_directory</span>, _) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>create</span>(::<span class='ident'>CONFIGURATION_DIRECTORY_NAME</span>.<span class='ident'>to_string</span>(),
-                                                              ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>,
-                                                              <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                              <span class='boolval'>false</span>,
-                                                              ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                              <span class='prelude-val'>None</span>));
-                <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>set_configuration_root_directory_id</span>(<span class='ident'>created_directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>()));
+                <span class='kw'>let</span> (<span class='ident'>created_directory</span>, _) <span class='op'>=</span>
+                    <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>create</span>(::<span class='ident'>CONFIGURATION_DIRECTORY_NAME</span>.<span class='ident'>to_string</span>(),
+                                     ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                     <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                     <span class='boolval'>false</span>,
+                                     ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                     <span class='prelude-val'>None</span>));
+                <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>())
+                         .<span class='ident'>set_configuration_root_directory_id</span>(<span class='ident'>created_directory</span>.<span class='ident'>get_key</span>()
+                                                                               .<span class='ident'>get_id</span>()
+                                                                               .<span class='ident'>clone</span>()));
                 <span class='ident'>created_directory</span>
             }
         };
-        <span class='kw'>match</span> <span class='ident'>config_directory_listing</span>.<span class='ident'>get_sub_directories</span>().<span class='ident'>iter</span>().<span class='ident'>position</span>(<span class='op'>|</span><span class='ident'>metadata</span><span class='op'>|</span> <span class='op'>*</span><span class='ident'>metadata</span>.<span class='ident'>get_name</span>() <span class='op'>==</span> <span class='ident'>directory_name</span>) {
+        <span class='kw'>match</span> <span class='ident'>config_directory_listing</span>.<span class='ident'>get_sub_directories</span>()
+                                      .<span class='ident'>iter</span>()
+                                      .<span class='ident'>position</span>(<span class='op'>|</span><span class='ident'>metadata</span><span class='op'>|</span> <span class='op'>*</span><span class='ident'>metadata</span>.<span class='ident'>get_name</span>() <span class='op'>==</span> <span class='ident'>directory_name</span>) {
             <span class='prelude-val'>Some</span>(<span class='ident'>index</span>) <span class='op'>=&gt;</span> {
-                <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving {:?} specific configuration directory ...&quot;</span>, <span class='ident'>directory_name</span>);
+                <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Retrieving {:?} specific configuration directory ...&quot;</span>,
+                       <span class='ident'>directory_name</span>);
                 <span class='kw'>let</span> <span class='ident'>directory_key</span> <span class='op'>=</span> <span class='ident'>config_directory_listing</span>.<span class='ident'>get_sub_directories</span>()[<span class='ident'>index</span>].<span class='ident'>get_key</span>();
                 <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory_key</span>)))
-            },
+            }
             <span class='prelude-val'>None</span> <span class='op'>=&gt;</span> {
-                <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Creating new directory {:?} in root configuration directory ...&quot;</span>, <span class='ident'>directory_name</span>);
+                <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Creating new directory {:?} in root configuration directory ...&quot;</span>,
+                       <span class='ident'>directory_name</span>);
                 <span class='kw'>let</span> (<span class='ident'>directory</span>, _) <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>create</span>(<span class='ident'>directory_name</span>,
                                                       ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>,
                                                       <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
@@ -796,13 +932,15 @@
                                                       ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
                                                       <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>config_directory_listing</span>)));
                 <span class='prelude-val'>Ok</span>(<span class='ident'>directory</span>)
-            },
+            }
         }
     }
 
     <span class='doccomment'>/// Creates a StructuredData in the Network</span>
     <span class='doccomment'>/// The StructuredData is created based on the version and AccessLevel of the DirectoryListing</span>
-    <span class='kw'>fn</span> <span class='ident'>save_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>StructuredData</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+    <span class='kw'>fn</span> <span class='ident'>save_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
+                              <span class='ident'>directory</span>: <span class='kw-2'>&amp;</span><span class='ident'>DirectoryListing</span>)
+                              <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>StructuredData</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>signing_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_secret_signing_key</span>()).<span class='ident'>clone</span>();
         <span class='kw'>let</span> <span class='ident'>owner_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_public_signing_key</span>()).<span class='ident'>clone</span>();
         <span class='kw'>let</span> <span class='ident'>access_level</span> <span class='op'>=</span> <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_access_level</span>();
@@ -813,41 +951,43 @@
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory</span>.<span class='ident'>encrypt</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>())),
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory</span>)),
             };
-            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
-            <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>structured_data_operations</span>::<span class='ident'>versioned</span>::<span class='ident'>create</span>(<span class='kw-2'>&amp;</span> <span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()),
-                                                                                 <span class='ident'>version</span>,
-                                                                                 <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>(),
-                                                                                 <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>(),
-                                                                                 <span class='number'>0</span>,
-                                                                                 <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>owner_key</span>],
-                                                                                 <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                                 <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>)))
+            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>,
+                                                           <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
+            <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>versioned</span>::<span class='ident'>create</span>(<span class='kw-2'>&amp;</span><span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()),
+                                      <span class='ident'>version</span>,
+                                      <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>(),
+                                      <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>(),
+                                      <span class='number'>0</span>,
+                                      <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>owner_key</span>],
+                                      <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                      <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>)))
         } <span class='kw'>else</span> {
-            <span class='kw'>let</span> <span class='ident'>private_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_public_encryption_key</span>()).<span class='ident'>clone</span>();
-            <span class='kw'>let</span> <span class='ident'>secret_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_secret_encryption_key</span>()).<span class='ident'>clone</span>();
-            <span class='kw'>let</span> <span class='ident'>nonce</span> <span class='op'>=</span> ::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>::<span class='ident'>generate_nonce</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>());
+            <span class='kw'>let</span> <span class='ident'>private_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_public_encryption_key</span>())
+                                  .<span class='ident'>clone</span>();
+            <span class='kw'>let</span> <span class='ident'>secret_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_secret_encryption_key</span>())
+                                 .<span class='ident'>clone</span>();
+            <span class='kw'>let</span> <span class='ident'>nonce</span> <span class='op'>=</span> <span class='ident'>DirectoryListing</span>::<span class='ident'>generate_nonce</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>());
             <span class='kw'>let</span> <span class='ident'>serialised_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory</span>));
 
             <span class='kw'>let</span> <span class='ident'>encryption_keys</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='op'>*</span><span class='ident'>access_level</span> {
-                ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='ident'>private_key</span>,
-                                                <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>,
-                                                <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)),
+                ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='ident'>private_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)),
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             };
-            <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>structured_data_operations</span>::<span class='ident'>unversioned</span>::<span class='ident'>create</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
-                                                                                   <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>(),
-                                                                                   <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>(),
-                                                                                   <span class='number'>0</span>,
-                                                                                   <span class='ident'>serialised_data</span>,
-                                                                                   <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>owner_key</span>.<span class='ident'>clone</span>()],
-                                                                                   <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                                   <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>,
-                                                                                   <span class='ident'>encryption_keys</span>)))
+            <span class='prelude-val'>Ok</span>(<span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>unversioned</span>::<span class='ident'>create</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
+                                        <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>(),
+                                        <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>(),
+                                        <span class='number'>0</span>,
+                                        <span class='ident'>serialised_data</span>,
+                                        <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>owner_key</span>.<span class='ident'>clone</span>()],
+                                        <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                        <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>,
+                                        <span class='ident'>encryption_keys</span>)))
         }
     }
 
-    <span class='kw'>fn</span> <span class='ident'>update_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory</span>: <span class='kw-2'>&amp;</span>::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>structured_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_structured_data</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(), <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>()));
+    <span class='kw'>fn</span> <span class='ident'>update_directory_listing</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>directory</span>: <span class='kw-2'>&amp;</span><span class='ident'>DirectoryListing</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(), <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>structured_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>get_structured_data</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
+                                                            <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>()));
 
         <span class='kw'>let</span> <span class='ident'>signing_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_secret_signing_key</span>()).<span class='ident'>clone</span>();
         <span class='kw'>let</span> <span class='ident'>owner_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_public_signing_key</span>()).<span class='ident'>clone</span>();
@@ -859,72 +999,74 @@
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>directory</span>.<span class='ident'>encrypt</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>())),
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory</span>)),
             };
-            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>, <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
-            <span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>structured_data_operations</span>::<span class='ident'>versioned</span>::<span class='ident'>append_version</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()),
-                                                                                      <span class='ident'>structured_data</span>,
-                                                                                      <span class='ident'>version</span>,
-                                                                                      <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>))
+            <span class='kw'>let</span> <span class='ident'>version</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>save_as_immutable_data</span>(<span class='ident'>serialised_data</span>,
+                                                           <span class='ident'>ImmutableDataType</span>::<span class='ident'>Normal</span>));
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>versioned</span>::<span class='ident'>append_version</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='op'>*</span><span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()),
+                                           <span class='ident'>structured_data</span>,
+                                           <span class='ident'>version</span>,
+                                           <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>))
         } <span class='kw'>else</span> {
-            <span class='kw'>let</span> <span class='ident'>private_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_public_encryption_key</span>()).<span class='ident'>clone</span>();
-            <span class='kw'>let</span> <span class='ident'>secret_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_secret_encryption_key</span>()).<span class='ident'>clone</span>();
-            <span class='kw'>let</span> <span class='ident'>nonce</span> <span class='op'>=</span> ::<span class='ident'>directory_listing</span>::<span class='ident'>DirectoryListing</span>::<span class='ident'>generate_nonce</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>());
+            <span class='kw'>let</span> <span class='ident'>private_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_public_encryption_key</span>())
+                                  .<span class='ident'>clone</span>();
+            <span class='kw'>let</span> <span class='ident'>secret_key</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get_secret_encryption_key</span>())
+                                 .<span class='ident'>clone</span>();
+            <span class='kw'>let</span> <span class='ident'>nonce</span> <span class='op'>=</span> <span class='ident'>DirectoryListing</span>::<span class='ident'>generate_nonce</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>());
             <span class='kw'>let</span> <span class='ident'>serialised_data</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>serialise</span>(<span class='kw-2'>&amp;</span><span class='ident'>directory</span>));
 
             <span class='kw'>let</span> <span class='ident'>encryption_keys</span> <span class='op'>=</span> <span class='kw'>match</span> <span class='op'>*</span><span class='ident'>access_level</span> {
-                ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='ident'>private_key</span>,
-                                                <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>,
-                                                <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)),
+                ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span> <span class='op'>=&gt;</span> <span class='prelude-val'>Some</span>((<span class='kw-2'>&amp;</span><span class='ident'>private_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>secret_key</span>, <span class='kw-2'>&amp;</span><span class='ident'>nonce</span>)),
                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Public</span> <span class='op'>=&gt;</span> <span class='prelude-val'>None</span>,
             };
-            <span class='macro'>try</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>structured_data_operations</span>::<span class='ident'>unversioned</span>::<span class='ident'>create</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
-                                                                                <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>(),
-                                                                                <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>(),
-                                                                                <span class='ident'>structured_data</span>.<span class='ident'>get_version</span>() <span class='op'>+</span> <span class='number'>1</span>,
-                                                                                <span class='ident'>serialised_data</span>,
-                                                                                <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>owner_key</span>.<span class='ident'>clone</span>()],
-                                                                                <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                                <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>,
-                                                                                <span class='ident'>encryption_keys</span>))
+            <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>unversioned</span>::<span class='ident'>create</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>clone</span>(),
+                                     <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>(),
+                                     <span class='ident'>directory</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>(),
+                                     <span class='ident'>structured_data</span>.<span class='ident'>get_version</span>() <span class='op'>+</span> <span class='number'>1</span>,
+                                     <span class='ident'>serialised_data</span>,
+                                     <span class='macro'>vec</span><span class='macro'>!</span>[<span class='ident'>owner_key</span>.<span class='ident'>clone</span>()],
+                                     <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                     <span class='kw-2'>&amp;</span><span class='ident'>signing_key</span>,
+                                     <span class='ident'>encryption_keys</span>))
         };
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Posting updated structured data to the network ...&quot;</span>);
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>post</span>(<span class='ident'>Data</span>::<span class='ident'>StructuredData</span>(<span class='ident'>updated_structured_data</span>), <span class='prelude-val'>None</span>));
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>())
+                 .<span class='ident'>post</span>(<span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='ident'>updated_structured_data</span>), <span class='prelude-val'>None</span>));
         <span class='prelude-val'>Ok</span>(())
     }
 
     <span class='doccomment'>/// Saves the data as ImmutableData in the network and returns the name</span>
     <span class='kw'>fn</span> <span class='ident'>save_as_immutable_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                              <span class='ident'>data</span>     : <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
-                              <span class='ident'>data_type</span>: <span class='ident'>ImmutableDataType</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>XorName</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+                              <span class='ident'>data</span>: <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>,
+                              <span class='ident'>data_type</span>: <span class='ident'>ImmutableDataType</span>)
+                              <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>XorName</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
         <span class='kw'>let</span> <span class='ident'>immutable_data</span> <span class='op'>=</span> <span class='ident'>ImmutableData</span>::<span class='ident'>new</span>(<span class='ident'>data_type</span>, <span class='ident'>data</span>);
         <span class='kw'>let</span> <span class='ident'>name</span> <span class='op'>=</span> <span class='ident'>immutable_data</span>.<span class='ident'>name</span>();
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Posting PUT request to save immutable data to the network ...&quot;</span>);
-        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>put</span>(<span class='ident'>Data</span>::<span class='ident'>ImmutableData</span>(<span class='ident'>immutable_data</span>), <span class='prelude-val'>None</span>));
+        <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>put</span>(<span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='ident'>immutable_data</span>), <span class='prelude-val'>None</span>));
         <span class='prelude-val'>Ok</span>(<span class='ident'>name</span>)
     }
 
     <span class='doccomment'>/// Get StructuredData from the Network</span>
-    <span class='kw'>fn</span> <span class='ident'>get_structured_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                           <span class='ident'>id</span>      : <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>,
-                           <span class='ident'>type_tag</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>StructuredData</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>StructuredData</span>(<span class='ident'>id</span>.<span class='ident'>clone</span>(), <span class='ident'>type_tag</span>);
+    <span class='kw'>fn</span> <span class='ident'>get_structured_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>, <span class='ident'>id</span>: <span class='kw-2'>&amp;</span><span class='ident'>XorName</span>, <span class='ident'>type_tag</span>: <span class='ident'>u64</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>StructuredData</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Structured</span>(<span class='ident'>id</span>.<span class='ident'>clone</span>(), <span class='ident'>type_tag</span>);
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Getting structured data from the network ...&quot;</span>);
         <span class='kw'>let</span> <span class='ident'>response_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get</span>(<span class='ident'>request</span>, <span class='prelude-val'>None</span>));
         <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>response_getter</span>.<span class='ident'>get</span>()) {
-            <span class='ident'>Data</span>::<span class='ident'>StructuredData</span>(<span class='ident'>structured_data</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>structured_data</span>),
-            _ <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>from</span>(::<span class='ident'>safe_core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>::<span class='ident'>ReceivedUnexpectedData</span>)),
+            <span class='ident'>Data</span>::<span class='ident'>Structured</span>(<span class='ident'>structured_data</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>structured_data</span>),
+            _ <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>from</span>(<span class='ident'>CoreError</span>::<span class='ident'>ReceivedUnexpectedData</span>)),
         }
     }
 
     <span class='doccomment'>/// Get ImmutableData from the Network</span>
     <span class='kw'>fn</span> <span class='ident'>get_immutable_data</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>,
-                          <span class='ident'>id</span>       : <span class='ident'>XorName</span>,
-                          <span class='ident'>data_type</span>: <span class='ident'>ImmutableDataType</span>) <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>ImmutableData</span>, ::<span class='ident'>errors</span>::<span class='ident'>NfsError</span><span class='op'>&gt;</span> {
-        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>ImmutableData</span>(<span class='ident'>id</span>, <span class='ident'>data_type</span>);
+                          <span class='ident'>id</span>: <span class='ident'>XorName</span>,
+                          <span class='ident'>data_type</span>: <span class='ident'>ImmutableDataType</span>)
+                          <span class='op'>-&gt;</span> <span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>ImmutableData</span>, <span class='ident'>NfsError</span><span class='op'>&gt;</span> {
+        <span class='kw'>let</span> <span class='ident'>request</span> <span class='op'>=</span> <span class='ident'>DataRequest</span>::<span class='ident'>Immutable</span>(<span class='ident'>id</span>, <span class='ident'>data_type</span>);
         <span class='macro'>debug</span><span class='macro'>!</span>(<span class='string'>&quot;Getting immutable data from the network ...&quot;</span>);
         <span class='kw'>let</span> <span class='ident'>response_getter</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>client</span>.<span class='ident'>lock</span>()).<span class='ident'>get</span>(<span class='ident'>request</span>, <span class='prelude-val'>None</span>));
         <span class='kw'>match</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>response_getter</span>.<span class='ident'>get</span>()) {
-            <span class='ident'>Data</span>::<span class='ident'>ImmutableData</span>(<span class='ident'>immutable_data</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>immutable_data</span>),
-            _ <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(::<span class='ident'>errors</span>::<span class='ident'>NfsError</span>::<span class='ident'>from</span>(::<span class='ident'>safe_core</span>::<span class='ident'>errors</span>::<span class='ident'>CoreError</span>::<span class='ident'>ReceivedUnexpectedData</span>)),
+            <span class='ident'>Data</span>::<span class='ident'>Immutable</span>(<span class='ident'>immutable_data</span>) <span class='op'>=&gt;</span> <span class='prelude-val'>Ok</span>(<span class='ident'>immutable_data</span>),
+            _ <span class='op'>=&gt;</span> <span class='prelude-val'>Err</span>(<span class='ident'>NfsError</span>::<span class='ident'>from</span>(<span class='ident'>CoreError</span>::<span class='ident'>ReceivedUnexpectedData</span>)),
         }
     }
 }
@@ -932,57 +1074,66 @@
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>test</span> {
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
+    <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::{<span class='ident'>Arc</span>, <span class='ident'>Mutex</span>};
+    <span class='kw'>use</span> <span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>;
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>create_dir_listing</span>() {
-        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
         <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='comment'>// Create a Directory</span>
-        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;DirName&quot;</span>.<span class='ident'>to_string</span>(),
-                                                                           ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
-                                                                           <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                           <span class='boolval'>true</span>,
-                                                                           ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                                           <span class='prelude-val'>None</span>));
+        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;DirName&quot;</span>.<span class='ident'>to_string</span>(),
+                                             ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                             <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                             <span class='boolval'>true</span>,
+                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                             <span class='prelude-val'>None</span>));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>grand_parent</span>.<span class='ident'>is_none</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>directory</span>, <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>())));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>directory</span>,
+                   <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>())));
         <span class='comment'>// Create a Child directory and update the parent_directory</span>
-        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Child&quot;</span>.<span class='ident'>to_string</span>(),
-                                                                                 ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
-                                                                                 <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                                 <span class='boolval'>true</span>,
-                                                                                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                                                 <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>directory</span>)));
+        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Child&quot;</span>.<span class='ident'>to_string</span>(),
+                                             ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                             <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                             <span class='boolval'>true</span>,
+                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                             <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>directory</span>)));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>grand_parent</span>.<span class='ident'>is_none</span>());
         <span class='comment'>// Assert whether parent is updated</span>
         <span class='kw'>let</span> <span class='ident'>parent</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>()));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>parent</span>.<span class='ident'>find_sub_directory</span>(<span class='ident'>child_directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>()).<span class='ident'>is_some</span>());
 
-        <span class='kw'>let</span> (<span class='ident'>grand_child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Grand Child&quot;</span>.<span class='ident'>to_string</span>(),
-                                                                                   ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
-                                                                                   <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                                   <span class='boolval'>true</span>,
-                                                                                   ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                                                   <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>)));
+        <span class='kw'>let</span> (<span class='ident'>grand_child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Grand Child&quot;</span>.<span class='ident'>to_string</span>(),
+                                             ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                             <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                             <span class='boolval'>true</span>,
+                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                             <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>)));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Grand Child&quot;</span>.<span class='ident'>to_string</span>(),
                                   ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
                                   <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
                                   <span class='boolval'>true</span>,
                                   ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                  <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>)).<span class='ident'>is_err</span>());
+                                  <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>))
+                          .<span class='ident'>is_err</span>());
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>grand_parent</span>.<span class='ident'>is_some</span>());
         <span class='kw'>let</span> <span class='ident'>grand_parent</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>grand_parent</span>, <span class='string'>&quot;Grand Parent Should be updated&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>grand_parent</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>(), <span class='op'>*</span><span class='ident'>directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>grand_parent</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_modified_time</span>(), <span class='op'>*</span><span class='ident'>grand_child_directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_modified_time</span>());
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>grand_parent</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>(),
+                   <span class='op'>*</span><span class='ident'>directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>());
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>grand_parent</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_modified_time</span>(),
+                   <span class='op'>*</span><span class='ident'>grand_child_directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_modified_time</span>());
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>create_versioned_public_directory</span>() {
         <span class='kw'>let</span> <span class='ident'>public_directory</span>;
         {
-            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
             <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
             <span class='kw'>let</span> (<span class='ident'>directory</span>, _) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;PublicDirectory&quot;</span>.<span class='ident'>to_string</span>(),
                                                                 ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
@@ -993,10 +1144,11 @@
             <span class='ident'>public_directory</span> <span class='op'>=</span> <span class='ident'>directory</span>;
         }
         {
-            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
             <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
-            <span class='kw'>let</span> <span class='ident'>retrieved_public_directory</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>public_directory</span>.<span class='ident'>get_key</span>()));
+            <span class='kw'>let</span> <span class='ident'>retrieved_public_directory</span> <span class='op'>=</span>
+                <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>public_directory</span>.<span class='ident'>get_key</span>()));
             <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>retrieved_public_directory</span>, <span class='ident'>public_directory</span>);
         }
     }
@@ -1005,8 +1157,8 @@
     <span class='kw'>fn</span> <span class='ident'>create_unversioned_public_directory</span>() {
         <span class='kw'>let</span> <span class='ident'>public_directory</span>;
         {
-            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
             <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
             <span class='kw'>let</span> (<span class='ident'>directory</span>, _) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;PublicDirectory&quot;</span>.<span class='ident'>to_string</span>(),
                                                                 ::<span class='ident'>UNVERSIONED_DIRECTORY_LISTING_TAG</span>,
@@ -1017,18 +1169,19 @@
             <span class='ident'>public_directory</span> <span class='op'>=</span> <span class='ident'>directory</span>;
         }
         {
-            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+            <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+            <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
             <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
-            <span class='kw'>let</span> <span class='ident'>retrieved_public_directory</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>public_directory</span>.<span class='ident'>get_key</span>()));
+            <span class='kw'>let</span> <span class='ident'>retrieved_public_directory</span> <span class='op'>=</span>
+                <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>public_directory</span>.<span class='ident'>get_key</span>()));
             <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>retrieved_public_directory</span>, <span class='ident'>public_directory</span>);
         }
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>user_root_configuration</span>() {
-        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
         <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
 
         <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>root_dir</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_user_root_directory_listing</span>());
@@ -1044,20 +1197,23 @@
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>configuration_directory</span>() {
-        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
         <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
-        <span class='kw'>let</span> <span class='ident'>config_dir</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_configuration_directory_listing</span>(<span class='string'>&quot;DNS&quot;</span>.<span class='ident'>to_string</span>()));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>config_dir</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>().<span class='ident'>clone</span>(), <span class='string'>&quot;DNS&quot;</span>.<span class='ident'>to_string</span>());
+        <span class='kw'>let</span> <span class='ident'>config_dir</span> <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_configuration_directory_listing</span>(<span class='string'>&quot;DNS&quot;</span>.<span class='ident'>to_string</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>config_dir</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>().<span class='ident'>clone</span>(),
+                   <span class='string'>&quot;DNS&quot;</span>.<span class='ident'>to_string</span>());
         <span class='kw'>let</span> <span class='ident'>id</span> <span class='op'>=</span> <span class='ident'>config_dir</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>();
-        <span class='kw'>let</span> <span class='ident'>config_dir</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_configuration_directory_listing</span>(<span class='string'>&quot;DNS&quot;</span>.<span class='ident'>to_string</span>()));
+        <span class='kw'>let</span> <span class='ident'>config_dir</span> <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_configuration_directory_listing</span>(<span class='string'>&quot;DNS&quot;</span>.<span class='ident'>to_string</span>()));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>config_dir</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>().<span class='ident'>clone</span>(), <span class='ident'>id</span>);
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>update_and_versioning</span>() {
-        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
         <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
 
         <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>dir_listing</span>, _) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;DirName2&quot;</span>.<span class='ident'>to_string</span>(),
@@ -1067,66 +1223,82 @@
                                                                   ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
                                                                   <span class='prelude-val'>None</span>));
 
-        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_versions</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(), <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>()));
+        <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_versions</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
+                                                                  <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>()
+                                                                             .<span class='ident'>get_type_tag</span>()));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>versions</span>.<span class='ident'>len</span>(), <span class='number'>1</span>);
 
         <span class='ident'>dir_listing</span>.<span class='ident'>get_mut_metadata</span>().<span class='ident'>set_name</span>(<span class='string'>&quot;NewName&quot;</span>.<span class='ident'>to_string</span>());
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>update</span>(<span class='kw-2'>&amp;</span><span class='ident'>dir_listing</span>).<span class='ident'>is_ok</span>());
 
-        <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_versions</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(), <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>()));
+        <span class='ident'>versions</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_versions</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
+                                                          <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_type_tag</span>()));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>versions</span>.<span class='ident'>len</span>(), <span class='number'>2</span>);
 
-        <span class='kw'>let</span> <span class='ident'>rxd_dir_listing</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_by_version</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
-                                                                     <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_access_level</span>(),
-                                                                     <span class='ident'>versions</span>[<span class='ident'>versions</span>.<span class='ident'>len</span>() <span class='op'>-</span> <span class='number'>1</span>].<span class='ident'>clone</span>()));
+        <span class='kw'>let</span> <span class='ident'>rxd_dir_listing</span> <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_by_version</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
+                                                     <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_access_level</span>(),
+                                                     <span class='ident'>versions</span>[<span class='ident'>versions</span>.<span class='ident'>len</span>() <span class='op'>-</span> <span class='number'>1</span>].<span class='ident'>clone</span>()));
         <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>rxd_dir_listing</span>, <span class='ident'>dir_listing</span>);
 
-        <span class='kw'>let</span> <span class='ident'>rxd_dir_listing</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_by_version</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
-                                                                     <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_access_level</span>(),
-                                                                     <span class='ident'>versions</span>[<span class='number'>0</span>].<span class='ident'>clone</span>()));
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>rxd_dir_listing</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>(), <span class='string'>&quot;DirName2&quot;</span>.<span class='ident'>to_string</span>());
+        <span class='kw'>let</span> <span class='ident'>rxd_dir_listing</span> <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get_by_version</span>(<span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_id</span>(),
+                                                     <span class='ident'>dir_listing</span>.<span class='ident'>get_key</span>().<span class='ident'>get_access_level</span>(),
+                                                     <span class='ident'>versions</span>[<span class='number'>0</span>].<span class='ident'>clone</span>()));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>rxd_dir_listing</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>(),
+                   <span class='string'>&quot;DirName2&quot;</span>.<span class='ident'>to_string</span>());
     }
 
     <span class='attribute'>#[<span class='ident'>test</span>]</span>
     <span class='kw'>fn</span> <span class='ident'>delete_directory</span>() {
-        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(::<span class='ident'>safe_core</span>::<span class='ident'>utility</span>::<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
-        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> ::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Arc</span>::<span class='ident'>new</span>(::<span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
+        <span class='kw'>let</span> <span class='ident'>test_client</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>test_utils</span>::<span class='ident'>get_client</span>());
+        <span class='kw'>let</span> <span class='ident'>client</span> <span class='op'>=</span> <span class='ident'>Arc</span>::<span class='ident'>new</span>(<span class='ident'>Mutex</span>::<span class='ident'>new</span>(<span class='ident'>test_client</span>));
         <span class='kw'>let</span> <span class='ident'>dir_helper</span> <span class='op'>=</span> <span class='ident'>DirectoryHelper</span>::<span class='ident'>new</span>(<span class='ident'>client</span>.<span class='ident'>clone</span>());
         <span class='comment'>// Create a Directory</span>
-        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;DirName&quot;</span>.<span class='ident'>to_string</span>(),
-                                                                           ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
-                                                                           <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                           <span class='boolval'>true</span>,
-                                                                           ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                                           <span class='prelude-val'>None</span>));
+        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;DirName&quot;</span>.<span class='ident'>to_string</span>(),
+                                             ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                             <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                             <span class='boolval'>true</span>,
+                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                             <span class='prelude-val'>None</span>));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>grand_parent</span>.<span class='ident'>is_none</span>());
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>directory</span>, <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>())));
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='ident'>directory</span>,
+                   <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>())));
         <span class='comment'>// Create a Child directory and update the parent_directory</span>
-        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Child&quot;</span>.<span class='ident'>to_string</span>(),
-                                                                                 ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
-                                                                                 <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                                 <span class='boolval'>true</span>,
-                                                                                 ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                                                 <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>directory</span>)));
+        <span class='kw'>let</span> (<span class='kw-2'>mut</span> <span class='ident'>child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Child&quot;</span>.<span class='ident'>to_string</span>(),
+                                             ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                             <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                             <span class='boolval'>true</span>,
+                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                             <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>directory</span>)));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>grand_parent</span>.<span class='ident'>is_none</span>());
         <span class='comment'>// Assert whether parent is updated</span>
         <span class='kw'>let</span> <span class='ident'>parent</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>get</span>(<span class='ident'>directory</span>.<span class='ident'>get_key</span>()));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>parent</span>.<span class='ident'>find_sub_directory</span>(<span class='ident'>child_directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>()).<span class='ident'>is_some</span>());
 
-        <span class='kw'>let</span> (<span class='ident'>grand_child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Grand Child&quot;</span>.<span class='ident'>to_string</span>(),
-                                                                                   ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
-                                                                                   <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
-                                                                                   <span class='boolval'>true</span>,
-                                                                                   ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
-                                                                                   <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>)));
+        <span class='kw'>let</span> (<span class='ident'>grand_child_directory</span>, <span class='ident'>grand_parent</span>) <span class='op'>=</span>
+            <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>create</span>(<span class='string'>&quot;Grand Child&quot;</span>.<span class='ident'>to_string</span>(),
+                                             ::<span class='ident'>VERSIONED_DIRECTORY_LISTING_TAG</span>,
+                                             <span class='ident'>Vec</span>::<span class='ident'>new</span>(),
+                                             <span class='boolval'>true</span>,
+                                             ::<span class='ident'>AccessLevel</span>::<span class='ident'>Private</span>,
+                                             <span class='prelude-val'>Some</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>)));
 
         <span class='kw'>let</span> _ <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>grand_parent</span>, <span class='string'>&quot;Grand Parent Should be updated&quot;</span>);
 
-        <span class='kw'>let</span> <span class='ident'>delete_result</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>, <span class='ident'>grand_child_directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>()));
-        <span class='kw'>let</span> <span class='ident'>updated_grand_parent</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>delete_result</span>, <span class='string'>&quot;Parent directory should be returned&quot;</span>);
-        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>updated_grand_parent</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_id</span>(), <span class='op'>*</span><span class='ident'>directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_id</span>());
+        <span class='kw'>let</span> <span class='ident'>delete_result</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>child_directory</span>,
+                                                             <span class='ident'>grand_child_directory</span>.<span class='ident'>get_metadata</span>()
+                                                                                  .<span class='ident'>get_name</span>()));
+        <span class='kw'>let</span> <span class='ident'>updated_grand_parent</span> <span class='op'>=</span> <span class='macro'>unwrap_option</span><span class='macro'>!</span>(<span class='ident'>delete_result</span>,
+                                                  <span class='string'>&quot;Parent directory should be returned&quot;</span>);
+        <span class='macro'>assert_eq</span><span class='macro'>!</span>(<span class='op'>*</span><span class='ident'>updated_grand_parent</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_id</span>(),
+                   <span class='op'>*</span><span class='ident'>directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_id</span>());
 
-        <span class='kw'>let</span> <span class='ident'>delete_result</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>directory</span>, <span class='ident'>child_directory</span>.<span class='ident'>get_metadata</span>().<span class='ident'>get_name</span>()));
+        <span class='kw'>let</span> <span class='ident'>delete_result</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>dir_helper</span>.<span class='ident'>delete</span>(<span class='kw-2'>&amp;</span><span class='kw-2'>mut</span> <span class='ident'>directory</span>,
+                                                             <span class='ident'>child_directory</span>.<span class='ident'>get_metadata</span>()
+                                                                            .<span class='ident'>get_name</span>()));
         <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>delete_result</span>.<span class='ident'>is_none</span>());
     }
 }

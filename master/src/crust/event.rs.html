@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/crust-0.8.0/src/event.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/crust-0.8.1/src/event.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>event.rs.html -- source</title>
@@ -97,10 +97,6 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
-<span id="57">57</span>
-<span id="58">58</span>
-<span id="59">59</span>
-<span id="60">60</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -119,48 +115,44 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
-<span class='kw'>use</span> <span class='ident'>transport</span>::<span class='ident'>Endpoint</span>;
-<span class='kw'>use</span> <span class='ident'>connection</span>::<span class='ident'>Connection</span>;
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>::{<span class='ident'>UdpSocket</span>, <span class='ident'>SocketAddr</span>};
-<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>collections</span>::<span class='ident'>HashSet</span>;
+<span class='kw'>use</span> <span class='ident'>endpoint</span>::<span class='ident'>Endpoint</span>;
+<span class='kw'>use</span> <span class='ident'>connection</span>::{<span class='ident'>RaiiTcpAcceptor</span>, <span class='ident'>Connection</span>};
+<span class='kw'>use</span> <span class='ident'>peer_id</span>::<span class='ident'>PeerId</span>;
+<span class='kw'>use</span> <span class='ident'>service</span>::<span class='ident'>ConnectionInfoResult</span>;
+<span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>net</span>::<span class='ident'>UdpSocket</span>;
+<span class='kw'>use</span> <span class='ident'>socket_addr</span>::<span class='ident'>SocketAddr</span>;
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>io</span>;
+<span class='kw'>use</span> <span class='ident'>static_contact_info</span>::<span class='ident'>StaticContactInfo</span>;
+<span class='kw'>use</span> <span class='ident'>sender_receiver</span>::<span class='ident'>CrustMsg</span>;
 
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>MappedUdpSocket</span> {
-    <span class='kw'>pub</span> <span class='ident'>result_token</span>: <span class='ident'>u32</span>,
-    <span class='comment'>// Using HashSet because SocketAddr is not Ord.</span>
-    <span class='kw'>pub</span> <span class='ident'>result</span>: <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='ident'>UdpSocket</span>, <span class='ident'>HashSet</span><span class='op'>&lt;</span><span class='ident'>SocketAddr</span><span class='op'>&gt;</span>)<span class='op'>&gt;</span>,
-}
-
-<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
-<span class='kw'>pub</span> <span class='kw'>struct</span> <span class='ident'>HolePunchResult</span> {
-    <span class='kw'>pub</span> <span class='ident'>result_token</span>: <span class='ident'>u32</span>,
-    <span class='kw'>pub</span> <span class='ident'>udp_socket</span>:   <span class='ident'>UdpSocket</span>,
-    <span class='kw'>pub</span> <span class='ident'>peer_addr</span>:    <span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span><span class='ident'>SocketAddr</span><span class='op'>&gt;</span>,
+<span class='comment'>// This is necessary to gracefully exit the threads. In current design, there is no control over</span>
+<span class='comment'>// the network reader threads - they infinitely block. So this workaround will use the writer</span>
+<span class='comment'>// thread to shutdown the stream so that the reader thread exits. Better design should be sought in</span>
+<span class='comment'>// the future.</span>
+<span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Clone</span>, <span class='ident'>Debug</span>, <span class='ident'>Eq</span>, <span class='ident'>PartialEq</span>)]</span>
+<span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>WriteEvent</span> {
+    <span class='ident'>Write</span>(<span class='ident'>CrustMsg</span>),
+    <span class='ident'>Shutdown</span>,
 }
 
 <span class='doccomment'>/// Enum representing different events that will be sent over the asynchronous channel to the user</span>
 <span class='doccomment'>/// of this module.</span>
 <span class='attribute'>#[<span class='ident'>derive</span>(<span class='ident'>Debug</span>)]</span>
 <span class='kw'>pub</span> <span class='kw'>enum</span> <span class='ident'>Event</span> {
-    <span class='doccomment'>/// Invoked when a new message is received.  Passes the peer&#39;s endpoint and the message.</span>
-    <span class='ident'>NewMessage</span>(<span class='ident'>Connection</span>, <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>),
-    <span class='doccomment'>/// Invoked when the new connection request finishes. Passes the peer&#39;s endpoint and the token used in the request.</span>
-    <span class='ident'>OnConnect</span>(<span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='ident'>Endpoint</span>, <span class='ident'>Connection</span>)<span class='op'>&gt;</span>, <span class='ident'>u32</span> <span class='comment'>/* token */</span>),
-    <span class='doccomment'>/// Invoked when the new rendezvous connection request finishes. Passes the peer&#39;s endpoint and the token used in the request.</span>
-    <span class='ident'>OnRendezvousConnect</span>(<span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>(<span class='ident'>Endpoint</span>, <span class='ident'>Connection</span>)<span class='op'>&gt;</span>, <span class='ident'>u32</span> <span class='comment'>/* token */</span>),
-    <span class='doccomment'>/// Invoked when a new connection is accepted. Passes the peer&#39;s endpoint.</span>
-    <span class='ident'>OnAccept</span>(<span class='ident'>Endpoint</span>, <span class='ident'>Connection</span>),
-    <span class='doccomment'>/// Invoked when a connection to a peer is lost.  Passes the peer&#39;s endpoint.</span>
-    <span class='ident'>LostConnection</span>(<span class='ident'>Connection</span>),
-    <span class='doccomment'>/// Invoked when a new bootstrap connection to a peer is established.  Passes the peer&#39;s endpoint.</span>
+    <span class='doccomment'>/// Invoked when a new message is received.  Passes the message.</span>
+    <span class='ident'>NewMessage</span>(<span class='ident'>PeerId</span>, <span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>u8</span><span class='op'>&gt;</span>),
+    <span class='doccomment'>/// Invoked when we get a bootstrap connection to a new peer.</span>
+    <span class='ident'>BootstrapConnect</span>(<span class='ident'>PeerId</span>),
+    <span class='doccomment'>/// Invoked when a bootstrap peer connects to us</span>
+    <span class='ident'>BootstrapAccept</span>(<span class='ident'>PeerId</span>),
+    <span class='doccomment'>/// Invoked when a connection to a new peer is established.</span>
+    <span class='ident'>NewPeer</span>(<span class='ident'>io</span>::<span class='prelude-ty'>Result</span><span class='op'>&lt;</span>()<span class='op'>&gt;</span>, <span class='ident'>PeerId</span>),
+    <span class='doccomment'>/// Invoked when a peer is lost.</span>
+    <span class='ident'>LostPeer</span>(<span class='ident'>PeerId</span>),
+    <span class='doccomment'>/// Raised once the list of bootstrap contacts is exhausted.</span>
     <span class='ident'>BootstrapFinished</span>,
-    <span class='doccomment'>/// Invoked when a new bootstrap connection to a peer is established.  Passes the peer&#39;s endpoint.</span>
-    <span class='ident'>ExternalEndpoints</span>(<span class='ident'>Vec</span><span class='op'>&lt;</span><span class='ident'>Endpoint</span><span class='op'>&gt;</span>),
-    <span class='doccomment'>/// Invoked as a result of the call to Service::get_mapped_udp_socket.</span>
-    <span class='ident'>OnUdpSocketMapped</span>(<span class='ident'>MappedUdpSocket</span>),
-    <span class='doccomment'>/// Invoked as a result of the call to Service::udp_punch_hole.</span>
-    <span class='ident'>OnHolePunched</span>(<span class='ident'>HolePunchResult</span>),
+    <span class='doccomment'>/// Invoked as a result to the call of `Service::prepare_contact_info`.</span>
+    <span class='ident'>ConnectionInfoPrepared</span>(<span class='ident'>ConnectionInfoResult</span>),
 }
 </pre>
 </section>

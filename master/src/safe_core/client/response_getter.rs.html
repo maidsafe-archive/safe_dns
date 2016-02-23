@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.5.0/src/client/response_getter.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.6.0/src/client/response_getter.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>response_getter.rs.html -- source</title>
@@ -177,7 +177,7 @@
                     <span class='kw'>let</span> <span class='kw-2'>mut</span> <span class='ident'>msg_queue</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='self'>self</span>.<span class='ident'>message_queue</span>.<span class='ident'>lock</span>());
                     <span class='kw'>let</span> <span class='ident'>response</span> <span class='op'>=</span> <span class='macro'>try</span><span class='macro'>!</span>(<span class='ident'>msg_queue</span>.<span class='ident'>get_response</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>.<span class='ident'>requested_name</span>));
 
-                    <span class='kw'>if</span> <span class='kw'>let</span> <span class='ident'>DataRequest</span>::<span class='ident'>ImmutableData</span>(..) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>requested_type</span> {
+                    <span class='kw'>if</span> <span class='kw'>let</span> <span class='ident'>DataRequest</span>::<span class='ident'>Immutable</span>(..) <span class='op'>=</span> <span class='self'>self</span>.<span class='ident'>requested_type</span> {
                         <span class='ident'>msg_queue</span>.<span class='ident'>local_cache_insert</span>(<span class='self'>self</span>.<span class='ident'>requested_name</span>.<span class='ident'>clone</span>(), <span class='ident'>response</span>.<span class='ident'>clone</span>());
                     }
 

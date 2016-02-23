@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.5.0/src/errors.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.6.0/src/errors.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>errors.rs.html -- source</title>
@@ -193,6 +193,17 @@
 <span id="150">150</span>
 <span id="151">151</span>
 <span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -213,6 +224,7 @@
 
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>sync</span>::<span class='ident'>mpsc</span>;
 <span class='kw'>use</span> <span class='ident'>maidsafe_utilities</span>::<span class='ident'>serialisation</span>::<span class='ident'>SerialisationError</span>;
+<span class='kw'>use</span> <span class='ident'>mpid_messaging</span>;
 
 <span class='doccomment'>/// Intended for converting Client Errors into numeric codes for propagating some error information</span>
 <span class='doccomment'>/// across FFI boundaries and specially to C.</span>
@@ -253,6 +265,8 @@
     <span class='ident'>UnsuccessfulPwHash</span>,
     <span class='doccomment'>/// Blocking operation was cancelled</span>
     <span class='ident'>OperationAborted</span>,
+    <span class='doccomment'>/// MpidMessaging Error</span>
+    <span class='ident'>MpidMessagingError</span>(<span class='ident'>mpid_messaging</span>::<span class='ident'>Error</span>),
 }
 
 <span class='kw'>impl</span><span class='op'>&lt;</span><span class='lifetime'>&#39;a</span><span class='op'>&gt;</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='kw-2'>&amp;</span><span class='lifetime'>&#39;a</span> <span class='ident'>str</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>CoreError</span> {
@@ -285,6 +299,12 @@
     }
 }
 
+<span class='kw'>impl</span> <span class='ident'>From</span><span class='op'>&lt;</span><span class='ident'>mpid_messaging</span>::<span class='ident'>Error</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>CoreError</span> {
+    <span class='kw'>fn</span> <span class='ident'>from</span>(<span class='ident'>error</span>: <span class='ident'>mpid_messaging</span>::<span class='ident'>Error</span>) <span class='op'>-&gt;</span> <span class='ident'>CoreError</span> {
+        <span class='ident'>CoreError</span>::<span class='ident'>MpidMessagingError</span>(<span class='ident'>error</span>)
+    }
+}
+
 <span class='kw'>impl</span> <span class='ident'>Into</span><span class='op'>&lt;</span><span class='ident'>i32</span><span class='op'>&gt;</span> <span class='kw'>for</span> <span class='ident'>CoreError</span> {
     <span class='kw'>fn</span> <span class='ident'>into</span>(<span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>i32</span> {
         <span class='kw'>match</span> <span class='self'>self</span> {
@@ -304,6 +324,7 @@
             <span class='ident'>CoreError</span>::<span class='ident'>UnsupportedSaltSizeForPwHash</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>14</span>,
             <span class='ident'>CoreError</span>::<span class='ident'>UnsuccessfulPwHash</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>15</span>,
             <span class='ident'>CoreError</span>::<span class='ident'>OperationAborted</span> <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>16</span>,
+            <span class='ident'>CoreError</span>::<span class='ident'>MpidMessagingError</span>(_) <span class='op'>=&gt;</span> <span class='ident'>CLIENT_ERROR_START_RANGE</span> <span class='op'>-</span> <span class='number'>17</span>,
         }
     }
 }
@@ -343,6 +364,7 @@
             }
             <span class='ident'>CoreError</span>::<span class='ident'>UnsuccessfulPwHash</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::UnsuccessfulPwHash&quot;</span>),
             <span class='ident'>CoreError</span>::<span class='ident'>OperationAborted</span> <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::OperationAborted&quot;</span>),
+            <span class='ident'>CoreError</span>::<span class='ident'>MpidMessagingError</span>(<span class='kw-2'>ref</span> <span class='ident'>err</span>) <span class='op'>=&gt;</span> <span class='macro'>write</span><span class='macro'>!</span>(<span class='ident'>f</span>, <span class='string'>&quot;CoreError::MpidMessagingError -&gt; {:?}&quot;</span>, <span class='ident'>err</span>),
         }
     }
 }

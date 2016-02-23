@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.5.0/src/utility/mod.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/safe_core-0.6.0/src/utility/mod.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>mod.rs.html -- source</title>
@@ -236,20 +236,6 @@
 <span id="193">193</span>
 <span id="194">194</span>
 <span id="195">195</span>
-<span id="196">196</span>
-<span id="197">197</span>
-<span id="198">198</span>
-<span id="199">199</span>
-<span id="200">200</span>
-<span id="201">201</span>
-<span id="202">202</span>
-<span id="203">203</span>
-<span id="204">204</span>
-<span id="205">205</span>
-<span id="206">206</span>
-<span id="207">207</span>
-<span id="208">208</span>
-<span id="209">209</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>// This SAFE Network Software is licensed to you under (1) the MaidSafe.net Commercial License,</span>
@@ -366,11 +352,6 @@
     <span class='prelude-val'>Ok</span>(<span class='ident'>arr</span>)
 }
 
-<span class='doccomment'>/// Returns true if both slices are equal in length, and have equal contents</span>
-<span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>slice_equal</span><span class='op'>&lt;</span><span class='ident'>T</span>: <span class='ident'>PartialEq</span><span class='op'>&gt;</span>(<span class='ident'>lhs</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>T</span>], <span class='ident'>rhs</span>: <span class='kw-2'>&amp;</span>[<span class='ident'>T</span>]) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
-    <span class='ident'>lhs</span>.<span class='ident'>len</span>() <span class='op'>==</span> <span class='ident'>rhs</span>.<span class='ident'>len</span>() <span class='op'>&amp;&amp;</span> <span class='ident'>lhs</span>.<span class='ident'>iter</span>().<span class='ident'>zip</span>(<span class='ident'>rhs</span>.<span class='ident'>iter</span>()).<span class='ident'>all</span>(<span class='op'>|</span>(<span class='ident'>a</span>, <span class='ident'>b</span>)<span class='op'>|</span> <span class='ident'>a</span> <span class='op'>==</span> <span class='ident'>b</span>)
-}
-
 <span class='attribute'>#[<span class='ident'>cfg</span>(<span class='ident'>test</span>)]</span>
 <span class='kw'>mod</span> <span class='ident'>test</span> {
     <span class='kw'>use</span> <span class='ident'>super</span>::<span class='op'>*</span>;
@@ -446,18 +427,9 @@
         <span class='kw'>let</span> <span class='ident'>arr1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>generate_random_array_u8_64</span>());
         <span class='kw'>let</span> <span class='ident'>arr2</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>generate_random_array_u8_64</span>());
 
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>slice_equal</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr0</span>, <span class='kw-2'>&amp;</span><span class='ident'>arr1</span>));
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>slice_equal</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr0</span>, <span class='kw-2'>&amp;</span><span class='ident'>arr2</span>));
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>slice_equal</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr1</span>, <span class='kw-2'>&amp;</span><span class='ident'>arr2</span>));
-    }
-
-    <span class='attribute'>#[<span class='ident'>test</span>]</span>
-    <span class='kw'>fn</span> <span class='ident'>slice_eqality</span>() {
-        <span class='kw'>let</span> <span class='ident'>arr0</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>generate_random_array_u8_64</span>());
-        <span class='kw'>let</span> <span class='ident'>arr1</span> <span class='op'>=</span> <span class='macro'>unwrap_result</span><span class='macro'>!</span>(<span class='ident'>generate_random_array_u8_64</span>());
-
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='ident'>slice_equal</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr0</span>, <span class='kw-2'>&amp;</span><span class='ident'>arr0</span>));
-        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='op'>!</span><span class='ident'>slice_equal</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr0</span>, <span class='kw-2'>&amp;</span><span class='ident'>arr1</span>));
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr0</span>[..] <span class='op'>!=</span> <span class='kw-2'>&amp;</span><span class='ident'>arr1</span>[..]);
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr0</span>[..] <span class='op'>!=</span> <span class='kw-2'>&amp;</span><span class='ident'>arr2</span>[..]);
+        <span class='macro'>assert</span><span class='macro'>!</span>(<span class='kw-2'>&amp;</span><span class='ident'>arr1</span>[..] <span class='op'>!=</span> <span class='kw-2'>&amp;</span><span class='ident'>arr2</span>[..]);
     }
 }
 </pre>

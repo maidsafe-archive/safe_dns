@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/event.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/event.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>event.rs.html -- source</title>
@@ -81,10 +81,6 @@
 <span id="38">38</span>
 <span id="39">39</span>
 <span id="40">40</span>
-<span id="41">41</span>
-<span id="42">42</span>
-<span id="43">43</span>
-<span id="44">44</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -104,7 +100,6 @@
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
-<span class='kw'>use</span> <span class='ident'>types</span>::<span class='ident'>MessageId</span>;
 <span class='kw'>use</span> <span class='ident'>messages</span>::{<span class='ident'>RequestMessage</span>, <span class='ident'>ResponseMessage</span>};
 
 <span class='doccomment'>/// An Event raised by a `Node` or `Client` via its event sender.</span>
@@ -120,13 +115,10 @@
     <span class='ident'>Request</span>(<span class='ident'>RequestMessage</span>),
     <span class='doccomment'>/// Response.</span>
     <span class='ident'>Response</span>(<span class='ident'>ResponseMessage</span>),
-    <span class='doccomment'>/// A churn event: a node left or joined this node&#39;s close group.</span>
-    <span class='ident'>Churn</span> {
-        <span class='doccomment'>/// The unique ID of this `Churn` event.</span>
-        <span class='ident'>id</span>: <span class='ident'>MessageId</span>,
-        <span class='doccomment'>/// The name of the node that left the close group, if any.</span>
-        <span class='ident'>lost_close_node</span>: <span class='prelude-ty'>Option</span><span class='op'>&lt;</span><span class='ident'>XorName</span><span class='op'>&gt;</span>,
-    },
+    <span class='doccomment'>/// A new node joined the network and may be a member of group authorities we also belong to.</span>
+    <span class='ident'>NodeAdded</span>(<span class='ident'>XorName</span>),
+    <span class='doccomment'>/// A node left the network and may have been a member of group authorities we also belong to.</span>
+    <span class='ident'>NodeLost</span>(<span class='ident'>XorName</span>),
     <span class='doccomment'>/// The client has successfully connected to a proxy node on the network.</span>
     <span class='ident'>Connected</span>,
 }

@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-3753' class='srclink' href='../src/routing/messages.rs.html#284-366' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-4080' class='srclink' href='../src/routing/messages.rs.html#291-373' title='goto source code'>[src]</a></span></h1>
 <pre class='rust enum'>pub enum ResponseContent {
     GetNetworkName {
         relocated_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
@@ -54,9 +54,9 @@
     GetPublicId {
         public_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
     },
-    GetPublicIdWithEndpoints {
+    GetPublicIdWithConnectionInfo {
         public_id: <a class='struct' href='../routing/struct.PublicId.html' title='routing::PublicId'>PublicId</a>,
-        encrypted_endpoints: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
+        encrypted_connection_info: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/vec/struct.Vec.html' title='collections::vec::Vec'>Vec</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>&gt;,
         nonce_bytes: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.array.html'>[<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>; box_::NONCEBYTES]</a>,
     },
     GetCloseGroup {
@@ -103,14 +103,14 @@ or client, the response will contain the signed request to prevent forgery.</p>
 </div><h3 class='fields'>Fields</h3>
 
                                               <table><tr><td id='variant.GetPublicId.field.public_id'><code>public_id</code></td><td><div class='docblock'><p>The requested <code>PublicId</code></p>
-</div></td></tr></table></td></tr><tr><td id='variant.GetPublicIdWithEndpoints'><code>GetPublicIdWithEndpoints</code></td><td><div class='docblock'><p>Reply with the <code>PublicId</code> along with the sender&#39;s encrypted endpoints</p>
+</div></td></tr></table></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo'><code>GetPublicIdWithConnectionInfo</code></td><td><div class='docblock'><p>Reply with the <code>PublicId</code> along with the sender&#39;s encrypted connection_info</p>
 
 <p>Sent from a <code>ManagedNode</code> to another node or client.</p>
 </div><h3 class='fields'>Fields</h3>
 
-                                              <table><tr><td id='variant.GetPublicIdWithEndpoints.field.public_id'><code>public_id</code></td><td><div class='docblock'><p>Our <code>PublicId</code></p>
-</div></td></tr><tr><td id='variant.GetPublicIdWithEndpoints.field.encrypted_endpoints'><code>encrypted_endpoints</code></td><td><div class='docblock'><p>Their endpoints</p>
-</div></td></tr><tr><td id='variant.GetPublicIdWithEndpoints.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Message salt</p>
+                                              <table><tr><td id='variant.GetPublicIdWithConnectionInfo.field.public_id'><code>public_id</code></td><td><div class='docblock'><p>Our <code>PublicId</code></p>
+</div></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo.field.encrypted_connection_info'><code>encrypted_connection_info</code></td><td><div class='docblock'><p>Their connection_info</p>
+</div></td></tr><tr><td id='variant.GetPublicIdWithConnectionInfo.field.nonce_bytes'><code>nonce_bytes</code></td><td><div class='docblock'><p>Message salt</p>
 </div></td></tr></table></td></tr><tr><td id='variant.GetCloseGroup'><code>GetCloseGroup</code></td><td><div class='docblock'><p>Return the close <code>PublicId</code>s back to the requestor.</p>
 
 <p>Sent from a <code>NodeManager</code> to a node or client.</p>

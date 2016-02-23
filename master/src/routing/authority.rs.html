@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="rustdoc">
-    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.6.3/src/authority.rs`.">
+    <meta name="description" content="Source to the Rust file `/home/travis/.cargo/registry/src/github.com-88ac128001ac3a9a/routing-0.7.0/src/authority.rs`.">
     <meta name="keywords" content="rust, rustlang, rust-lang">
 
     <title>authority.rs.html -- source</title>
@@ -128,6 +128,15 @@
 <span id="85">85</span>
 <span id="86">86</span>
 <span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
 </pre><pre class='rust '>
 <span class='comment'>// Copyright 2015 MaidSafe.net limited.</span>
 <span class='comment'>//</span>
@@ -146,6 +155,7 @@
 <span class='comment'>// Please review the Licences for the specific language governing permissions and limitations</span>
 <span class='comment'>// relating to use of the SAFE Network Software.</span>
 
+<span class='kw'>use</span> <span class='ident'>kademlia_routing_table</span>::<span class='ident'>Destination</span>;
 <span class='kw'>use</span> <span class='ident'>xor_name</span>::<span class='ident'>XorName</span>;
 <span class='kw'>use</span> <span class='ident'>sodiumoxide</span>::<span class='ident'>crypto</span>::{<span class='ident'>hash</span>, <span class='ident'>sign</span>};
 <span class='kw'>use</span> <span class='ident'>std</span>::<span class='ident'>fmt</span>::{<span class='ident'>Debug</span>, <span class='ident'>Formatter</span>};
@@ -180,22 +190,30 @@
     <span class='doccomment'>/// Returns true if group authority, otherwise false.</span>
     <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>is_group</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>bool</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(_) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
-            <span class='ident'>Authority</span>::<span class='ident'>NaeManager</span>(_) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
+            <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(_) <span class='op'>|</span>
+            <span class='ident'>Authority</span>::<span class='ident'>NaeManager</span>(_) <span class='op'>|</span>
             <span class='ident'>Authority</span>::<span class='ident'>NodeManager</span>(_) <span class='op'>=&gt;</span> <span class='boolval'>true</span>,
-            <span class='ident'>Authority</span>::<span class='ident'>ManagedNode</span>(_) <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
-            <span class='ident'>Authority</span>::<span class='ident'>Client</span> { .. } <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
+            <span class='ident'>Authority</span>::<span class='ident'>ManagedNode</span>(_) <span class='op'>|</span> <span class='ident'>Authority</span>::<span class='ident'>Client</span> { .. } <span class='op'>=&gt;</span> <span class='boolval'>false</span>,
         }
     }
 
     <span class='doccomment'>/// Returns the name of authority.</span>
-    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>get_name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>XorName</span> {
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>name</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='kw-2'>&amp;</span><span class='ident'>XorName</span> {
         <span class='kw'>match</span> <span class='op'>*</span><span class='self'>self</span> {
-            <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>=&gt;</span> <span class='ident'>name</span>,
-            <span class='ident'>Authority</span>::<span class='ident'>NaeManager</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>=&gt;</span> <span class='ident'>name</span>,
-            <span class='ident'>Authority</span>::<span class='ident'>NodeManager</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>=&gt;</span> <span class='ident'>name</span>,
+            <span class='ident'>Authority</span>::<span class='ident'>ClientManager</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>|</span>
+            <span class='ident'>Authority</span>::<span class='ident'>NaeManager</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>|</span>
+            <span class='ident'>Authority</span>::<span class='ident'>NodeManager</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>|</span>
             <span class='ident'>Authority</span>::<span class='ident'>ManagedNode</span>(<span class='kw-2'>ref</span> <span class='ident'>name</span>) <span class='op'>=&gt;</span> <span class='ident'>name</span>,
             <span class='ident'>Authority</span>::<span class='ident'>Client</span> { <span class='kw-2'>ref</span> <span class='ident'>proxy_node_name</span>, .. } <span class='op'>=&gt;</span> <span class='ident'>proxy_node_name</span>,
+        }
+    }
+
+    <span class='doccomment'>/// Returns the `Destination` for the `RoutingTable`.</span>
+    <span class='kw'>pub</span> <span class='kw'>fn</span> <span class='ident'>to_destination</span>(<span class='kw-2'>&amp;</span><span class='self'>self</span>) <span class='op'>-&gt;</span> <span class='ident'>Destination</span> {
+        <span class='kw'>if</span> <span class='self'>self</span>.<span class='ident'>is_group</span>() {
+            <span class='ident'>Destination</span>::<span class='ident'>Group</span>(<span class='op'>*</span><span class='self'>self</span>.<span class='ident'>name</span>())
+        } <span class='kw'>else</span> {
+            <span class='ident'>Destination</span>::<span class='ident'>Node</span>(<span class='op'>*</span><span class='self'>self</span>.<span class='ident'>name</span>())
         }
     }
 }

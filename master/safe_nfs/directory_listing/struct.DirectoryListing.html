@@ -46,7 +46,7 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-1925' class='srclink' href='../../src/safe_nfs/directory_listing/mod.rs.html#23-27' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-1995' class='srclink' href='../../src/safe_nfs/directory_listing/mod.rs.html#36-40' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct DirectoryListing {
     // some fields omitted
 }</pre><div class='docblock'><p>DirectoryListing is the representation of a deserialised Directory in the network</p>
@@ -85,7 +85,8 @@ Returns the Option<DirectoryInfo> for the directory_name from the DirectoryListi
 </div><h4 id='method.upsert_file' class='method'><code>fn <a href='#method.upsert_file' class='fnname'>upsert_file</a>(&amp;mut self, file: <a class='struct' href='../../safe_nfs/file/struct.File.html' title='safe_nfs::file::File'>File</a>)</code></h4>
 <div class='docblock'><p>If file is present in the DirectoryListing then replace it else insert it</p>
 </div><h4 id='method.upsert_sub_directory' class='method'><code>fn <a href='#method.upsert_sub_directory' class='fnname'>upsert_sub_directory</a>(&amp;mut self, directory_metadata: <a class='struct' href='../../safe_nfs/metadata/directory_metadata/struct.DirectoryMetadata.html' title='safe_nfs::metadata::directory_metadata::DirectoryMetadata'>DirectoryMetadata</a>)</code></h4>
-<div class='docblock'><p>If DirectoryMetadata is present in the sub_directories of DirectoryListing then replace it else insert it</p>
+<div class='docblock'><p>If DirectoryMetadata is present in the sub_directories of DirectoryListing
+then replace it else insert it</p>
 </div><h4 id='method.remove_sub_directory' class='method'><code>fn <a href='#method.remove_sub_directory' class='fnname'>remove_sub_directory</a>(&amp;mut self, directory_name: &amp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
 <div class='docblock'><p>Remove a sub_directory</p>
 </div><h4 id='method.remove_file' class='method'><code>fn <a href='#method.remove_file' class='fnname'>remove_file</a>(&amp;mut self, file_name: &amp;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>()</a>, <a class='enum' href='../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>

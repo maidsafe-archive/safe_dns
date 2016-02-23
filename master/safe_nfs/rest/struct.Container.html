@@ -46,14 +46,15 @@
             <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
                 [<span class='inner'>&#x2212;</span>]
             </a>
-        </span><a id='src-175' class='srclink' href='../../src/safe_nfs/rest/container.rs.html#22-25' title='goto source code'>[src]</a></span></h1>
+        </span><a id='src-188' class='srclink' href='../../src/safe_nfs/rest/container.rs.html#32-35' title='goto source code'>[src]</a></span></h1>
 <pre class='rust struct'>pub struct Container {
     // some fields omitted
 }</pre><div class='docblock'><p>Container Repersents a Directory.
 Container can have its own metadata, sub-containers and files</p>
 </div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../../safe_nfs/rest/struct.Container.html' title='safe_nfs::rest::Container'>Container</a></code></h3><div class='impl-items'><h4 id='method.authorise' class='method'><code>fn <a href='#method.authorise' class='fnname'>authorise</a>(client: <a class='struct' href='https://doc.rust-lang.org/nightly/alloc/arc/struct.Arc.html' title='alloc::arc::Arc'>Arc</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/std/sync/mutex/struct.Mutex.html' title='std::sync::mutex::Mutex'>Mutex</a>&lt;<a class='struct' href='../../safe_core/client/struct.Client.html' title='safe_core::client::Client'>Client</a>&gt;&gt;, container_info: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../safe_nfs/rest/struct.ContainerInfo.html' title='safe_nfs::rest::ContainerInfo'>ContainerInfo</a>&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../../safe_nfs/rest/struct.Container.html' title='safe_nfs::rest::Container'>Container</a>, <a class='enum' href='../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
 <div class='docblock'><p>Authorises the directory access.
-This sevrves as the initial access point of the Rest API. Operations can only be performed on a Container object.
+This sevrves as the initial access point of the Rest API.
+Operations can only be performed on a Container object.
 If the ContainerInfo parameter is None, then the user&#39;s root directory is returned.
 Returns the Container, if authorisation is successful.</p>
 </div><h4 id='method.create' class='method'><code>fn <a href='#method.create' class='fnname'>create</a>(&amp;mut self, name: <a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>, versioned: <a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.bool.html'>bool</a>, access_level: <a class='enum' href='../../safe_nfs/enum.AccessLevel.html' title='safe_nfs::AccessLevel'>AccessLevel</a>, metadata: <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='https://doc.rust-lang.org/nightly/collections/string/struct.String.html' title='collections::string::String'>String</a>&gt;) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='primitive' href='https://doc.rust-lang.org/nightly/std/primitive.tuple.html'>(<a class='struct' href='../../safe_nfs/rest/struct.Container.html' title='safe_nfs::rest::Container'>Container</a>, <a class='enum' href='https://doc.rust-lang.org/nightly/core/option/enum.Option.html' title='core::option::Option'>Option</a>&lt;<a class='struct' href='../../safe_nfs/rest/struct.Container.html' title='safe_nfs::rest::Container'>Container</a>&gt;)</a>, <a class='enum' href='../../safe_nfs/errors/enum.NfsError.html' title='safe_nfs::errors::NfsError'>NfsError</a>&gt;</code></h4>
@@ -61,14 +62,19 @@ Returns the Container, if authorisation is successful.</p>
 Say there are nested containers,
     Home
       -  Pictures
-In the above example, <code>Home</code> is top level container and <code>Pictures</code> container is a child of <code>Home</code>
-When a new Conatiner <code>Tour</code> is created within <code>Pictures</code>, the following updates are carried out.
+In the above example, <code>Home</code> is top level container and
+<code>Pictures</code> container is a child of <code>Home</code>
+When a new Conatiner <code>Tour</code> is created within <code>Pictures</code>,
+the following updates are carried out.
     1. A new container is created
-    2. The metadata of the new Container (<code>Tour</code>) is added to the list of containers of <code>Pictures</code>.
+    2. The metadata of the new Container (<code>Tour</code>) is added to
+       the list of containers of <code>Pictures</code>.
        Modified time of <code>Tour</code> Container is also updated.
     3. Metadata of <code>Tour</code> is updated in <code>Home</code>.
-Thus when a Container is created, the function returns the created Container and also the parent of the Container in which the new Container is being returned.
-Based on the above example, when the Container <code>Tour</code> is created in <code>Pictures</code>, this function would return a tpule of (Tour, Home)
+Thus when a Container is created, the function returns the created Container and also the
+parent of the Container in which the new Container is being returned.
+Based on the above example, when the Container <code>Tour</code> is created in <code>Pictures</code>, this
+function would return a tpule of (Tour, Home)
 In case if there is no parent for the Container then <code>None</code> is returned.
 Returns tuple of created_container &amp; parent_container of the the current</p>
 </div><h4 id='method.get_created_time' class='method'><code>fn <a href='#method.get_created_time' class='fnname'>get_created_time</a>(&amp;self) -&gt; &amp;<a class='struct' href='../../time/struct.Tm.html' title='time::Tm'>Tm</a></code></h4>
