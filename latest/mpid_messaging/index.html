@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `mpid_messaging` crate.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, mpid_messaging">
+
+    <title>mpid_messaging - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../rustdoc.css">
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    <link rel="shortcut icon" href="http://maidsafe.net/img/favicon.ico">
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        <a href='../mpid_messaging/index.html'><img src='https://raw.githubusercontent.com/maidsafe/QA/master/Images/maidsafe_logo.png' alt='' width='100'></a>
+        <p class='location'></p><script>window.sidebarCurrent = {name: 'mpid_messaging', ty: 'mod', relpath: '../'};</script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content mod">
+<h1 class='fqn'><span class='in-band'>Crate <a class='mod' href=''>mpid_messaging</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-0' class='srclink' href='../src/mpid_messaging/lib.rs.html#18-97' title='goto source code'>[src]</a></span></h1>
+<div class='docblock'>
+<h1 id='mpid-messaging' class='section-header'><a href='#mpid-messaging'>MPID Messaging</a></h1>
+<p>Types used by SAFE Vaults and SAFE Clients to send and receive messages.</p>
+</div><h2 id='structs' class='section-header'><a href="#structs">Structs</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.MpidHeader.html'
+                               title='mpid_messaging::MpidHeader'>MpidHeader</a></td>
+                        <td class='docblock short'>
+                             <p>Minimal information about a given message which can be used as a notification to the receiver.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='struct' href='struct.MpidMessage.html'
+                               title='mpid_messaging::MpidMessage'>MpidMessage</a></td>
+                        <td class='docblock short'>
+                             <p>A full message including header and body which can be sent to or retrieved from the network.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='enums' class='section-header'><a href="#enums">Enums</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.Error.html'
+                               title='mpid_messaging::Error'>Error</a></td>
+                        <td class='docblock short'>
+                             <p>Error types relating to MPID messaging.</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='enum' href='enum.MpidMessageWrapper.html'
+                               title='mpid_messaging::MpidMessageWrapper'>MpidMessageWrapper</a></td>
+                        <td class='docblock short'>
+                             <p>A serialisable wrapper to allow multiplexing all MPID message types and actions via a single
+type.</p>
+
+                        </td>
+                    </tr>
+                </table><h2 id='constants' class='section-header'><a href="#constants">Constants</a></h2>
+<table>
+                    <tr class=' module-item'>
+                        <td><a class='constant' href='constant.GUID_SIZE.html'
+                               title='mpid_messaging::GUID_SIZE'>GUID_SIZE</a></td>
+                        <td class='docblock short'>
+                             <p>Length of the GUID (unique ID) of a message (16 bytes).</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='constant' href='constant.MAX_BODY_SIZE.html'
+                               title='mpid_messaging::MAX_BODY_SIZE'>MAX_BODY_SIZE</a></td>
+                        <td class='docblock short'>
+                             <p>Maximum allowed length for a <a href="struct.MpidMessage.html#method.new">message&#39;s <code>body</code></a> (101,760
+bytes).</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='constant' href='constant.MAX_HEADER_METADATA_SIZE.html'
+                               title='mpid_messaging::MAX_HEADER_METADATA_SIZE'>MAX_HEADER_METADATA_SIZE</a></td>
+                        <td class='docblock short'>
+                             <p>Maximum allowed length for a <a href="struct.MpidHeader.html#method.new">header&#39;s <code>metadata</code></a> (128
+bytes).</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='constant' href='constant.MAX_INBOX_SIZE.html'
+                               title='mpid_messaging::MAX_INBOX_SIZE'>MAX_INBOX_SIZE</a></td>
+                        <td class='docblock short'>
+                             <p>Maximum allowed inbox size for an account (128 MiB).</p>
+
+                        </td>
+                    </tr>
+                
+                    <tr class=' module-item'>
+                        <td><a class='constant' href='constant.MAX_OUTBOX_SIZE.html'
+                               title='mpid_messaging::MAX_OUTBOX_SIZE'>MAX_OUTBOX_SIZE</a></td>
+                        <td class='docblock short'>
+                             <p>Maximum allowed outbox size for an account (128 MiB).</p>
+
+                        </td>
+                    </tr>
+                </table></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "mpid_messaging";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script defer src="../search-index.js"></script>
+</body>
+</html>
