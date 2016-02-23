@@ -10,15 +10,15 @@ repository = "https://github.com/maidsafe/safe_dns"
 version = "0.5.0"
 
 [dependencies]
-clippy = {version = "~0.0.37", optional = true}
-log = "~0.3.4"
-maidsafe_utilities = "~0.1.5"
-routing = "~0.6.1"
+clippy = {version = "~0.0.44", optional = true}
+log = "~0.3.5"
+maidsafe_utilities = "~0.2.0"
+routing = "~0.7.0"
 rustc-serialize = "~0.3.16"
-safe_core = "~0.5.0"
-safe_nfs = "~0.5.0"
+safe_core = "~0.6.0"
+safe_nfs = "~0.6.0"
 sodiumoxide = "~0.0.9"
-xor_name = "~0.0.1"
+xor_name = "~0.0.4"
 
 [dev-dependencies]
 regex = "~0.1.44"

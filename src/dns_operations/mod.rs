@@ -249,10 +249,10 @@ impl DnsOperations {
 
     fn get_housing_structured_data(&self, long_name: &String) -> Result<StructuredData, ::errors::DnsError> {
         let identifier = XorName::new(::sodiumoxide::crypto::hash::sha512::hash(long_name.as_bytes()).0);
-        let request = DataRequest::StructuredData(identifier, DNS_TAG);
+        let request = DataRequest::Structured(identifier, DNS_TAG);
         debug!("Retrieving structured data from network for {:?} dns ...", long_name);
         let response_getter = try!(unwrap_result!(self.client.lock()).get(request, None));
-        if let Data::StructuredData(struct_data) = try!(response_getter.get()) {
+        if let Data::Structured(struct_data) = try!(response_getter.get()) {
             Ok(struct_data)
         } else {
             Err(::errors::DnsError::from(::safe_core::errors::CoreError::ReceivedUnexpectedData))
@@ -293,7 +293,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        unwrap_result!(unwrap_result!(client.lock()).put(Data::StructuredData(struct_data), None));
+        unwrap_result!(unwrap_result!(client.lock()).put(Data::Structured(struct_data), None));
 
         // Get Services
         let services = unwrap_result!(dns_operations.get_all_services(&dns_name, None));
@@ -314,7 +314,7 @@ mod test {
 
         // Delete
         struct_data = unwrap_result!(dns_operations.delete_dns(&dns_name, &secret_signing_key));
-        unwrap_result!(unwrap_result!(client.lock()).delete(Data::StructuredData(struct_data), None));
+        unwrap_result!(unwrap_result!(client.lock()).delete(Data::Structured(struct_data), None));
 
         // Registering again should be allowed
         let _ = unwrap_result!(dns_operations.register_dns(dns_name,
@@ -363,7 +363,7 @@ mod test {
                                                                        &secret_signing_key,
                                                                        None));
 
-        unwrap_result!(unwrap_result!(client.lock()).put(Data::StructuredData(struct_data), None));
+        unwrap_result!(unwrap_result!(client.lock()).put(Data::Structured(struct_data), None));
 
         // Get all dns-names
         let dns_records_vec = unwrap_result!(dns_operations.get_all_registered_names());
@@ -392,7 +392,7 @@ mod test {
         // Remove a service
         let removed_service = services.remove(1);
         struct_data = unwrap_result!(dns_operations.remove_service(&dns_name, removed_service.0.clone(), &secret_signing_key, None));
-        unwrap_result!(unwrap_result!(client.lock()).post(Data::StructuredData(struct_data), None));
+        unwrap_result!(unwrap_result!(client.lock()).post(Data::Structured(struct_data), None));
 
         // Get all services
         let services_vec = unwrap_result!(dns_operations_unregistered.get_all_services(&dns_name, None));
@@ -415,7 +415,7 @@ mod test {
                                                                               ::safe_nfs::AccessLevel::Public)));
         let services_size = services.len();
         struct_data = unwrap_result!(dns_operations.add_service(&dns_name, services[services_size - 1].clone(), &secret_signing_key, None));
-        unwrap_result!(unwrap_result!(client.lock()).post(Data::StructuredData(struct_data), None));
+        unwrap_result!(unwrap_result!(client.lock()).post(Data::Structured(struct_data), None));
 
         // Get all services
         let services_vec = unwrap_result!(dns_operations_unregistered.get_all_services(&dns_name, None));

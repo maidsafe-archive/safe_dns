@@ -111,7 +111,7 @@ fn create_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_core::
                                                            owners,
                                                            &secret_signing_key,
                                                            None));
-    Ok(try!(unwrap_result!(client.lock()).put(Data::StructuredData(dns_struct_data), None)))
+    Ok(try!(unwrap_result!(client.lock()).put(Data::Structured(dns_struct_data), None)))
 }
 
 fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>,
@@ -128,7 +128,7 @@ fn delete_dns_record(client        : std::sync::Arc<std::sync::Mutex<safe_core::
     println!("Deleting Dns...");
 
     let dns_struct_data = try!(dns_operations.delete_dns(&long_name, &secret_signing_key));
-    Ok(try!(unwrap_result!(client.lock()).delete(Data::StructuredData(dns_struct_data), None)))
+    Ok(try!(unwrap_result!(client.lock()).delete(Data::Structured(dns_struct_data), None)))
 }
 
 fn display_dns_records(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
@@ -189,7 +189,7 @@ fn add_service(client        : std::sync::Arc<std::sync::Mutex<safe_core::client
                                                       &secret_signing_key,
                                                       None));
 
-    Ok(try!(client.lock().unwrap().post(Data::StructuredData(struct_data), None)))
+    Ok(try!(client.lock().unwrap().post(Data::Structured(struct_data), None)))
 }
 
 fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_core::client::Client>>,
@@ -210,7 +210,7 @@ fn remove_service(client        : std::sync::Arc<std::sync::Mutex<safe_core::cli
 
     let secret_signing_key = try!(client.lock().unwrap().get_secret_signing_key()).clone();
     let struct_data = try!(dns_operations.remove_service(&long_name, service_name, &secret_signing_key, None));
-    Ok(try!(client.lock().unwrap().post(Data::StructuredData(struct_data), None)))
+    Ok(try!(client.lock().unwrap().post(Data::Structured(struct_data), None)))
 }
 
 fn display_services(dns_operations: &safe_dns::dns_operations::DnsOperations) -> Result<(), safe_dns::errors::DnsError> {
