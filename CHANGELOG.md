@@ -1,5 +1,8 @@
 # safe_dns - Change Log
 
+## [0.6.0]
+- Migrate to Routing 0.7.0
+
 ## [0.5.0]
 - Dependencies updated to allow building with Rust stable
 
